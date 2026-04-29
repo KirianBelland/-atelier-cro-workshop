@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atelier d'Idéation CRO - Shopping Section</title>
+    <title>Atelier d'Idéation CRO - Shopping Section (Collaboratif)</title>
     <style>
         * {
             margin: 0;
@@ -179,7 +179,7 @@
             background: #f5f7fa;
         }
 
-        input[type="text"], input[type="number"], textarea {
+        input[type="text"], input[type="number"], textarea, select {
             border: 2px solid #e0e0e0;
             padding: 8px;
             border-radius: 5px;
@@ -187,7 +187,7 @@
             transition: border-color 0.3s;
         }
 
-        input:focus, textarea:focus {
+        input:focus, textarea:focus, select:focus {
             outline: none;
             border-color: #667eea;
         }
@@ -226,7 +226,7 @@
             cursor: pointer;
             font-size: 1em;
             font-weight: 600;
-            margin: 10px 0;
+            margin: 10px 5px;
             transition: all 0.3s ease;
         }
 
@@ -235,8 +235,7 @@
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
-        .btn-delete {
-            background: #ff6b6b;
+        .btn-delete, .btn-edit {
             color: white;
             padding: 8px 15px;
             border: none;
@@ -244,10 +243,98 @@
             cursor: pointer;
             font-size: 0.9em;
             transition: all 0.3s ease;
+            margin: 0 3px;
+        }
+
+        .btn-delete {
+            background: #ff6b6b;
         }
 
         .btn-delete:hover {
             background: #ff5252;
+        }
+
+        .btn-edit {
+            background: #4CAF50;
+        }
+
+        .btn-edit:hover {
+            background: #45a049;
+        }
+
+        .alert {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 5px solid #28a745;
+        }
+
+        .parcours-card {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .parcours-card.good {
+            border-left: 5px solid #27ae60;
+        }
+
+        .parcours-card.bad {
+            border-left: 5px solid #e74c3c;
+        }
+
+        .parcours-actions {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .page-section {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+
+        .component-item {
+            background: white;
+            padding: 10px 15px;
+            margin: 8px 0;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .theme-card {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid #f39c12;
+        }
+
+        .theme-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .theme-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #764ba2;
         }
 
         .item-list {
@@ -277,51 +364,6 @@
             margin-right: 15px;
         }
 
-        .alert {
-            background: #d4edda;
-            color: #155724;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            border-left: 5px solid #28a745;
-        }
-
-        .export-section {
-            margin-top: 30px;
-            text-align: center;
-        }
-
-        .chart-placeholder {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            padding: 40px;
-            border-radius: 10px;
-            text-align: center;
-            margin: 20px 0;
-            border: 2px dashed #667eea;
-        }
-
-        .parcours-card {
-            background: white;
-            padding: 20px;
-            margin: 15px 0;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            border-left: 5px solid #764ba2;
-        }
-
-        .friction-badge {
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            margin: 5px;
-            font-weight: 600;
-        }
-
-        .friction-info { background: #3498db; color: white; }
-        .friction-psycho { background: #e74c3c; color: white; }
-        .friction-func { background: #f39c12; color: white; }
-
         .save-indicator {
             position: fixed;
             top: 20px;
@@ -332,6 +374,7 @@
             border-radius: 8px;
             display: none;
             animation: slideIn 0.3s;
+            z-index: 1000;
         }
 
         @keyframes slideIn {
@@ -349,6 +392,81 @@
             font-size: 1.2em;
             font-weight: 600;
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .modal-close {
+            font-size: 2em;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .modal-close:hover {
+            color: #333;
+        }
+
+        .form-group {
+            margin: 15px 0;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .export-section {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin: 5px;
+        }
+
+        .badge-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .badge-danger {
+            background: #e74c3c;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -358,7 +476,7 @@
         <header>
             <h1>🎯 Atelier d'Idéation CRO</h1>
             <p class="subtitle">Analyse Shopping Section - France & US | Roadmap AB Testing</p>
-            <div class="workshop-timer">⏱️ Durée atelier : <span id="timer">2h30</span></div>
+            <div class="workshop-timer">⏱️ Durée atelier : <span id="timer">2h30</span> | <span id="collaborativeStatus">🔄 Connexion...</span></div>
         </header>
 
         <nav class="nav-tabs">
@@ -455,26 +573,6 @@
                 </tbody>
             </table>
 
-            <h3>Répartition Audiences</h3>
-            <div class="metric-grid">
-                <div class="metric-card">
-                    <div class="metric-label">New Users</div>
-                    <input type="text" class="metric-value" value="65%" onchange="saveData()">
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Returning Users</div>
-                    <input type="text" class="metric-value" value="35%" onchange="saveData()">
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">BE Entry</div>
-                    <input type="text" class="metric-value" value="25%" onchange="saveData()">
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Not BE Entry</div>
-                    <input type="text" class="metric-value" value="75%" onchange="saveData()">
-                </div>
-            </div>
-
             <h3>Sources de Trafic</h3>
             <table>
                 <thead>
@@ -518,50 +616,6 @@
                     </tr>
                 </tbody>
             </table>
-
-            <h3>Pages d'Entrée Dominantes</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Page</th>
-                        <th>% Entrées</th>
-                        <th>Taux d'Entrée BE</th>
-                        <th>Taux de Sortie</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Homepage</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">40%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">22%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">35%</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Resort Page</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">28%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">38%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">28%</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Search/Listing</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">18%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">25%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">42%</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Offer Page</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">10%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">45%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">22%</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Landing Pages</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">4%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">32%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">38%</td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
 
         <!-- TAB 2: PARCOURS -->
@@ -573,496 +627,21 @@
 
             <h3>Parcours Principaux (Avant BE Entry)</h3>
 
-            <div class="parcours-card">
-                <h4>🏆 Parcours Convertissant #1</h4>
-                <p><strong>Homepage → Resort Page → Offer Page → BE Entry</strong></p>
-                <div class="metric-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">% Utilisateurs</div>
-                        <input type="text" class="metric-value" value="32%" onchange="saveData()">
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Taux Conversion</div>
-                        <input type="text" class="metric-value" value="8.5%" onchange="saveData()">
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Temps Moyen</div>
-                        <input type="text" class="metric-value" value="6:45" onchange="saveData()">
-                    </div>
-                </div>
-                <p><strong>Insights :</strong> <textarea style="margin-top:10px;" rows="2" onchange="saveData()">Parcours direct et efficace. Les utilisateurs qui passent par une offre spécifique convertissent mieux.</textarea></p>
-            </div>
+            <div id="parcoursContainer"></div>
 
-            <div class="parcours-card">
-                <h4>🏆 Parcours Convertissant #2</h4>
-                <p><strong>Search → Resort Page → BE Entry</strong></p>
-                <div class="metric-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">% Utilisateurs</div>
-                        <input type="text" class="metric-value" value="28%" onchange="saveData()">
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Taux Conversion</div>
-                        <input type="text" class="metric-value" value="7.2%" onchange="saveData()">
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Temps Moyen</div>
-                        <input type="text" class="metric-value" value="5:20" onchange="saveData()">
-                    </div>
-                </div>
-                <p><strong>Insights :</strong> <textarea style="margin-top:10px;" rows="2" onchange="saveData()">Utilisateurs avec une intention claire. La search est un accélérateur de conversion.</textarea></p>
-            </div>
-
-            <div class="parcours-card" style="border-left-color: #e74c3c;">
-                <h4>❌ Parcours Non-Convertissant #1</h4>
-                <p><strong>Homepage → Resort Page → Homepage → Exit</strong></p>
-                <div class="metric-grid">
-                    <div class="metric-card">
-                        <div class="metric-label">% Utilisateurs</div>
-                        <input type="text" class="metric-value" value="18%" onchange="saveData()">
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Taux Conversion</div>
-                        <input type="text" class="metric-value" value="0.5%" onchange="saveData()">
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-label">Temps Moyen</div>
-                        <input type="text" class="metric-value" value="3:15" onchange="saveData()">
-                    </div>
-                </div>
-                <p><strong>Insights :</strong> <textarea style="margin-top:10px;" rows="2" onchange="saveData()">Boucle de navigation. Les utilisateurs ne trouvent pas ce qu'ils cherchent sur la resort page.</textarea></p>
-            </div>
-
-            <h3>Analyse par Segmentation</h3>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>Segment</th>
-                        <th>Taux d'Entrée BE</th>
-                        <th>Pages Moyennes</th>
-                        <th>Observation</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Desktop</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">32%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">5.8</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Meilleure conversion, plus d'exploration</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Mobile</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">18%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">3.8</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Friction majeure sur mobile</td>
-                    </tr>
-                    <tr>
-                        <td><strong>BE Entry</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">100%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">4.2</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Parcours ciblé et efficace</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Non-BE Entry</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">0%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">4.9</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Plus d'exploration mais pas de conversion</td>
-                    </tr>
-                    <tr>
-                        <td><strong>France</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">28%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">5.1</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Bon engagement global</td>
-                    </tr>
-                    <tr>
-                        <td><strong>USA</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">22%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">4.4</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Sessions plus courtes, conversion plus faible</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h3>🔴 Points de Friction Macro</h3>
-            <div class="friction-section">
-                <ul class="item-list" id="frictionsMacro">
-                    <li>
-                        <div class="item-content">
-                            <strong>Boucles Homepage ↔ Resort Page</strong><br>
-                            <small>18% des utilisateurs font des allers-retours, indiquant un manque d'information ou de clarté</small>
-                        </div>
-                        <button class="btn-delete" onclick="removeItem(this)">Supprimer</button>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <strong>Sorties prématurées sur Search Page (42%)</strong><br>
-                            <small>Taux de sortie élevé sur la page de recherche suggère des problèmes de résultats ou de filtrage</small>
-                        </div>
-                        <button class="btn-delete" onclick="removeItem(this)">Supprimer</button>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <strong>Abandon après Resort Page sans aller vers BE</strong><br>
-                            <small>62% des visiteurs de Resort Page n'entrent pas dans le BE</small>
-                        </div>
-                        <button class="btn-delete" onclick="removeItem(this)">Supprimer</button>
-                    </li>
-                </ul>
-                <button class="btn-add" onclick="addFrictionMacro()">+ Ajouter un Point de Friction</button>
-            </div>
-
-            <h3>🔄 Reverse Path Analysis (BE Entry → Pages Précédentes)</h3>
-            <div class="chart-placeholder">
-                <h4>Pages visitées avant l'entrée dans le Booking Engine</h4>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Page Précédente</th>
-                            <th>% BE Entry depuis cette page</th>
-                            <th>Performance</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>Offer Page</strong></td>
-                            <td class="editable" contenteditable="true" onblur="saveData()">45%</td>
-                            <td style="color: #27ae60;">⬆️ Très performant</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Resort Page - Tab Rooms</strong></td>
-                            <td class="editable" contenteditable="true" onblur="saveData()">38%</td>
-                            <td style="color: #27ae60;">⬆️ Performant</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Resort Page - Tab Overview</strong></td>
-                            <td class="editable" contenteditable="true" onblur="saveData()">28%</td>
-                            <td style="color: #f39c12;">➡️ Moyen</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Homepage</strong></td>
-                            <td class="editable" contenteditable="true" onblur="saveData()">22%</td>
-                            <td style="color: #f39c12;">➡️ Moyen</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Search/Listing</strong></td>
-                            <td class="editable" contenteditable="true" onblur="saveData()">25%</td>
-                            <td style="color: #f39c12;">➡️ Moyen</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <button class="btn-add" onclick="openParcoursModal()">+ Ajouter un Parcours</button>
         </div>
 
         <!-- TAB 3: COMPORTEMENT -->
         <div id="comportement" class="tab-content">
             <h2>👤 Analyse Comportementale In-Page</h2>
             <div class="alert">
-                <strong>Objectif :</strong> Analyser le comportement sur chaque page critique et identifier les frictions et opportunités CRO.
+                <strong>Objectif :</strong> Analyser le comportement sur chaque page critique, identifier les frictions et opportunités CRO.
             </div>
 
-            <h3>📄 Homepage</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Composant</th>
-                        <th>Scroll Reach</th>
-                        <th>Taux de Clic</th>
-                        <th>Observation</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Hero Banner + CTA Principal</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">98%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">12%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Bonne visibilité, CTR acceptable</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Search Bar</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">95%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">18%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Forte utilisation, élément clé</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Resorts Populaires</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">72%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">22%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Bon engagement</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Offres Spéciales</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">58%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">8%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Faible visibilité sous le fold</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Footer Links</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">15%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">3%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Peu atteint</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div id="pagesContainer"></div>
 
-            <h4>Différences Comportementales Homepage</h4>
-            <div class="metric-grid">
-                <div class="metric-card">
-                    <div class="metric-label">Desktop - Scroll Depth Moyen</div>
-                    <input type="text" class="metric-value" value="68%" onchange="saveData()">
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Mobile - Scroll Depth Moyen</div>
-                    <input type="text" class="metric-value" value="52%" onchange="saveData()">
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Acheteurs - Scroll</div>
-                    <input type="text" class="metric-value" value="75%" onchange="saveData()">
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Non-Acheteurs - Scroll</div>
-                    <input type="text" class="metric-value" value="48%" onchange="saveData()">
-                </div>
-            </div>
-
-            <h3>🏨 Resort Page</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Composant / Tab</th>
-                        <th>Scroll Reach</th>
-                        <th>Taux de Clic</th>
-                        <th>Observation</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Hero Image + Prix Principal</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">100%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">-</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Attention immédiate</td>
-                    </tr>
-                    <tr>
-                        <td><strong>CTA "Réserver"</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">98%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">38%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Conversion élevée</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Tab "Vue d'ensemble"</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">85%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">65%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Tab par défaut, forte consultation</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Tab "Chambres"</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">-</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">48%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Information clé pour décision</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Tab "Activités"</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">-</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">28%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Consultation moyenne</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Tab "All Inclusive"</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">-</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">42%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Forte demande d'information</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Galerie Photos</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">78%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">52%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Forte interaction</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Avis Clients</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">45%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">18%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Bas dans la page</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h4>Comparaison FR vs US - Resort Page</h4>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Métrique</th>
-                        <th>France</th>
-                        <th>USA</th>
-                        <th>Insight</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Scroll Depth Moyen</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">72%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">58%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">FR plus engagés</td>
-                    </tr>
-                    <tr>
-                        <td>Clics Tab "All Inclusive"</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">52%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">32%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Attente culturelle forte en FR</td>
-                    </tr>
-                    <tr>
-                        <td>Consultation Prix</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">88%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">92%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Prix = critère prioritaire US</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h3>🎯 Offer Page</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Composant</th>
-                        <th>Scroll Reach</th>
-                        <th>Taux de Clic</th>
-                        <th>Observation</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Titre Offre + Badge Promo</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">100%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">-</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Attention maximale</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Prix Barré vs Prix Final</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">98%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">-</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Ancrage prix efficace</td>
-                    </tr>
-                    <tr>
-                        <td><strong>CTA "Voir Disponibilités"</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">95%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">45%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Meilleur taux de conversion du site</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Conditions de l'Offre</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">62%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">28%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Consulté par utilisateurs engagés</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Date Limite</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">88%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">-</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Urgence bien perçue</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h3>🔍 Search / Listing Page</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Composant</th>
-                        <th>Scroll Reach</th>
-                        <th>Taux de Clic</th>
-                        <th>Observation</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Filtres (Prix, Destination, Dates)</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">92%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">58%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Forte utilisation</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Résultats - 3 Premiers</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">95%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">42%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Concentration sur le top</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Résultats - Au-delà de 6</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">35%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">8%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Faible visibilité</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Tri (Prix, Popularité)</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">88%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">32%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Usage modéré</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Map View</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">-</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">12%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Peu utilisé</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h3>🔴 Points de Friction Identifiés In-Page</h3>
-            <div class="friction-section">
-                <h4><span class="friction-badge friction-info">Informationnels</span></h4>
-                <ul class="item-list">
-                    <li>
-                        <div class="item-content">
-                            <strong>Manque de clarté sur le "All Inclusive"</strong><br>
-                            <small>Resort Page: utilisateurs cliquent sur le tab mais temps passé court (avg 8 sec), suggère frustration</small>
-                        </div>
-                        <button class="btn-delete" onclick="removeItem(this)">Supprimer</button>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <strong>Informations chambres trop basses</strong><br>
-                            <small>48% seulement consultent le tab Chambres alors que c'est un critère décisif</small>
-                        </div>
-                        <button class="btn-delete" onclick="removeItem(this)">Supprimer</button>
-                    </li>
-                </ul>
-
-                <h4><span class="friction-badge friction-psycho">Psychologiques</span></h4>
-                <ul class="item-list">
-                    <li>
-                        <div class="item-content">
-                            <strong>Anxiété sur la disponibilité</strong><br>
-                            <small>Users scrollent rapidement vers le prix mais hésitent à cliquer sur le CTA sans confirmation de disponibilité</small>
-                        </div>
-                        <button class="btn-delete" onclick="removeItem(this)">Supprimer</button>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <strong>Manque de réassurance</strong><br>
-                            <small>Avis clients scroll reach seulement 45%, pas assez mis en avant pour rassurer</small>
-                        </div>
-                        <button class="btn-delete" onclick="removeItem(this)">Supprimer</button>
-                    </li>
-                </ul>
-
-                <h4><span class="friction-badge friction-func">Fonctionnels</span></h4>
-                <ul class="item-list">
-                    <li>
-                        <div class="item-content">
-                            <strong>Filtres Search peu performants</strong><br>
-                            <small>Exit rate 42% sur Search Page, filtres ne retournent pas de résultats satisfaisants</small>
-                        </div>
-                        <button class="btn-delete" onclick="removeItem(this)">Supprimer</button>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <strong>Navigation tabs Resort Page (mobile)</strong><br>
-                            <small>Sur mobile, tabs horizontaux difficiles à naviguer, 65% restent sur tab par défaut</small>
-                        </div>
-                        <button class="btn-delete" onclick="removeItem(this)">Supprimer</button>
-                    </li>
-                </ul>
-            </div>
+            <button class="btn-add" onclick="openPageModal()">+ Ajouter une Page</button>
         </div>
 
         <!-- TAB 4: FRICTIONS & BESOINS -->
@@ -1072,194 +651,9 @@
                 <strong>Synthèse :</strong> Regroupement des frictions et besoins utilisateurs par thématiques CRO pour orienter l'idéation.
             </div>
 
-            <div class="friction-section">
-                <h3>💰 Thème : Prix</h3>
-                <ul class="item-list" id="themePrix">
-                    <li>
-                        <div class="item-content">
-                            <strong>Manque de transparence sur le prix final</strong><br>
-                            <small>Utilisateurs US particulièrement sensibles, besoin de voir taxes incluses dès le début</small>
-                        </div>
-                        <button class="btn-delete" onclick="removeItem(this)">Supprimer</button>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <strong>Comparaison de prix difficile</strong><br>
-                            <small>Sur Search Page, prix affichés de manière inconsistante (par nuit vs total, avec/sans promos)</small>
-                        </div>
-                        <button class="btn-delete" onclick="removeItem(this)">Supprimer</button>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <strong>Rapport qualité-prix non évident</strong><br>
-                            <small>Prix affiché sans contexte des services inclus, besoin de justifier la valeur</small>
-                        </div>
-                        <button class="btn-delete" onclick="removeItem(this)">Supprimer</button>
-                    </li>
-                </ul>
-                <button class="btn-add" onclick="addThemeItem('themePrix')">+ Ajouter Friction Prix</button>
-            </div>
+            <div id="themesContainer"></div>
 
-            <div class="friction-section">
-                <h3>🔍 Thème : Search / Recherche</h3>
-                <ul class="item-list" id="themeSearch">
-                    <li>
-                        <div class="item-content">
-                            <strong>Résultats de recherche non pertinents</strong><br>
-                            <small>Taux de sortie 42% sur Search Page, les utilisateurs ne trouvent pas ce qu'ils cherchent</small>
-                        </div>
-                        <button class="btn-delete" onclick="removeItem(this)">Supprimer</button>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <strong>Filtres limités ou mal compris</strong><br>
-                            <small>Utilisateurs appliquent des filtres mais obtiennent 0 résultats, frustration élevée</small>
-                        </div>
-                        <button class="btn-delete" onclick="removeItem(this)">Supprimer</button>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <strong>Manque de suggestions intelligentes</strong><br>
-                            <small>Pas de recommandations alternatives quand recherche initiale ne donne pas de résultats</small>
-                        </div>
-                        <button class="btn-delete" onclick="removeItem(this)">Supprimer</button>
-                    </li>
-                </ul>
-                <button class="btn-add" onclick="addThemeItem('themeSearch')">+ Ajouter Friction Search</button>
-            </div>
-
-            <div class="friction-section">
-                <h3>🛏️ Thème : Chambres</h3>
-                <ul class="item-list" id="themeChambres">
-                    <li>
-                        <div class="item-content">
-                            <strong>Informations chambres enfouies</strong><br>
-                            <small>Tab "Chambres" seulement consulté par 48% alors que c'est un critère décisif</small>
-                        </div>
-                        <button class="btn-delete" onclick="removeItem(this)">Supprimer</button>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <strong>Photos chambres insuffisantes</strong><br>
-                            <small>Galerie photos consultée (52%) mais pas assez de variété de chambres montrées</small>
-                        </div>
-                        <button class="btn-delete" onclick="removeItem(this)">Supprimer</button>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <strong>Capacité et configuration floues</strong><br>
-                            <small>Questions fréquentes sur nombre de lits, taille, vue - informations pas assez visibles</small>
-                        </div>
-                        <button class="btn-delete" onclick="removeItem(this)">Supprimer</button>
-                    </li>
-                </ul>
-                <button class="btn-add" onclick="addThemeItem('themeChambres')">+ Ajouter Friction Chambres</button>
-            </div>
-
-            <div class="friction-section">
-                <h3>🏨 Thème : Informations Resort</h3>
-                <ul class="item-list" id="themeResort">
-                    <li>
-                        <div class="item-content">
-                            <strong>Propositions de valeur enterrées</strong><br>
-                            <small>Services clés (spa, kids club, restaurants) bas dans la page, scroll reach insuffisant</small>
-                        </div>
-                        <button class="btn-delete" onclick="removeItem(this)">Supprimer</button>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <strong>Différenciation Resort peu claire</strong><br>
-                            <small>Utilisateurs font des boucles Homepage ↔ Resort, cherchent à comparer mais manquent d'éléments</small>
-                        </div>
-                        <button class="btn-delete" onclick="removeItem(this)">Supprimer</button>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <strong>Localisation et accessibilité</strong><br>
-                            <small>Map View peu utilisée (12%), mais besoin d'information géographique présent</small>
-                        </div>
-                        <button class="btn-delete" onclick="removeItem(this)">Supprimer</button>
-                    </li>
-                </ul>
-                <button class="btn-add" onclick="addThemeItem('themeResort')">+ Ajouter Friction Resort</button>
-            </div>
-
-            <div class="friction-section">
-                <h3>🎯 Thème : Activités</h3>
-                <ul class="item-list" id="themeActivites">
-                    <li>
-                        <div class="item-content">
-                            <strong>Activités non mises en avant</strong><br>
-                            <small>Tab "Activités" consulté par seulement 28%, pourtant critère de choix important</small>
-                        </div>
-                        <button class="btn-delete" onclick="removeItem(this)">Supprimer</button>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <strong>Activités incluses vs payantes floues</strong><br>
-                            <small>Confusion sur ce qui est inclus dans le séjour vs en supplément</small>
-                        </div>
-                        <button class="btn-delete" onclick="removeItem(this)">Supprimer</button>
-                    </li>
-                </ul>
-                <button class="btn-add" onclick="addThemeItem('themeActivites')">+ Ajouter Friction Activités</button>
-            </div>
-
-            <div class="friction-section">
-                <h3>🍽️ Thème : All Inclusive</h3>
-                <ul class="item-list" id="themeAllInclusive">
-                    <li>
-                        <div class="item-content">
-                            <strong>Définition All Inclusive vague</strong><br>
-                            <small>42% cliquent sur tab All Inclusive mais temps court (8 sec), informations pas assez claires</small>
-                        </div>
-                        <button class="btn-delete" onclick="removeItem(this)">Supprimer</button>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <strong>Différence culturelle FR vs US</strong><br>
-                            <small>FR attendent All Inclusive (52% consultent), US moins (32%), besoin d'adaptation du message</small>
-                        </div>
-                        <button class="btn-delete" onclick="removeItem(this)">Supprimer</button>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <strong>Manque de détails restaurants & boissons</strong><br>
-                            <small>Questions sur types de restaurants, horaires, boissons alcoolisées incluses non répondues</small>
-                        </div>
-                        <button class="btn-delete" onclick="removeItem(this)">Supprimer</button>
-                    </li>
-                </ul>
-                <button class="btn-add" onclick="addThemeItem('themeAllInclusive')">+ Ajouter Friction All Inclusive</button>
-            </div>
-
-            <div class="friction-section">
-                <h3>🎁 Thème : Offres & Promotions</h3>
-                <ul class="item-list" id="themeOffres">
-                    <li>
-                        <div class="item-content">
-                            <strong>Offres peu visibles sur Homepage</strong><br>
-                            <small>Section Offres Spéciales scroll reach 58%, taux de clic 8%, opportunité manquée</small>
-                        </div>
-                        <button class="btn-delete" onclick="removeItem(this)">Supprimer</button>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <strong>Conditions promotions confuses</strong><br>
-                            <small>Sur Offer Page, conditions consultées (62%) mais langage légal, besoin de simplification</small>
-                        </div>
-                        <button class="btn-delete" onclick="removeItem(this)">Supprimer</button>
-                    </li>
-                    <li>
-                        <div class="item-content">
-                            <strong>Urgence non assez appuyée</strong><br>
-                            <small>Date limite visible (88%) mais pas de countdown ni d'indicateurs de stock</small>
-                        </div>
-                        <button class="btn-delete" onclick="removeItem(this)">Supprimer</button>
-                    </li>
-                </ul>
-                <button class="btn-add" onclick="addThemeItem('themeOffres')">+ Ajouter Friction Offres</button>
-            </div>
+            <button class="btn-add" onclick="openThemeModal()">+ Ajouter un Thème</button>
         </div>
 
         <!-- TAB 5: HYPOTHESES -->
@@ -1269,62 +663,9 @@
                 <strong>Framework :</strong> Si [ACTION] alors [COMPORTEMENT ATTENDU] ce qui devrait [IMPACT BUSINESS]
             </div>
 
-            <div class="hypothesis-section">
-                <h3>Hypothèse #1 - Propositions de valeur Resort</h3>
-                <div style="background: white; padding: 15px; border-radius: 8px; margin: 10px 0;">
-                    <p><strong>Si</strong> <input type="text" style="width: 100%; margin: 5px 0;" value="nous mettons en avant plus haut sur la page les propositions de valeur clés du resort (activités, services inclus, types de chambres)" onchange="saveData()"></p>
-                    <p><strong>Alors</strong> <input type="text" style="width: 100%; margin: 5px 0;" value="les utilisateurs comprendront plus rapidement l'offre du resort" onchange="saveData()"></p>
-                    <p><strong>Ce qui devrait</strong> <input type="text" style="width: 100%; margin: 5px 0;" value="augmenter l'engagement sur la page et le taux d'entrée dans le booking engine" onchange="saveData()"></p>
-                    <p><strong>Thème(s) associé(s) :</strong> <input type="text" style="width: 100%; margin: 5px 0;" value="Informations Resort, Activités" onchange="saveData()"></p>
-                </div>
-                <button class="btn-delete" onclick="removeItem(this.parentElement)">Supprimer</button>
-            </div>
+            <div id="hypothesesContainer"></div>
 
-            <div class="hypothesis-section">
-                <h3>Hypothèse #2 - Transparence Prix</h3>
-                <div style="background: white; padding: 15px; border-radius: 8px; margin: 10px 0;">
-                    <p><strong>Si</strong> <input type="text" style="width: 100%; margin: 5px 0;" value="nous affichons le prix total (taxes incluses) dès la Search/Listing page" onchange="saveData()"></p>
-                    <p><strong>Alors</strong> <input type="text" style="width: 100%; margin: 5px 0;" value="les utilisateurs auront plus de confiance et moins de surprise au moment de payer" onchange="saveData()"></p>
-                    <p><strong>Ce qui devrait</strong> <input type="text" style="width: 100%; margin: 5px 0;" value="réduire le taux d'abandon dans le BE et augmenter la conversion globale" onchange="saveData()"></p>
-                    <p><strong>Thème(s) associé(s) :</strong> <input type="text" style="width: 100%; margin: 5px 0;" value="Prix" onchange="saveData()"></p>
-                </div>
-                <button class="btn-delete" onclick="removeItem(this.parentElement)">Supprimer</button>
-            </div>
-
-            <div class="hypothesis-section">
-                <h3>Hypothèse #3 - Clarification All Inclusive</h3>
-                <div style="background: white; padding: 15px; border-radius: 8px; margin: 10px 0;">
-                    <p><strong>Si</strong> <input type="text" style="width: 100%; margin: 5px 0;" value="nous créons un encart visuel détaillant ce qui est inclus dans l'All Inclusive (repas, boissons, activités) directement sur la Resort Page hero section" onchange="saveData()"></p>
-                    <p><strong>Alors</strong> <input type="text" style="width: 100%; margin: 5px 0;" value="les utilisateurs comprendront immédiatement la valeur de l'offre sans avoir à chercher dans les tabs" onchange="saveData()"></p>
-                    <p><strong>Ce qui devrait</strong> <input type="text" style="width: 100%; margin: 5px 0;" value="augmenter la perception de valeur et le taux de clic sur le CTA Réserver" onchange="saveData()"></p>
-                    <p><strong>Thème(s) associé(s) :</strong> <input type="text" style="width: 100%; margin: 5px 0;" value="All Inclusive, Prix" onchange="saveData()"></p>
-                </div>
-                <button class="btn-delete" onclick="removeItem(this.parentElement)">Supprimer</button>
-            </div>
-
-            <div class="hypothesis-section">
-                <h3>Hypothèse #4 - Amélioration Search</h3>
-                <div style="background: white; padding: 15px; border-radius: 8px; margin: 10px 0;">
-                    <p><strong>Si</strong> <input type="text" style="width: 100%; margin: 5px 0;" value="nous ajoutons des suggestions alternatives quand une recherche ne retourne aucun résultat" onchange="saveData()"></p>
-                    <p><strong>Alors</strong> <input type="text" style="width: 100%; margin: 5px 0;" value="les utilisateurs trouveront des options pertinentes au lieu de quitter le site" onchange="saveData()"></p>
-                    <p><strong>Ce qui devrait</strong> <input type="text" style="width: 100%; margin: 5px 0;" value="réduire le taux de sortie de 42% à moins de 30% sur la Search Page" onchange="saveData()"></p>
-                    <p><strong>Thème(s) associé(s) :</strong> <input type="text" style="width: 100%; margin: 5px 0;" value="Search" onchange="saveData()"></p>
-                </div>
-                <button class="btn-delete" onclick="removeItem(this.parentElement)">Supprimer</button>
-            </div>
-
-            <div class="hypothesis-section">
-                <h3>Hypothèse #5 - Informations Chambres</h3>
-                <div style="background: white; padding: 15px; border-radius: 8px; margin: 10px 0;">
-                    <p><strong>Si</strong> <input type="text" style="width: 100%; margin: 5px 0;" value="nous remontons les informations clés des chambres (capacité, vue, taille) dans la section hero de la Resort Page" onchange="saveData()"></p>
-                    <p><strong>Alors</strong> <input type="text" style="width: 100%; margin: 5px 0;" value="plus d'utilisateurs (>65% vs 48% actuellement) consulteront ces informations critiques" onchange="saveData()"></p>
-                    <p><strong>Ce qui devrait</strong> <input type="text" style="width: 100%; margin: 5px 0;" value="réduire les boucles de navigation et augmenter la confiance avant l'entrée dans le BE" onchange="saveData()"></p>
-                    <p><strong>Thème(s) associé(s) :</strong> <input type="text" style="width: 100%; margin: 5px 0;" value="Chambres, Informations Resort" onchange="saveData()"></p>
-                </div>
-                <button class="btn-delete" onclick="removeItem(this.parentElement)">Supprimer</button>
-            </div>
-
-            <button class="btn-add" onclick="addHypothesis()">+ Ajouter une Hypothèse</button>
+            <button class="btn-add" onclick="openHypotheseModal()">+ Ajouter une Hypothèse</button>
         </div>
 
         <!-- TAB 6: IDEES AB TEST -->
@@ -1334,217 +675,9 @@
                 <strong>Instructions :</strong> Pour chaque idée, préciser le test, la page concernée, l'hypothèse liée et la priorité estimée.
             </div>
 
-            <div class="idea-section">
-                <h3>💡 Idée #1 - Hero Resort avec propositions de valeur</h3>
-                <table style="margin-bottom: 10px;">
-                    <tr>
-                        <td style="width: 200px;"><strong>Page(s) concernée(s)</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Resort Page</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Hypothèse liée</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Hypothèse #1 - Propositions de valeur Resort</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Thème(s)</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Informations Resort, Activités</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Description</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Ajouter dans la hero section (sous le prix) une zone avec 4-5 badges/icônes mettant en avant : "5 restaurants inclus", "Kids Club gratuit", "Spa sur place", "Piscines", "Activités nautiques". Version A (control) vs Version B (avec badges)</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Métrique Primaire</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Taux d'entrée dans le BE depuis Resort Page</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Métriques Secondaires</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Scroll depth, temps sur page, taux de rebond</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Priorité (ICE)</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Impact: 8, Confidence: 7, Ease: 6 = Score 7</td>
-                    </tr>
-                </table>
-                <button class="btn-delete" onclick="removeItem(this.parentElement)">Supprimer</button>
-            </div>
+            <div id="ideesContainer"></div>
 
-            <div class="idea-section">
-                <h3>💡 Idée #2 - Prix total dès la Listing</h3>
-                <table style="margin-bottom: 10px;">
-                    <tr>
-                        <td style="width: 200px;"><strong>Page(s) concernée(s)</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Search / Listing Page</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Hypothèse liée</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Hypothèse #2 - Transparence Prix</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Thème(s)</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Prix</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Description</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Afficher le prix total TTC (au lieu de "à partir de X€/nuit") sur les cards de résultats. Version A: prix par nuit. Version B: prix total séjour avec mention "taxes incluses"</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Métrique Primaire</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Taux de clic sur resort depuis Listing, Taux d'abandon dans BE</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Métriques Secondaires</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Conversion globale, temps sur Listing Page</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Priorité (ICE)</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Impact: 9, Confidence: 8, Ease: 7 = Score 8</td>
-                    </tr>
-                </table>
-                <button class="btn-delete" onclick="removeItem(this.parentElement)">Supprimer</button>
-            </div>
-
-            <div class="idea-section">
-                <h3>💡 Idée #3 - Encart All Inclusive visuel</h3>
-                <table style="margin-bottom: 10px;">
-                    <tr>
-                        <td style="width: 200px;"><strong>Page(s) concernée(s)</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Resort Page</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Hypothèse liée</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Hypothèse #3 - Clarification All Inclusive</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Thème(s)</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">All Inclusive, Prix</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Description</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Créer un module "All Inclusive" avec icônes détaillant : repas (petit-déj, déj, dîner), boissons (alcoolisées/soft), activités, kids club. Positionné juste après le hero. Test A/B avec et sans ce module.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Métrique Primaire</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Taux de clic CTA Réserver, Taux d'entrée BE</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Métriques Secondaires</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Clics sur tab "All Inclusive", perception de valeur (enquête post-achat)</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Priorité (ICE)</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Impact: 8, Confidence: 7, Ease: 5 = Score 6.7</td>
-                    </tr>
-                </table>
-                <button class="btn-delete" onclick="removeItem(this.parentElement)">Supprimer</button>
-            </div>
-
-            <div class="idea-section">
-                <h3>💡 Idée #4 - Suggestions Search alternatives</h3>
-                <table style="margin-bottom: 10px;">
-                    <tr>
-                        <td style="width: 200px;"><strong>Page(s) concernée(s)</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Search / Listing Page</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Hypothèse liée</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Hypothèse #4 - Amélioration Search</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Thème(s)</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Search</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Description</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Quand une recherche retourne 0 résultat, afficher : "Aucun résultat pour ces critères. Essayez plutôt :" + 3 suggestions (dates flexibles, destination proche, budget similaire). Test A/B: message d'erreur classique vs suggestions intelligentes.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Métrique Primaire</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Taux de sortie sur Search Page (objectif: passer de 42% à <30%)</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Métriques Secondaires</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Taux de rebond, nouvelles recherches effectuées, sessions récupérées</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Priorité (ICE)</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Impact: 9, Confidence: 6, Ease: 4 = Score 6.3</td>
-                    </tr>
-                </table>
-                <button class="btn-delete" onclick="removeItem(this.parentElement)">Supprimer</button>
-            </div>
-
-            <div class="idea-section">
-                <h3>💡 Idée #5 - Informations chambres dans Hero</h3>
-                <table style="margin-bottom: 10px;">
-                    <tr>
-                        <td style="width: 200px;"><strong>Page(s) concernée(s)</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Resort Page</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Hypothèse liée</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Hypothèse #5 - Informations Chambres</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Thème(s)</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Chambres, Informations Resort</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Description</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Ajouter sous le hero un carrousel de 3 types de chambres principales avec photo + infos clés (capacité, taille, vue). Version A: sans carrousel. Version B: avec carrousel interactif.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Métrique Primaire</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Consultation informations chambres (objectif: passer de 48% à >65%), Taux d'entrée BE</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Métriques Secondaires</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Boucles Homepage ↔ Resort (objectif: réduire de 18% à <10%), Clics sur tab Chambres</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Priorité (ICE)</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Impact: 7, Confidence: 7, Ease: 5 = Score 6.3</td>
-                    </tr>
-                </table>
-                <button class="btn-delete" onclick="removeItem(this.parentElement)">Supprimer</button>
-            </div>
-
-            <div class="idea-section">
-                <h3>💡 Idée #6 - Urgence et scarcité sur Offer Page</h3>
-                <table style="margin-bottom: 10px;">
-                    <tr>
-                        <td style="width: 200px;"><strong>Page(s) concernée(s)</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Offer Page</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Hypothèse liée</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Hypothèse liée aux Offres & Promotions</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Thème(s)</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Offres & Promotions</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Description</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Ajouter un countdown dynamique jusqu'à la fin de l'offre + indicateur de stock ("Plus que 5 chambres à ce tarif"). Version A: date limite statique. Version B: countdown + scarcité dynamique.</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Métrique Primaire</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Taux de clic CTA (objectif: augmenter de 45% à >50%), Conversion</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Métriques Secondaires</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Temps sur page, taux de rebond</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Priorité (ICE)</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Impact: 6, Confidence: 8, Ease: 7 = Score 7</td>
-                    </tr>
-                </table>
-                <button class="btn-delete" onclick="removeItem(this.parentElement)">Supprimer</button>
-            </div>
-
-            <button class="btn-add" onclick="addIdea()">+ Ajouter une Idée d'AB Test</button>
+            <button class="btn-add" onclick="openIdeaModal()">+ Ajouter une Idée d'AB Test</button>
 
             <div class="export-section">
                 <h3>📥 Export et Partage</h3>
@@ -1554,33 +687,861 @@
         </div>
     </div>
 
+    <!-- MODAL PARCOURS -->
+    <div id="parcoursModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Ajouter/Modifier un Parcours</h2>
+                <span class="modal-close" onclick="closeModal('parcoursModal')">&times;</span>
+            </div>
+            <form id="parcoursForm" onsubmit="saveParcours(event)">
+                <input type="hidden" id="parcoursId">
+                <div class="form-group">
+                    <label>Nom du Parcours</label>
+                    <input type="text" id="parcoursName" placeholder="Ex: Homepage → Resort Page → Offer Page → BE Entry" required>
+                </div>
+                <div class="form-group">
+                    <label>Type de Parcours</label>
+                    <select id="parcoursType" required>
+                        <option value="good">✅ Bon Parcours (Convertissant)</option>
+                        <option value="bad">❌ Mauvais Parcours (Non-Convertissant)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>% Utilisateurs</label>
+                    <input type="text" id="parcoursUsers" placeholder="Ex: 32%" required>
+                </div>
+                <div class="form-group">
+                    <label>Taux Conversion</label>
+                    <input type="text" id="parcoursConversion" placeholder="Ex: 8.5%">
+                </div>
+                <div class="form-group">
+                    <label>Temps Moyen</label>
+                    <input type="text" id="parcoursTime" placeholder="Ex: 6:45">
+                </div>
+                <div class="form-group">
+                    <label>Insights / Observations</label>
+                    <textarea id="parcoursInsights" rows="3" placeholder="Décrivez les insights clés pour ce parcours"></textarea>
+                </div>
+                <button type="submit" class="btn-add">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL PAGE -->
+    <div id="pageModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Ajouter/Modifier une Page</h2>
+                <span class="modal-close" onclick="closeModal('pageModal')">&times;</span>
+            </div>
+            <form id="pageForm" onsubmit="savePage(event)">
+                <input type="hidden" id="pageId">
+                <div class="form-group">
+                    <label>Nom de la Page</label>
+                    <input type="text" id="pageName" placeholder="Ex: Homepage, Resort Page, Offer Page" required>
+                </div>
+                <div class="form-group">
+                    <label>Emoji (optionnel)</label>
+                    <input type="text" id="pageEmoji" placeholder="Ex: 🏠" maxlength="2">
+                </div>
+                <button type="submit" class="btn-add">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL COMPOSANT -->
+    <div id="componentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Ajouter un Composant</h2>
+                <span class="modal-close" onclick="closeModal('componentModal')">&times;</span>
+            </div>
+            <form id="componentForm" onsubmit="saveComponent(event)">
+                <input type="hidden" id="componentPageId">
+                <div class="form-group">
+                    <label>Nom du Composant</label>
+                    <input type="text" id="componentName" placeholder="Ex: Hero Banner + CTA Principal" required>
+                </div>
+                <div class="form-group">
+                    <label>Scroll Reach (%)</label>
+                    <input type="text" id="componentScroll" placeholder="Ex: 98%">
+                </div>
+                <div class="form-group">
+                    <label>Taux de Clic (%)</label>
+                    <input type="text" id="componentClick" placeholder="Ex: 12%">
+                </div>
+                <div class="form-group">
+                    <label>Observation</label>
+                    <input type="text" id="componentObs" placeholder="Ex: Bonne visibilité, CTR acceptable">
+                </div>
+                <button type="submit" class="btn-add">Ajouter Composant</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL THEME -->
+    <div id="themeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Ajouter/Modifier un Thème</h2>
+                <span class="modal-close" onclick="closeModal('themeModal')">&times;</span>
+            </div>
+            <form id="themeForm" onsubmit="saveTheme(event)">
+                <input type="hidden" id="themeId">
+                <div class="form-group">
+                    <label>Nom du Thème</label>
+                    <input type="text" id="themeName" placeholder="Ex: Prix, Search, Chambres" required>
+                </div>
+                <div class="form-group">
+                    <label>Emoji (optionnel)</label>
+                    <input type="text" id="themeEmoji" placeholder="Ex: 💰" maxlength="2">
+                </div>
+                <button type="submit" class="btn-add">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL FRICTION -->
+    <div id="frictionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Ajouter une Friction</h2>
+                <span class="modal-close" onclick="closeModal('frictionModal')">&times;</span>
+            </div>
+            <form id="frictionForm" onsubmit="saveFriction(event)">
+                <input type="hidden" id="frictionThemeId">
+                <div class="form-group">
+                    <label>Titre de la Friction</label>
+                    <input type="text" id="frictionTitle" placeholder="Ex: Manque de transparence sur le prix final" required>
+                </div>
+                <div class="form-group">
+                    <label>Description / Contexte</label>
+                    <textarea id="frictionDesc" rows="3" placeholder="Décrivez la friction en détail"></textarea>
+                </div>
+                <button type="submit" class="btn-add">Ajouter Friction</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL HYPOTHESE -->
+    <div id="hypotheseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Ajouter/Modifier une Hypothèse</h2>
+                <span class="modal-close" onclick="closeModal('hypotheseModal')">&times;</span>
+            </div>
+            <form id="hypotheseForm" onsubmit="saveHypothese(event)">
+                <input type="hidden" id="hypotheseId">
+                <div class="form-group">
+                    <label>Titre de l'Hypothèse</label>
+                    <input type="text" id="hypotheseTitle" placeholder="Ex: Propositions de valeur Resort" required>
+                </div>
+                <div class="form-group">
+                    <label>Si (Action)</label>
+                    <textarea id="hypotheseSi" rows="2" placeholder="L'action que vous voulez tester" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Alors (Comportement attendu)</label>
+                    <textarea id="hypotheseAlors" rows="2" placeholder="Le comportement utilisateur attendu" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Ce qui devrait (Impact business)</label>
+                    <textarea id="hypotheseImpact" rows="2" placeholder="L'impact business espéré" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Thème(s) associé(s)</label>
+                    <input type="text" id="hypotheseThemes" placeholder="Ex: Prix, Search">
+                </div>
+                <button type="submit" class="btn-add">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL IDEA -->
+    <div id="ideaModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Ajouter/Modifier une Idée d'AB Test</h2>
+                <span class="modal-close" onclick="closeModal('ideaModal')">&times;</span>
+            </div>
+            <form id="ideaForm" onsubmit="saveIdea(event)">
+                <input type="hidden" id="ideaId">
+                <div class="form-group">
+                    <label>Titre de l'Idée</label>
+                    <input type="text" id="ideaTitle" placeholder="Ex: Hero Resort avec propositions de valeur" required>
+                </div>
+                <div class="form-group">
+                    <label>Page(s) concernée(s)</label>
+                    <input type="text" id="ideaPages" placeholder="Ex: Resort Page, Homepage" required>
+                </div>
+                <div class="form-group">
+                    <label>Hypothèse liée</label>
+                    <input type="text" id="ideaHypothese" placeholder="Ex: Hypothèse #1">
+                </div>
+                <div class="form-group">
+                    <label>Thème(s)</label>
+                    <input type="text" id="ideaThemes" placeholder="Ex: Informations Resort, Activités">
+                </div>
+                <div class="form-group">
+                    <label>Description du Test</label>
+                    <textarea id="ideaDesc" rows="3" placeholder="Décrivez le test A/B en détail" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Métrique Primaire</label>
+                    <input type="text" id="ideaMetricPrimary" placeholder="Ex: Taux d'entrée dans le BE">
+                </div>
+                <div class="form-group">
+                    <label>Métriques Secondaires</label>
+                    <input type="text" id="ideaMetricSecondary" placeholder="Ex: Scroll depth, temps sur page">
+                </div>
+                <div class="form-group">
+                    <label>Priorité (ICE Score)</label>
+                    <input type="text" id="ideaPriority" placeholder="Ex: Impact: 8, Confidence: 7, Ease: 6 = Score 7">
+                </div>
+                <button type="submit" class="btn-add">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
     <script>
-        // Tab switching
+        // Data storage
+        let appData = {
+            parcours: [],
+            pages: [],
+            themes: [],
+            hypotheses: [],
+            ideas: []
+        };
+
+        // Initialize data
+        function initData() {
+            const saved = localStorage.getItem('croWorkshopData');
+            if (saved) {
+                appData = JSON.parse(saved);
+            } else {
+                // Default data
+                appData.parcours = [
+                    {
+                        id: 1,
+                        name: "Homepage → Resort Page → Offer Page → BE Entry",
+                        type: "good",
+                        users: "32%",
+                        conversion: "8.5%",
+                        time: "6:45",
+                        insights: "Parcours direct et efficace. Les utilisateurs qui passent par une offre spécifique convertissent mieux."
+                    },
+                    {
+                        id: 2,
+                        name: "Search → Resort Page → BE Entry",
+                        type: "good",
+                        users: "28%",
+                        conversion: "7.2%",
+                        time: "5:20",
+                        insights: "Utilisateurs avec une intention claire. La search est un accélérateur de conversion."
+                    },
+                    {
+                        id: 3,
+                        name: "Homepage → Resort Page → Homepage → Exit",
+                        type: "bad",
+                        users: "18%",
+                        conversion: "0.5%",
+                        time: "3:15",
+                        insights: "Boucle de navigation. Les utilisateurs ne trouvent pas ce qu'ils cherchent sur la resort page."
+                    }
+                ];
+
+                appData.pages = [
+                    {
+                        id: 1,
+                        name: "Homepage",
+                        emoji: "🏠",
+                        components: [
+                            { name: "Hero Banner + CTA Principal", scroll: "98%", click: "12%", observation: "Bonne visibilité, CTR acceptable" },
+                            { name: "Search Bar", scroll: "95%", click: "18%", observation: "Forte utilisation, élément clé" },
+                            { name: "Resorts Populaires", scroll: "72%", click: "22%", observation: "Bon engagement" }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        name: "Resort Page",
+                        emoji: "🏨",
+                        components: [
+                            { name: "Hero Image + Prix Principal", scroll: "100%", click: "-", observation: "Attention immédiate" },
+                            { name: "CTA Réserver", scroll: "98%", click: "38%", observation: "Conversion élevée" },
+                            { name: "Tab Vue d'ensemble", scroll: "85%", click: "65%", observation: "Tab par défaut, forte consultation" }
+                        ]
+                    }
+                ];
+
+                appData.themes = [
+                    {
+                        id: 1,
+                        name: "Prix",
+                        emoji: "💰",
+                        frictions: [
+                            { title: "Manque de transparence sur le prix final", desc: "Utilisateurs US particulièrement sensibles, besoin de voir taxes incluses dès le début" },
+                            { title: "Comparaison de prix difficile", desc: "Sur Search Page, prix affichés de manière inconsistante (par nuit vs total, avec/sans promos)" }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        name: "Search",
+                        emoji: "🔍",
+                        frictions: [
+                            { title: "Résultats de recherche non pertinents", desc: "Taux de sortie 42% sur Search Page, les utilisateurs ne trouvent pas ce qu'ils cherchent" }
+                        ]
+                    }
+                ];
+
+                appData.hypotheses = [
+                    {
+                        id: 1,
+                        title: "Propositions de valeur Resort",
+                        si: "nous mettons en avant plus haut sur la page les propositions de valeur clés du resort (activités, services inclus, types de chambres)",
+                        alors: "les utilisateurs comprendront plus rapidement l'offre du resort",
+                        impact: "augmenter l'engagement sur la page et le taux d'entrée dans le booking engine",
+                        themes: "Informations Resort, Activités"
+                    }
+                ];
+
+                appData.ideas = [
+                    {
+                        id: 1,
+                        title: "Hero Resort avec propositions de valeur",
+                        pages: "Resort Page",
+                        hypothese: "Hypothèse #1 - Propositions de valeur Resort",
+                        themes: "Informations Resort, Activités",
+                        desc: "Ajouter dans la hero section (sous le prix) une zone avec 4-5 badges/icônes mettant en avant : \"5 restaurants inclus\", \"Kids Club gratuit\", \"Spa sur place\", \"Piscines\", \"Activités nautiques\". Version A (control) vs Version B (avec badges)",
+                        metricPrimary: "Taux d'entrée dans le BE depuis Resort Page",
+                        metricSecondary: "Scroll depth, temps sur page, taux de rebond",
+                        priority: "Impact: 8, Confidence: 7, Ease: 6 = Score 7"
+                    }
+                ];
+            }
+            renderAll();
+        }
+
+        // Render functions
+        function renderParcours() {
+            const container = document.getElementById('parcoursContainer');
+            container.innerHTML = '';
+
+            appData.parcours.forEach(p => {
+                const card = document.createElement('div');
+                card.className = `parcours-card ${p.type}`;
+                card.innerHTML = `
+                    <div class="parcours-actions">
+                        <button class="btn-edit" onclick="editParcours(${p.id})">✏️ Modifier</button>
+                        <button class="btn-delete" onclick="deleteParcours(${p.id})">🗑️ Supprimer</button>
+                    </div>
+                    <h4>${p.type === 'good' ? '🏆' : '❌'} ${p.name}</h4>
+                    <div class="metric-grid">
+                        <div class="metric-card">
+                            <div class="metric-label">% Utilisateurs</div>
+                            <div class="metric-value" style="font-size: 1.5em;">${p.users}</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Taux Conversion</div>
+                            <div class="metric-value" style="font-size: 1.5em;">${p.conversion}</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Temps Moyen</div>
+                            <div class="metric-value" style="font-size: 1.5em;">${p.time}</div>
+                        </div>
+                    </div>
+                    <p style="margin-top: 15px;"><strong>Insights :</strong> ${p.insights}</p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderPages() {
+            const container = document.getElementById('pagesContainer');
+            container.innerHTML = '';
+
+            appData.pages.forEach(page => {
+                const section = document.createElement('div');
+                section.className = 'page-section';
+                section.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3>${page.emoji} ${page.name}</h3>
+                        <div>
+                            <button class="btn-edit" onclick="editPage(${page.id})">✏️ Modifier</button>
+                            <button class="btn-delete" onclick="deletePage(${page.id})">🗑️ Supprimer</button>
+                            <button class="btn-add" style="padding: 8px 15px; font-size: 0.9em;" onclick="openComponentModal(${page.id})">+ Composant</button>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Composant</th>
+                                <th>Scroll Reach</th>
+                                <th>Taux de Clic</th>
+                                <th>Observation</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="components-${page.id}">
+                            ${page.components.map((c, idx) => `
+                                <tr>
+                                    <td><strong>${c.name}</strong></td>
+                                    <td>${c.scroll}</td>
+                                    <td>${c.click}</td>
+                                    <td>${c.observation}</td>
+                                    <td><button class="btn-delete" onclick="deleteComponent(${page.id}, ${idx})">🗑️</button></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                container.appendChild(section);
+            });
+        }
+
+        function renderThemes() {
+            const container = document.getElementById('themesContainer');
+            container.innerHTML = '';
+
+            appData.themes.forEach(theme => {
+                const card = document.createElement('div');
+                card.className = 'theme-card';
+                card.innerHTML = `
+                    <div class="theme-header">
+                        <div class="theme-title">${theme.emoji} ${theme.name}</div>
+                        <div>
+                            <button class="btn-edit" onclick="editTheme(${theme.id})">✏️ Modifier</button>
+                            <button class="btn-delete" onclick="deleteTheme(${theme.id})">🗑️ Supprimer</button>
+                            <button class="btn-add" style="padding: 8px 15px; font-size: 0.9em;" onclick="openFrictionModal(${theme.id})">+ Friction</button>
+                        </div>
+                    </div>
+                    <ul class="item-list">
+                        ${theme.frictions.map((f, idx) => `
+                            <li>
+                                <div class="item-content">
+                                    <strong>${f.title}</strong><br>
+                                    <small>${f.desc}</small>
+                                </div>
+                                <button class="btn-delete" onclick="deleteFriction(${theme.id}, ${idx})">🗑️</button>
+                            </li>
+                        `).join('')}
+                    </ul>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderHypotheses() {
+            const container = document.getElementById('hypothesesContainer');
+            container.innerHTML = '';
+
+            appData.hypotheses.forEach(h => {
+                const section = document.createElement('div');
+                section.className = 'hypothesis-section';
+                section.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3>Hypothèse #${h.id} - ${h.title}</h3>
+                        <div>
+                            <button class="btn-edit" onclick="editHypothese(${h.id})">✏️ Modifier</button>
+                            <button class="btn-delete" onclick="deleteHypothese(${h.id})">🗑️ Supprimer</button>
+                        </div>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                        <p><strong>Si</strong> ${h.si}</p>
+                        <p style="margin-top: 10px;"><strong>Alors</strong> ${h.alors}</p>
+                        <p style="margin-top: 10px;"><strong>Ce qui devrait</strong> ${h.impact}</p>
+                        <p style="margin-top: 10px;"><strong>Thème(s) associé(s) :</strong> ${h.themes}</p>
+                    </div>
+                `;
+                container.appendChild(section);
+            });
+        }
+
+        function renderIdeas() {
+            const container = document.getElementById('ideesContainer');
+            container.innerHTML = '';
+
+            appData.ideas.forEach(idea => {
+                const section = document.createElement('div');
+                section.className = 'idea-section';
+                section.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3>💡 Idée #${idea.id} - ${idea.title}</h3>
+                        <div>
+                            <button class="btn-edit" onclick="editIdea(${idea.id})">✏️ Modifier</button>
+                            <button class="btn-delete" onclick="deleteIdea(${idea.id})">🗑️ Supprimer</button>
+                        </div>
+                    </div>
+                    <table style="margin-top: 15px;">
+                        <tr><td style="width: 200px;"><strong>Page(s) concernée(s)</strong></td><td>${idea.pages}</td></tr>
+                        <tr><td><strong>Hypothèse liée</strong></td><td>${idea.hypothese}</td></tr>
+                        <tr><td><strong>Thème(s)</strong></td><td>${idea.themes}</td></tr>
+                        <tr><td><strong>Description</strong></td><td>${idea.desc}</td></tr>
+                        <tr><td><strong>Métrique Primaire</strong></td><td>${idea.metricPrimary}</td></tr>
+                        <tr><td><strong>Métriques Secondaires</strong></td><td>${idea.metricSecondary}</td></tr>
+                        <tr><td><strong>Priorité (ICE)</strong></td><td>${idea.priority}</td></tr>
+                    </table>
+                `;
+                container.appendChild(section);
+            });
+        }
+
+        function renderAll() {
+            renderParcours();
+            renderPages();
+            renderThemes();
+            renderHypotheses();
+            renderIdeas();
+        }
+
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function openParcoursModal(id = null) {
+            if (id) {
+                const p = appData.parcours.find(x => x.id === id);
+                document.getElementById('parcoursId').value = p.id;
+                document.getElementById('parcoursName').value = p.name;
+                document.getElementById('parcoursType').value = p.type;
+                document.getElementById('parcoursUsers').value = p.users;
+                document.getElementById('parcoursConversion').value = p.conversion;
+                document.getElementById('parcoursTime').value = p.time;
+                document.getElementById('parcoursInsights').value = p.insights;
+            } else {
+                document.getElementById('parcoursForm').reset();
+                document.getElementById('parcoursId').value = '';
+            }
+            openModal('parcoursModal');
+        }
+
+        function openPageModal(id = null) {
+            if (id) {
+                const p = appData.pages.find(x => x.id === id);
+                document.getElementById('pageId').value = p.id;
+                document.getElementById('pageName').value = p.name;
+                document.getElementById('pageEmoji').value = p.emoji;
+            } else {
+                document.getElementById('pageForm').reset();
+                document.getElementById('pageId').value = '';
+            }
+            openModal('pageModal');
+        }
+
+        function openComponentModal(pageId) {
+            document.getElementById('componentPageId').value = pageId;
+            document.getElementById('componentForm').reset();
+            openModal('componentModal');
+        }
+
+        function openThemeModal(id = null) {
+            if (id) {
+                const t = appData.themes.find(x => x.id === id);
+                document.getElementById('themeId').value = t.id;
+                document.getElementById('themeName').value = t.name;
+                document.getElementById('themeEmoji').value = t.emoji;
+            } else {
+                document.getElementById('themeForm').reset();
+                document.getElementById('themeId').value = '';
+            }
+            openModal('themeModal');
+        }
+
+        function openFrictionModal(themeId) {
+            document.getElementById('frictionThemeId').value = themeId;
+            document.getElementById('frictionForm').reset();
+            openModal('frictionModal');
+        }
+
+        function openHypotheseModal(id = null) {
+            if (id) {
+                const h = appData.hypotheses.find(x => x.id === id);
+                document.getElementById('hypotheseId').value = h.id;
+                document.getElementById('hypotheseTitle').value = h.title;
+                document.getElementById('hypotheseSi').value = h.si;
+                document.getElementById('hypotheseAlors').value = h.alors;
+                document.getElementById('hypotheseImpact').value = h.impact;
+                document.getElementById('hypotheseThemes').value = h.themes;
+            } else {
+                document.getElementById('hypotheseForm').reset();
+                document.getElementById('hypotheseId').value = '';
+            }
+            openModal('hypotheseModal');
+        }
+
+        function openIdeaModal(id = null) {
+            if (id) {
+                const idea = appData.ideas.find(x => x.id === id);
+                document.getElementById('ideaId').value = idea.id;
+                document.getElementById('ideaTitle').value = idea.title;
+                document.getElementById('ideaPages').value = idea.pages;
+                document.getElementById('ideaHypothese').value = idea.hypothese;
+                document.getElementById('ideaThemes').value = idea.themes;
+                document.getElementById('ideaDesc').value = idea.desc;
+                document.getElementById('ideaMetricPrimary').value = idea.metricPrimary;
+                document.getElementById('ideaMetricSecondary').value = idea.metricSecondary;
+                document.getElementById('ideaPriority').value = idea.priority;
+            } else {
+                document.getElementById('ideaForm').reset();
+                document.getElementById('ideaId').value = '';
+            }
+            openModal('ideaModal');
+        }
+
+        // Save functions
+        function saveParcours(e) {
+            e.preventDefault();
+            const id = document.getElementById('parcoursId').value;
+            const parcours = {
+                id: id ? parseInt(id) : Date.now(),
+                name: document.getElementById('parcoursName').value,
+                type: document.getElementById('parcoursType').value,
+                users: document.getElementById('parcoursUsers').value,
+                conversion: document.getElementById('parcoursConversion').value,
+                time: document.getElementById('parcoursTime').value,
+                insights: document.getElementById('parcoursInsights').value
+            };
+
+            if (id) {
+                const index = appData.parcours.findIndex(x => x.id === parseInt(id));
+                appData.parcours[index] = parcours;
+            } else {
+                appData.parcours.push(parcours);
+            }
+
+            saveData();
+            renderParcours();
+            closeModal('parcoursModal');
+        }
+
+        function savePage(e) {
+            e.preventDefault();
+            const id = document.getElementById('pageId').value;
+            const page = {
+                id: id ? parseInt(id) : Date.now(),
+                name: document.getElementById('pageName').value,
+                emoji: document.getElementById('pageEmoji').value,
+                components: id ? appData.pages.find(x => x.id === parseInt(id)).components : []
+            };
+
+            if (id) {
+                const index = appData.pages.findIndex(x => x.id === parseInt(id));
+                appData.pages[index] = page;
+            } else {
+                appData.pages.push(page);
+            }
+
+            saveData();
+            renderPages();
+            closeModal('pageModal');
+        }
+
+        function saveComponent(e) {
+            e.preventDefault();
+            const pageId = parseInt(document.getElementById('componentPageId').value);
+            const page = appData.pages.find(x => x.id === pageId);
+
+            page.components.push({
+                name: document.getElementById('componentName').value,
+                scroll: document.getElementById('componentScroll').value,
+                click: document.getElementById('componentClick').value,
+                observation: document.getElementById('componentObs').value
+            });
+
+            saveData();
+            renderPages();
+            closeModal('componentModal');
+        }
+
+        function saveTheme(e) {
+            e.preventDefault();
+            const id = document.getElementById('themeId').value;
+            const theme = {
+                id: id ? parseInt(id) : Date.now(),
+                name: document.getElementById('themeName').value,
+                emoji: document.getElementById('themeEmoji').value,
+                frictions: id ? appData.themes.find(x => x.id === parseInt(id)).frictions : []
+            };
+
+            if (id) {
+                const index = appData.themes.findIndex(x => x.id === parseInt(id));
+                appData.themes[index] = theme;
+            } else {
+                appData.themes.push(theme);
+            }
+
+            saveData();
+            renderThemes();
+            closeModal('themeModal');
+        }
+
+        function saveFriction(e) {
+            e.preventDefault();
+            const themeId = parseInt(document.getElementById('frictionThemeId').value);
+            const theme = appData.themes.find(x => x.id === themeId);
+
+            theme.frictions.push({
+                title: document.getElementById('frictionTitle').value,
+                desc: document.getElementById('frictionDesc').value
+            });
+
+            saveData();
+            renderThemes();
+            closeModal('frictionModal');
+        }
+
+        function saveHypothese(e) {
+            e.preventDefault();
+            const id = document.getElementById('hypotheseId').value;
+            const hypothese = {
+                id: id ? parseInt(id) : Date.now(),
+                title: document.getElementById('hypotheseTitle').value,
+                si: document.getElementById('hypotheseSi').value,
+                alors: document.getElementById('hypotheseAlors').value,
+                impact: document.getElementById('hypotheseImpact').value,
+                themes: document.getElementById('hypotheseThemes').value
+            };
+
+            if (id) {
+                const index = appData.hypotheses.findIndex(x => x.id === parseInt(id));
+                appData.hypotheses[index] = hypothese;
+            } else {
+                appData.hypotheses.push(hypothese);
+            }
+
+            saveData();
+            renderHypotheses();
+            closeModal('hypotheseModal');
+        }
+
+        function saveIdea(e) {
+            e.preventDefault();
+            const id = document.getElementById('ideaId').value;
+            const idea = {
+                id: id ? parseInt(id) : Date.now(),
+                title: document.getElementById('ideaTitle').value,
+                pages: document.getElementById('ideaPages').value,
+                hypothese: document.getElementById('ideaHypothese').value,
+                themes: document.getElementById('ideaThemes').value,
+                desc: document.getElementById('ideaDesc').value,
+                metricPrimary: document.getElementById('ideaMetricPrimary').value,
+                metricSecondary: document.getElementById('ideaMetricSecondary').value,
+                priority: document.getElementById('ideaPriority').value
+            };
+
+            if (id) {
+                const index = appData.ideas.findIndex(x => x.id === parseInt(id));
+                appData.ideas[index] = idea;
+            } else {
+                appData.ideas.push(idea);
+            }
+
+            saveData();
+            renderIdeas();
+            closeModal('ideaModal');
+        }
+
+        // Edit functions
+        function editParcours(id) {
+            openParcoursModal(id);
+        }
+
+        function editPage(id) {
+            openPageModal(id);
+        }
+
+        function editTheme(id) {
+            openThemeModal(id);
+        }
+
+        function editHypothese(id) {
+            openHypotheseModal(id);
+        }
+
+        function editIdea(id) {
+            openIdeaModal(id);
+        }
+
+        // Delete functions
+        function deleteParcours(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce parcours ?')) {
+                appData.parcours = appData.parcours.filter(x => x.id !== id);
+                saveData();
+                renderParcours();
+            }
+        }
+
+        function deletePage(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette page ?')) {
+                appData.pages = appData.pages.filter(x => x.id !== id);
+                saveData();
+                renderPages();
+            }
+        }
+
+        function deleteComponent(pageId, componentIndex) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce composant ?')) {
+                const page = appData.pages.find(x => x.id === pageId);
+                page.components.splice(componentIndex, 1);
+                saveData();
+                renderPages();
+            }
+        }
+
+        function deleteTheme(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce thème ?')) {
+                appData.themes = appData.themes.filter(x => x.id !== id);
+                saveData();
+                renderThemes();
+            }
+        }
+
+        function deleteFriction(themeId, frictionIndex) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette friction ?')) {
+                const theme = appData.themes.find(x => x.id === themeId);
+                theme.frictions.splice(frictionIndex, 1);
+                saveData();
+                renderThemes();
+            }
+        }
+
+        function deleteHypothese(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette hypothèse ?')) {
+                appData.hypotheses = appData.hypotheses.filter(x => x.id !== id);
+                saveData();
+                renderHypotheses();
+            }
+        }
+
+        function deleteIdea(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette idée ?')) {
+                appData.ideas = appData.ideas.filter(x => x.id !== id);
+                saveData();
+                renderIdeas();
+            }
+        }
+
+        // Utility functions
         function switchTab(tabName) {
-            // Hide all tabs
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
-            // Remove active from all buttons
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            // Show selected tab
             document.getElementById(tabName).classList.add('active');
-            // Activate button
             event.target.classList.add('active');
-
-            // Save current tab
             localStorage.setItem('currentTab', tabName);
         }
 
-        // Save data to localStorage
         function saveData() {
+            localStorage.setItem('croWorkshopData', JSON.stringify(appData));
             showSaveIndicator();
-            // In a real application, you would save to a backend
-            // For now, we'll use localStorage
-            const data = document.documentElement.outerHTML;
-            localStorage.setItem('workshopData', data);
         }
 
         function showSaveIndicator() {
@@ -1591,121 +1552,8 @@
             }, 2000);
         }
 
-        // Remove item from list
-        function removeItem(element) {
-            if (confirm('Êtes-vous sûr de vouloir supprimer cet élément ?')) {
-                element.remove();
-                saveData();
-            }
-        }
-
-        // Add friction macro
-        function addFrictionMacro() {
-            const list = document.getElementById('frictionsMacro');
-            const newItem = document.createElement('li');
-            newItem.innerHTML = `
-                <div class="item-content">
-                    <strong><input type="text" placeholder="Titre de la friction" style="width: 100%; font-weight: bold;"></strong><br>
-                    <small><input type="text" placeholder="Description détaillée" style="width: 100%;"></small>
-                </div>
-                <button class="btn-delete" onclick="removeItem(this.parentElement)">Supprimer</button>
-            `;
-            list.appendChild(newItem);
-            saveData();
-        }
-
-        // Add theme item
-        function addThemeItem(themeId) {
-            const list = document.getElementById(themeId);
-            const newItem = document.createElement('li');
-            newItem.innerHTML = `
-                <div class="item-content">
-                    <strong><input type="text" placeholder="Titre de la friction" style="width: 100%; font-weight: bold;"></strong><br>
-                    <small><input type="text" placeholder="Description et contexte" style="width: 100%;"></small>
-                </div>
-                <button class="btn-delete" onclick="removeItem(this.parentElement)">Supprimer</button>
-            `;
-            list.appendChild(newItem);
-            saveData();
-        }
-
-        // Add hypothesis
-        function addHypothesis() {
-            const container = document.getElementById('hypotheses');
-            const count = container.querySelectorAll('.hypothesis-section').length + 1;
-            const newHypothesis = document.createElement('div');
-            newHypothesis.className = 'hypothesis-section';
-            newHypothesis.innerHTML = `
-                <h3>Hypothèse #${count} - <input type="text" placeholder="Titre" style="background: transparent; border: none; border-bottom: 2px solid white; width: 60%;" onchange="saveData()"></h3>
-                <div style="background: white; padding: 15px; border-radius: 8px; margin: 10px 0;">
-                    <p><strong>Si</strong> <input type="text" style="width: 100%; margin: 5px 0;" placeholder="Action à tester" onchange="saveData()"></p>
-                    <p><strong>Alors</strong> <input type="text" style="width: 100%; margin: 5px 0;" placeholder="Comportement attendu" onchange="saveData()"></p>
-                    <p><strong>Ce qui devrait</strong> <input type="text" style="width: 100%; margin: 5px 0;" placeholder="Impact business" onchange="saveData()"></p>
-                    <p><strong>Thème(s) associé(s) :</strong> <input type="text" style="width: 100%; margin: 5px 0;" placeholder="Thèmes liés" onchange="saveData()"></p>
-                </div>
-                <button class="btn-delete" onclick="removeItem(this.parentElement)">Supprimer</button>
-            `;
-            container.insertBefore(newHypothesis, container.querySelector('.btn-add'));
-            saveData();
-        }
-
-        // Add idea
-        function addIdea() {
-            const container = document.getElementById('idees');
-            const count = container.querySelectorAll('.idea-section').length + 1;
-            const newIdea = document.createElement('div');
-            newIdea.className = 'idea-section';
-            newIdea.innerHTML = `
-                <h3>💡 Idée #${count} - <input type="text" placeholder="Titre de l'idée" style="background: transparent; border: none; border-bottom: 2px solid #333; width: 60%;" onchange="saveData()"></h3>
-                <table style="margin-bottom: 10px;">
-                    <tr>
-                        <td style="width: 200px;"><strong>Page(s) concernée(s)</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Cliquer pour éditer</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Hypothèse liée</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Cliquer pour éditer</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Thème(s)</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Cliquer pour éditer</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Description</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Cliquer pour éditer</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Métrique Primaire</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Cliquer pour éditer</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Métriques Secondaires</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Cliquer pour éditer</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Priorité (ICE)</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">Impact: X, Confidence: X, Ease: X = Score X</td>
-                    </tr>
-                </table>
-                <button class="btn-delete" onclick="removeItem(this.parentElement)">Supprimer</button>
-            `;
-            container.insertBefore(newIdea, container.querySelector('.export-section'));
-            saveData();
-        }
-
-        // Export data
         function exportData() {
-            const data = {
-                exportDate: new Date().toISOString(),
-                overview: {}, // Extract overview data
-                parcours: {},
-                comportement: {},
-                frictions: {},
-                hypotheses: {},
-                idees: {}
-            };
-
-            const dataStr = JSON.stringify(data, null, 2);
+            const dataStr = JSON.stringify(appData, null, 2);
             const dataBlob = new Blob([dataStr], {type: 'application/json'});
             const url = URL.createObjectURL(dataBlob);
             const link = document.createElement('a');
@@ -1715,32 +1563,232 @@
             URL.revokeObjectURL(url);
         }
 
-        // Auto-save on input changes
-        document.addEventListener('input', function(e) {
-            if (e.target.matches('input, textarea, [contenteditable]')) {
-                saveData();
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
             }
-        });
-
-        // Load saved tab on page load
-        window.addEventListener('load', function() {
-            const savedTab = localStorage.getItem('currentTab');
-            if (savedTab) {
-                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-                document.getElementById(savedTab).classList.add('active');
-                document.querySelector(`[onclick="switchTab('${savedTab}')"]`).classList.add('active');
-            }
-        });
-
-        // Workshop timer (optional - can be set to countdown)
-        let workshopDuration = 150; // 2h30 in minutes
-        function updateTimer() {
-            const hours = Math.floor(workshopDuration / 60);
-            const minutes = workshopDuration % 60;
-            document.getElementById('timer').textContent = `${hours}h${minutes.toString().padStart(2, '0')}`;
         }
-        updateTimer();
+
+        // ===== FIREBASE INTEGRATION =====
+        // Import Firebase scripts
+        const firebaseScript = document.createElement('script');
+        firebaseScript.src = 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js';
+        document.head.appendChild(firebaseScript);
+
+        const firebaseDatabaseScript = document.createElement('script');
+        firebaseDatabaseScript.src = 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js';
+        document.head.appendChild(firebaseDatabaseScript);
+
+        let database;
+        let isFirebaseReady = false;
+
+        // Firebase configuration - REMPLACEZ PAR VOTRE CONFIG
+        const firebaseConfig = {
+            apiKey: "AIzaSyDEMO_REPLACE_WITH_YOUR_KEY",
+            authDomain: "atelier-cro-demo.firebaseapp.com",
+            databaseURL: "https://atelier-cro-demo-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "atelier-cro-demo",
+            storageBucket: "atelier-cro-demo.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:demo"
+        };
+
+        // Initialize Firebase when scripts are loaded
+        firebaseDatabaseScript.onload = function() {
+            try {
+                firebase.initializeApp(firebaseConfig);
+                database = firebase.database();
+                isFirebaseReady = true;
+                console.log('✅ Firebase connecté - Mode collaboratif activé!');
+                document.getElementById('collaborativeStatus').innerHTML = '🌐 Mode Collaboratif Actif';
+                document.getElementById('collaborativeStatus').style.color = '#27ae60';
+                loadFromFirebase();
+            } catch (error) {
+                console.warn('⚠️ Firebase non disponible, mode local activé', error);
+                isFirebaseReady = false;
+                document.getElementById('collaborativeStatus').innerHTML = '💾 Mode Local';
+                document.getElementById('collaborativeStatus').style.color = '#f39c12';
+                initData();
+            }
+        };
+
+        // Load data from Firebase
+        function loadFromFirebase() {
+            const dataRef = database.ref('workshopData');
+
+            // Listen for changes in real-time
+            dataRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    appData = data;
+                    renderAll();
+                    console.log('🔄 Données synchronisées depuis Firebase');
+                } else {
+                    // First time - initialize with default data
+                    initData();
+                    saveToFirebase();
+                }
+            });
+        }
+
+        // Save data to Firebase
+        function saveToFirebase() {
+            if (isFirebaseReady && database) {
+                database.ref('workshopData').set(appData)
+                    .then(() => {
+                        console.log('✅ Données sauvegardées dans Firebase');
+                        showSaveIndicator();
+                    })
+                    .catch((error) => {
+                        console.error('❌ Erreur Firebase:', error);
+                        // Fallback to localStorage
+                        localStorage.setItem('croWorkshopData', JSON.stringify(appData));
+                        showSaveIndicator();
+                    });
+            } else {
+                // Fallback to localStorage if Firebase not available
+                localStorage.setItem('croWorkshopData', JSON.stringify(appData));
+                showSaveIndicator();
+            }
+        }
+
+        // Override saveData to use Firebase
+        function saveData() {
+            saveToFirebase();
+        }
+
+        // Modified initData to work with both Firebase and localStorage
+        function initData() {
+            const saved = localStorage.getItem('croWorkshopData');
+            if (saved) {
+                appData = JSON.parse(saved);
+            } else {
+                // Default data
+                appData.parcours = [
+                    {
+                        id: 1,
+                        name: "Homepage → Resort Page → Offer Page → BE Entry",
+                        type: "good",
+                        users: "32%",
+                        conversion: "8.5%",
+                        time: "6:45",
+                        insights: "Parcours direct et efficace. Les utilisateurs qui passent par une offre spécifique convertissent mieux."
+                    },
+                    {
+                        id: 2,
+                        name: "Search → Resort Page → BE Entry",
+                        type: "good",
+                        users: "28%",
+                        conversion: "7.2%",
+                        time: "5:20",
+                        insights: "Utilisateurs avec une intention claire. La search est un accélérateur de conversion."
+                    },
+                    {
+                        id: 3,
+                        name: "Homepage → Resort Page → Homepage → Exit",
+                        type: "bad",
+                        users: "18%",
+                        conversion: "0.5%",
+                        time: "3:15",
+                        insights: "Boucle de navigation. Les utilisateurs ne trouvent pas ce qu'ils cherchent sur la resort page."
+                    }
+                ];
+
+                appData.pages = [
+                    {
+                        id: 1,
+                        name: "Homepage",
+                        emoji: "🏠",
+                        components: [
+                            { name: "Hero Banner + CTA Principal", scroll: "98%", click: "12%", observation: "Bonne visibilité, CTR acceptable" },
+                            { name: "Search Bar", scroll: "95%", click: "18%", observation: "Forte utilisation, élément clé" },
+                            { name: "Resorts Populaires", scroll: "72%", click: "22%", observation: "Bon engagement" }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        name: "Resort Page",
+                        emoji: "🏨",
+                        components: [
+                            { name: "Hero Image + Prix Principal", scroll: "100%", click: "-", observation: "Attention immédiate" },
+                            { name: "CTA Réserver", scroll: "98%", click: "38%", observation: "Conversion élevée" },
+                            { name: "Tab Vue d'ensemble", scroll: "85%", click: "65%", observation: "Tab par défaut, forte consultation" }
+                        ]
+                    }
+                ];
+
+                appData.themes = [
+                    {
+                        id: 1,
+                        name: "Prix",
+                        emoji: "💰",
+                        frictions: [
+                            { title: "Manque de transparence sur le prix final", desc: "Utilisateurs US particulièrement sensibles, besoin de voir taxes incluses dès le début" },
+                            { title: "Comparaison de prix difficile", desc: "Sur Search Page, prix affichés de manière inconsistante (par nuit vs total, avec/sans promos)" }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        name: "Search",
+                        emoji: "🔍",
+                        frictions: [
+                            { title: "Résultats de recherche non pertinents", desc: "Taux de sortie 42% sur Search Page, les utilisateurs ne trouvent pas ce qu'ils cherchent" }
+                        ]
+                    }
+                ];
+
+                appData.hypotheses = [
+                    {
+                        id: 1,
+                        title: "Propositions de valeur Resort",
+                        si: "nous mettons en avant plus haut sur la page les propositions de valeur clés du resort (activités, services inclus, types de chambres)",
+                        alors: "les utilisateurs comprendront plus rapidement l'offre du resort",
+                        impact: "augmenter l'engagement sur la page et le taux d'entrée dans le booking engine",
+                        themes: "Informations Resort, Activités"
+                    }
+                ];
+
+                appData.ideas = [
+                    {
+                        id: 1,
+                        title: "Hero Resort avec propositions de valeur",
+                        pages: "Resort Page",
+                        hypothese: "Hypothèse #1 - Propositions de valeur Resort",
+                        themes: "Informations Resort, Activités",
+                        desc: "Ajouter dans la hero section (sous le prix) une zone avec 4-5 badges/icônes mettant en avant : \"5 restaurants inclus\", \"Kids Club gratuit\", \"Spa sur place\", \"Piscines\", \"Activités nautiques\". Version A (control) vs Version B (avec badges)",
+                        metricPrimary: "Taux d'entrée dans le BE depuis Resort Page",
+                        metricSecondary: "Scroll depth, temps sur page, taux de rebond",
+                        priority: "Impact: 8, Confidence: 7, Ease: 6 = Score 7"
+                    }
+                ];
+            }
+            renderAll();
+        }
+
+        // Initialize on load
+        window.addEventListener('load', function() {
+            // Firebase will call initData or loadFromFirebase when ready
+            // If Firebase fails to load after 3 seconds, fallback to local
+            setTimeout(() => {
+                if (!isFirebaseReady) {
+                    console.log('⚠️ Timeout Firebase - Mode local activé');
+                    document.getElementById('collaborativeStatus').innerHTML = '💾 Mode Local';
+                    document.getElementById('collaborativeStatus').style.color = '#f39c12';
+                    initData();
+                }
+            }, 3000);
+
+            const savedTab = localStorage.getItem('currentTab');
+            if (savedTab && savedTab !== 'overview') {
+                setTimeout(() => {
+                    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+                    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                    document.getElementById(savedTab).classList.add('active');
+                    document.querySelector(`[onclick="switchTab('${savedTab}')"]`).classList.add('active');
+                }, 500);
+            }
+        });
     </script>
 </body>
 </html>
