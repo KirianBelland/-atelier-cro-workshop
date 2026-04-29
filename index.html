@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Atelier d'Idéation CRO - Shopping Section (Collaboratif)</title>
+    <!-- SheetJS for Excel export -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -262,6 +264,48 @@
             background: #45a049;
         }
 
+        .btn-vote {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: 600;
+        }
+
+        .btn-vote:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-vote:active {
+            transform: scale(0.95);
+        }
+
+        .btn-vote-down {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: 600;
+        }
+
+        .btn-vote-down:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-vote-down:active {
+            transform: scale(0.95);
+        }
+
         .alert {
             background: #d4edda;
             color: #155724;
@@ -476,14 +520,19 @@
         <header>
             <h1>🎯 Atelier d'Idéation CRO</h1>
             <p class="subtitle">Analyse Shopping Section - France & US | Roadmap AB Testing</p>
-            <div class="workshop-timer">⏱️ Durée atelier : <span id="timer">2h30</span> | <span id="collaborativeStatus">🔄 Connexion...</span></div>
+            <div class="workshop-timer">
+                ⏱️ Durée atelier : <span id="timer">2h30</span> |
+                <span id="collaborativeStatus">🔄 Connexion...</span> |
+                👤 <span id="currentUser"></span>
+                <button onclick="logout()" style="margin-left: 10px; padding: 5px 10px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">🚪 Déconnexion</button>
+            </div>
         </header>
 
         <nav class="nav-tabs">
             <button class="tab-btn active" onclick="switchTab('overview')">📊 Vue d'ensemble</button>
             <button class="tab-btn" onclick="switchTab('parcours')">🗺️ Parcours Utilisateurs</button>
             <button class="tab-btn" onclick="switchTab('comportement')">👤 Comportement In-Page</button>
-            <button class="tab-btn" onclick="switchTab('frictions')">⚠️ Frictions & Besoins</button>
+            <button class="tab-btn" onclick="switchTab('frictions')">🎨 Thèmes</button>
             <button class="tab-btn" onclick="switchTab('hypotheses')">💡 Hypothèses</button>
             <button class="tab-btn" onclick="switchTab('idees')">🚀 Idées d'AB Test</button>
         </nav>
@@ -496,126 +545,20 @@
             </div>
 
             <h3>Métriques Globales</h3>
-            <div class="metric-grid">
-                <div class="metric-card">
-                    <div class="metric-label">Sessions Totales Shopping</div>
-                    <input type="text" class="metric-value" value="1 250 000" onchange="saveData()">
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Pages Vues / Session</div>
-                    <input type="text" class="metric-value" value="4.8" onchange="saveData()">
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Temps Moyen (min)</div>
-                    <input type="text" class="metric-value" value="5:32" onchange="saveData()">
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Exit Rate Global (%)</div>
-                    <input type="text" class="metric-value" value="42%" onchange="saveData()">
-                </div>
-            </div>
+            <div id="metricsContainer" class="metric-grid"></div>
+            <button class="btn-add" onclick="openMetricModal()">+ Ajouter une Métrique</button>
 
             <h3>Répartition par Device</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Device</th>
-                        <th>Sessions</th>
-                        <th>% Total</th>
-                        <th>Pages/Session</th>
-                        <th>Exit Rate</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Desktop</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">625 000</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">50%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">5.2</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">38%</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Mobile</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">625 000</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">50%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">4.4</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">46%</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div id="devicesTableContainer"></div>
+            <button class="btn-add" onclick="openDeviceModal()">+ Ajouter un Device</button>
 
             <h3>Répartition par Pays</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Pays</th>
-                        <th>Sessions</th>
-                        <th>% Total</th>
-                        <th>Taux d'Entrée BE</th>
-                        <th>Conversion</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>🇫🇷 France</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">750 000</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">60%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">28%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">3.2%</td>
-                    </tr>
-                    <tr>
-                        <td><strong>🇺🇸 USA</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">500 000</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">40%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">22%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">2.8%</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div id="countriesTableContainer"></div>
+            <button class="btn-add" onclick="openCountryModal()">+ Ajouter un Pays</button>
 
             <h3>Sources de Trafic</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Source</th>
-                        <th>% Sessions</th>
-                        <th>Taux d'Entrée BE</th>
-                        <th>Quality Score</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Organic Search</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">35%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">28%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">8/10</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Paid Search</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">25%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">32%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">9/10</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Direct</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">20%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">35%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">9/10</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Social Media</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">12%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">18%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">6/10</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Referral</strong></td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">8%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">22%</td>
-                        <td class="editable" contenteditable="true" onblur="saveData()">7/10</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div id="trafficSourcesTableContainer"></div>
+            <button class="btn-add" onclick="openTrafficSourceModal()">+ Ajouter une Source</button>
         </div>
 
         <!-- TAB 2: PARCOURS -->
@@ -644,11 +587,11 @@
             <button class="btn-add" onclick="openPageModal()">+ Ajouter une Page</button>
         </div>
 
-        <!-- TAB 4: FRICTIONS & BESOINS -->
+        <!-- TAB 4: THÈMES -->
         <div id="frictions" class="tab-content">
-            <h2>⚠️ Frictions & Besoins Identifiés par Thème</h2>
+            <h2>🎨 Thèmes CRO</h2>
             <div class="alert">
-                <strong>Synthèse :</strong> Regroupement des frictions et besoins utilisateurs par thématiques CRO pour orienter l'idéation.
+                <strong>Objectif :</strong> Organiser les frictions et besoins utilisateurs par thématiques CRO pour orienter l'idéation.
             </div>
 
             <div id="themesContainer"></div>
@@ -681,6 +624,7 @@
 
             <div class="export-section">
                 <h3>📥 Export et Partage</h3>
+                <button class="btn-add" onclick="exportIdeasToExcel()" style="background: linear-gradient(135deg, #1e7e34 0%, #27ae60 100%);">📊 Exporter Idées en Excel</button>
                 <button class="btn-add" onclick="exportData()">💾 Télécharger les Données (JSON)</button>
                 <button class="btn-add" onclick="window.print()" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">🖨️ Imprimer / PDF</button>
             </div>
@@ -904,9 +848,202 @@
         </div>
     </div>
 
+    <!-- MODAL METRIC -->
+    <div id="metricModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Ajouter/Modifier une Métrique</h2>
+                <span class="modal-close" onclick="closeModal('metricModal')">&times;</span>
+            </div>
+            <form id="metricForm" onsubmit="saveMetric(event)">
+                <input type="hidden" id="metricId">
+                <div class="form-group">
+                    <label>Nom de la Métrique</label>
+                    <input type="text" id="metricLabel" placeholder="Ex: Sessions Totales" required>
+                </div>
+                <div class="form-group">
+                    <label>Valeur</label>
+                    <input type="text" id="metricValue" placeholder="Ex: 1 250 000" required>
+                </div>
+                <button type="submit" class="btn-add">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DEVICE -->
+    <div id="deviceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Ajouter/Modifier un Device</h2>
+                <span class="modal-close" onclick="closeModal('deviceModal')">&times;</span>
+            </div>
+            <form id="deviceForm" onsubmit="saveDevice(event)">
+                <input type="hidden" id="deviceId">
+                <div class="form-group">
+                    <label>Nom du Device</label>
+                    <input type="text" id="deviceName" placeholder="Ex: Desktop, Mobile, Tablet" required>
+                </div>
+                <div class="form-group">
+                    <label>Sessions</label>
+                    <input type="text" id="deviceSessions" placeholder="Ex: 625 000" required>
+                </div>
+                <div class="form-group">
+                    <label>% Total</label>
+                    <input type="text" id="devicePercent" placeholder="Ex: 50%" required>
+                </div>
+                <div class="form-group">
+                    <label>Pages/Session</label>
+                    <input type="text" id="devicePagesPerSession" placeholder="Ex: 5.2" required>
+                </div>
+                <div class="form-group">
+                    <label>Exit Rate</label>
+                    <input type="text" id="deviceExitRate" placeholder="Ex: 38%" required>
+                </div>
+                <button type="submit" class="btn-add">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL COUNTRY -->
+    <div id="countryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Ajouter/Modifier un Pays</h2>
+                <span class="modal-close" onclick="closeModal('countryModal')">&times;</span>
+            </div>
+            <form id="countryForm" onsubmit="saveCountry(event)">
+                <input type="hidden" id="countryId">
+                <div class="form-group">
+                    <label>Nom du Pays (avec emoji)</label>
+                    <input type="text" id="countryName" placeholder="Ex: 🇫🇷 France" required>
+                </div>
+                <div class="form-group">
+                    <label>Sessions</label>
+                    <input type="text" id="countrySessions" placeholder="Ex: 750 000" required>
+                </div>
+                <div class="form-group">
+                    <label>% Total</label>
+                    <input type="text" id="countryPercent" placeholder="Ex: 60%" required>
+                </div>
+                <div class="form-group">
+                    <label>Taux d'Entrée BE</label>
+                    <input type="text" id="countryBeEntry" placeholder="Ex: 28%" required>
+                </div>
+                <div class="form-group">
+                    <label>Conversion</label>
+                    <input type="text" id="countryConversion" placeholder="Ex: 3.2%" required>
+                </div>
+                <button type="submit" class="btn-add">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL TRAFFIC SOURCE -->
+    <div id="trafficSourceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Ajouter/Modifier une Source de Trafic</h2>
+                <span class="modal-close" onclick="closeModal('trafficSourceModal')">&times;</span>
+            </div>
+            <form id="trafficSourceForm" onsubmit="saveTrafficSource(event)">
+                <input type="hidden" id="trafficSourceId">
+                <div class="form-group">
+                    <label>Nom de la Source</label>
+                    <input type="text" id="trafficSourceName" placeholder="Ex: Organic Search" required>
+                </div>
+                <div class="form-group">
+                    <label>% Sessions</label>
+                    <input type="text" id="trafficSourcePercent" placeholder="Ex: 35%" required>
+                </div>
+                <div class="form-group">
+                    <label>Taux d'Entrée BE</label>
+                    <input type="text" id="trafficSourceBeEntry" placeholder="Ex: 28%" required>
+                </div>
+                <div class="form-group">
+                    <label>Quality Score</label>
+                    <input type="text" id="trafficSourceQuality" placeholder="Ex: 8/10" required>
+                </div>
+                <button type="submit" class="btn-add">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL USER LOGIN -->
+    <div id="userLoginModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 550px;">
+            <div class="modal-header">
+                <h2 id="authModalTitle">👤 Connexion à l'Atelier CRO</h2>
+            </div>
+
+            <!-- Mode Selection -->
+            <div id="authModeSelection" style="text-align: center; margin-bottom: 20px;">
+                <button type="button" class="btn-add" onclick="showLoginForm()" style="margin: 5px; padding: 12px 20px;">🔑 Se connecter</button>
+                <button type="button" class="btn-add" onclick="showSignupForm()" style="margin: 5px; padding: 12px 20px; background: #27ae60;">📝 Créer un compte</button>
+                <button type="button" class="btn-add" onclick="continueAsGuest()" style="margin: 5px; padding: 12px 20px; background: #95a5a6;">👥 Mode invité</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" onsubmit="loginWithEmail(event)" style="display: none;">
+                <div class="alert" style="margin-bottom: 20px;">
+                    <strong>Connexion</strong> avec votre compte email
+                </div>
+
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" placeholder="votre.email@exemple.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="btn-add" style="width: 100%; padding: 12px;">Se connecter</button>
+                <button type="button" onclick="showAuthModeSelection()" class="btn-add" style="width: 100%; padding: 10px; margin-top: 10px; background: #95a5a6;">Retour</button>
+
+                <p style="margin-top: 15px; text-align: center;">
+                    <a href="#" onclick="resetPassword(); return false;" style="color: #667eea; text-decoration: none;">Mot de passe oublié ?</a>
+                </p>
+            </form>
+
+            <!-- Signup Form -->
+            <form id="signupForm" onsubmit="signupWithEmail(event)" style="display: none;">
+                <div class="alert" style="margin-bottom: 20px;">
+                    <strong>Créer un compte</strong><br>
+                    <small style="color: #666;">💡 Toutes les données sont partagées entre tous les utilisateurs.</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Votre nom / pseudonyme</label>
+                    <input type="text" id="signupUserName" placeholder="Ex: Marie, Jean..." required>
+                </div>
+
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="signupEmail" placeholder="votre.email@exemple.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Mot de passe (min 6 caractères)</label>
+                    <input type="password" id="signupPassword" placeholder="••••••••" minlength="6" required>
+                </div>
+
+                <button type="submit" class="btn-add" style="width: 100%; padding: 12px;">Créer mon compte</button>
+                <button type="button" onclick="showAuthModeSelection()" class="btn-add" style="width: 100%; padding: 10px; margin-top: 10px; background: #95a5a6;">Retour</button>
+            </form>
+        </div>
+    </div>
+
     <script>
+        // User management
+        let currentUser = null;
+
         // Data storage
         let appData = {
+            metrics: [],
+            devices: [],
+            countries: [],
+            trafficSources: [],
             parcours: [],
             pages: [],
             themes: [],
@@ -921,6 +1058,31 @@
                 appData = JSON.parse(saved);
             } else {
                 // Default data
+                appData.metrics = [
+                    { id: 1, label: "Sessions Totales Shopping", value: "1 250 000" },
+                    { id: 2, label: "Pages Vues / Session", value: "4.8" },
+                    { id: 3, label: "Temps Moyen (min)", value: "5:32" },
+                    { id: 4, label: "Exit Rate Global (%)", value: "42%" }
+                ];
+
+                appData.devices = [
+                    { id: 1, name: "Desktop", sessions: "625 000", percent: "50%", pagesPerSession: "5.2", exitRate: "38%" },
+                    { id: 2, name: "Mobile", sessions: "625 000", percent: "50%", pagesPerSession: "4.4", exitRate: "46%" }
+                ];
+
+                appData.countries = [
+                    { id: 1, name: "🇫🇷 France", sessions: "750 000", percent: "60%", beEntry: "28%", conversion: "3.2%" },
+                    { id: 2, name: "🇺🇸 USA", sessions: "500 000", percent: "40%", beEntry: "22%", conversion: "2.8%" }
+                ];
+
+                appData.trafficSources = [
+                    { id: 1, name: "Organic Search", percent: "35%", beEntry: "28%", quality: "8/10" },
+                    { id: 2, name: "Paid Search", percent: "25%", beEntry: "32%", quality: "9/10" },
+                    { id: 3, name: "Direct", percent: "20%", beEntry: "35%", quality: "9/10" },
+                    { id: 4, name: "Social Media", percent: "12%", beEntry: "18%", quality: "6/10" },
+                    { id: 5, name: "Referral", percent: "8%", beEntry: "22%", quality: "7/10" }
+                ];
+
                 appData.parcours = [
                     {
                         id: 1,
@@ -1015,7 +1177,8 @@
                         desc: "Ajouter dans la hero section (sous le prix) une zone avec 4-5 badges/icônes mettant en avant : \"5 restaurants inclus\", \"Kids Club gratuit\", \"Spa sur place\", \"Piscines\", \"Activités nautiques\". Version A (control) vs Version B (avec badges)",
                         metricPrimary: "Taux d'entrée dans le BE depuis Resort Page",
                         metricSecondary: "Scroll depth, temps sur page, taux de rebond",
-                        priority: "Impact: 8, Confidence: 7, Ease: 6 = Score 7"
+                        priority: "Impact: 8, Confidence: 7, Ease: 6 = Score 7",
+                        votes: 0
                     }
                 ];
             }
@@ -1023,9 +1186,150 @@
         }
 
         // Render functions
+        function renderMetrics() {
+            const container = document.getElementById('metricsContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (!appData.metrics) appData.metrics = [];
+
+            appData.metrics.forEach(metric => {
+                const card = document.createElement('div');
+                card.className = 'metric-card';
+                card.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div style="flex: 1;">
+                            <div class="metric-label">${metric.label}</div>
+                            <div class="metric-value" style="font-size: 1.8em;">${metric.value}</div>
+                        </div>
+                        <div style="display: flex; gap: 5px;">
+                            <button class="btn-edit" onclick="editMetric(${metric.id})" style="padding: 5px 10px; font-size: 0.8em;">✏️</button>
+                            <button class="btn-delete" onclick="deleteMetric(${metric.id})" style="padding: 5px 10px; font-size: 0.8em;">🗑️</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderDevices() {
+            const container = document.getElementById('devicesTableContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (!appData.devices) appData.devices = [];
+
+            const table = document.createElement('table');
+            table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>Device</th>
+                        <th>Sessions</th>
+                        <th>% Total</th>
+                        <th>Pages/Session</th>
+                        <th>Exit Rate</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${appData.devices.map(d => `
+                        <tr>
+                            <td><strong>${d.name}</strong></td>
+                            <td>${d.sessions}</td>
+                            <td>${d.percent}</td>
+                            <td>${d.pagesPerSession}</td>
+                            <td>${d.exitRate}</td>
+                            <td>
+                                <button class="btn-edit" onclick="editDevice(${d.id})" style="padding: 5px 10px; font-size: 0.8em;">✏️</button>
+                                <button class="btn-delete" onclick="deleteDevice(${d.id})" style="padding: 5px 10px; font-size: 0.8em;">🗑️</button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            `;
+            container.appendChild(table);
+        }
+
+        function renderCountries() {
+            const container = document.getElementById('countriesTableContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (!appData.countries) appData.countries = [];
+
+            const table = document.createElement('table');
+            table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>Pays</th>
+                        <th>Sessions</th>
+                        <th>% Total</th>
+                        <th>Taux d'Entrée BE</th>
+                        <th>Conversion</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${appData.countries.map(c => `
+                        <tr>
+                            <td><strong>${c.name}</strong></td>
+                            <td>${c.sessions}</td>
+                            <td>${c.percent}</td>
+                            <td>${c.beEntry}</td>
+                            <td>${c.conversion}</td>
+                            <td>
+                                <button class="btn-edit" onclick="editCountry(${c.id})" style="padding: 5px 10px; font-size: 0.8em;">✏️</button>
+                                <button class="btn-delete" onclick="deleteCountry(${c.id})" style="padding: 5px 10px; font-size: 0.8em;">🗑️</button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            `;
+            container.appendChild(table);
+        }
+
+        function renderTrafficSources() {
+            const container = document.getElementById('trafficSourcesTableContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (!appData.trafficSources) appData.trafficSources = [];
+
+            const table = document.createElement('table');
+            table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>Source</th>
+                        <th>% Sessions</th>
+                        <th>Taux d'Entrée BE</th>
+                        <th>Quality Score</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${appData.trafficSources.map(ts => `
+                        <tr>
+                            <td><strong>${ts.name}</strong></td>
+                            <td>${ts.percent}</td>
+                            <td>${ts.beEntry}</td>
+                            <td>${ts.quality}</td>
+                            <td>
+                                <button class="btn-edit" onclick="editTrafficSource(${ts.id})" style="padding: 5px 10px; font-size: 0.8em;">✏️</button>
+                                <button class="btn-delete" onclick="deleteTrafficSource(${ts.id})" style="padding: 5px 10px; font-size: 0.8em;">🗑️</button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            `;
+            container.appendChild(table);
+        }
+
         function renderParcours() {
             const container = document.getElementById('parcoursContainer');
+            if (!container) return;
             container.innerHTML = '';
+
+            if (!appData.parcours) appData.parcours = [];
 
             appData.parcours.forEach(p => {
                 const card = document.createElement('div');
@@ -1058,7 +1362,10 @@
 
         function renderPages() {
             const container = document.getElementById('pagesContainer');
+            if (!container) return;
             container.innerHTML = '';
+
+            if (!appData.pages) appData.pages = [];
 
             appData.pages.forEach(page => {
                 const section = document.createElement('div');
@@ -1101,9 +1408,15 @@
 
         function renderThemes() {
             const container = document.getElementById('themesContainer');
+            if (!container) return;
             container.innerHTML = '';
 
+            if (!appData.themes) appData.themes = [];
+
             appData.themes.forEach(theme => {
+                // Ensure frictions array exists
+                if (!theme.frictions) theme.frictions = [];
+
                 const card = document.createElement('div');
                 card.className = 'theme-card';
                 card.innerHTML = `
@@ -1116,7 +1429,7 @@
                         </div>
                     </div>
                     <ul class="item-list">
-                        ${theme.frictions.map((f, idx) => `
+                        ${(theme.frictions || []).map((f, idx) => `
                             <li>
                                 <div class="item-content">
                                     <strong>${f.title}</strong><br>
@@ -1125,6 +1438,7 @@
                                 <button class="btn-delete" onclick="deleteFriction(${theme.id}, ${idx})">🗑️</button>
                             </li>
                         `).join('')}
+                        ${(!theme.frictions || theme.frictions.length === 0) ? '<li style="color: #999;">Aucune friction ajoutée</li>' : ''}
                     </ul>
                 `;
                 container.appendChild(card);
@@ -1133,7 +1447,10 @@
 
         function renderHypotheses() {
             const container = document.getElementById('hypothesesContainer');
+            if (!container) return;
             container.innerHTML = '';
+
+            if (!appData.hypotheses) appData.hypotheses = [];
 
             appData.hypotheses.forEach(h => {
                 const section = document.createElement('div');
@@ -1159,15 +1476,31 @@
 
         function renderIdeas() {
             const container = document.getElementById('ideesContainer');
+            if (!container) return;
             container.innerHTML = '';
 
-            appData.ideas.forEach(idea => {
+            if (!appData.ideas) appData.ideas = [];
+
+            // Trier les idées par nombre de votes (décroissant)
+            const sortedIdeas = [...appData.ideas].sort((a, b) => (b.votes || 0) - (a.votes || 0));
+
+            sortedIdeas.forEach(idea => {
                 const section = document.createElement('div');
                 section.className = 'idea-section';
+                const voteCount = idea.votes || 0;
                 section.innerHTML = `
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <h3>💡 Idée #${idea.id} - ${idea.title}</h3>
-                        <div>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 5px; background: rgba(102, 126, 234, 0.1); padding: 5px; border-radius: 10px;">
+                                <button class="btn-vote-down" onclick="unvoteIdea(${idea.id})" title="Retirer un vote">
+                                    👎
+                                </button>
+                                <span style="font-size: 1.3em; font-weight: bold; color: #667eea; min-width: 35px; text-align: center;" id="votes-${idea.id}">${voteCount}</span>
+                                <button class="btn-vote" onclick="voteIdea(${idea.id})" title="Ajouter un vote">
+                                    👍
+                                </button>
+                            </div>
                             <button class="btn-edit" onclick="editIdea(${idea.id})">✏️ Modifier</button>
                             <button class="btn-delete" onclick="deleteIdea(${idea.id})">🗑️ Supprimer</button>
                         </div>
@@ -1180,6 +1513,9 @@
                         <tr><td><strong>Métrique Primaire</strong></td><td>${idea.metricPrimary}</td></tr>
                         <tr><td><strong>Métriques Secondaires</strong></td><td>${idea.metricSecondary}</td></tr>
                         <tr><td><strong>Priorité (ICE)</strong></td><td>${idea.priority}</td></tr>
+                        <tr><td><strong>Votes</strong></td><td><span style="font-size: 1.3em; font-weight: bold; color: #667eea;">👍 ${voteCount}</span></td></tr>
+                        ${idea.createdBy ? `<tr><td><strong>Créée par</strong></td><td>👤 ${idea.createdBy} ${idea.createdAt ? `<span style="color: #888; font-size: 0.9em;">(${new Date(idea.createdAt).toLocaleDateString('fr-FR')})</span>` : ''}</td></tr>` : ''}
+                        ${idea.modifiedBy ? `<tr><td><strong>Modifiée par</strong></td><td>✏️ ${idea.modifiedBy} ${idea.modifiedAt ? `<span style="color: #888; font-size: 0.9em;">(${new Date(idea.modifiedAt).toLocaleDateString('fr-FR')})</span>` : ''}</td></tr>` : ''}
                     </table>
                 `;
                 container.appendChild(section);
@@ -1187,6 +1523,10 @@
         }
 
         function renderAll() {
+            renderMetrics();
+            renderDevices();
+            renderCountries();
+            renderTrafficSources();
             renderParcours();
             renderPages();
             renderThemes();
@@ -1240,12 +1580,20 @@
         }
 
         function openThemeModal(id = null) {
+            console.log('openThemeModal appelée, id:', id);
+            if (!appData.themes) appData.themes = [];
+
             if (id) {
                 const t = appData.themes.find(x => x.id === id);
-                document.getElementById('themeId').value = t.id;
-                document.getElementById('themeName').value = t.name;
-                document.getElementById('themeEmoji').value = t.emoji;
+                if (t) {
+                    document.getElementById('themeId').value = t.id;
+                    document.getElementById('themeName').value = t.name;
+                    document.getElementById('themeEmoji').value = t.emoji;
+                } else {
+                    console.error('Thème non trouvé avec id:', id);
+                }
             } else {
+                console.log('Nouveau thème - reset du formulaire');
                 document.getElementById('themeForm').reset();
                 document.getElementById('themeId').value = '';
             }
@@ -1360,21 +1708,32 @@
 
         function saveTheme(e) {
             e.preventDefault();
+            console.log('saveTheme appelée');
+
+            if (!appData.themes) appData.themes = [];
+
             const id = document.getElementById('themeId').value;
+            const existingTheme = id ? appData.themes.find(x => x.id === parseInt(id)) : null;
+
             const theme = {
                 id: id ? parseInt(id) : Date.now(),
                 name: document.getElementById('themeName').value,
                 emoji: document.getElementById('themeEmoji').value,
-                frictions: id ? appData.themes.find(x => x.id === parseInt(id)).frictions : []
+                frictions: existingTheme ? existingTheme.frictions : []
             };
+
+            console.log('Thème à sauvegarder:', theme);
 
             if (id) {
                 const index = appData.themes.findIndex(x => x.id === parseInt(id));
                 appData.themes[index] = theme;
+                console.log('Thème modifié');
             } else {
                 appData.themes.push(theme);
+                console.log('Nouveau thème ajouté');
             }
 
+            console.log('Total thèmes:', appData.themes.length);
             saveData();
             renderThemes();
             closeModal('themeModal');
@@ -1422,6 +1781,8 @@
         function saveIdea(e) {
             e.preventDefault();
             const id = document.getElementById('ideaId').value;
+            const existingIdea = id ? appData.ideas.find(x => x.id === parseInt(id)) : null;
+
             const idea = {
                 id: id ? parseInt(id) : Date.now(),
                 title: document.getElementById('ideaTitle').value,
@@ -1431,7 +1792,12 @@
                 desc: document.getElementById('ideaDesc').value,
                 metricPrimary: document.getElementById('ideaMetricPrimary').value,
                 metricSecondary: document.getElementById('ideaMetricSecondary').value,
-                priority: document.getElementById('ideaPriority').value
+                priority: document.getElementById('ideaPriority').value,
+                votes: existingIdea ? existingIdea.votes : 0,
+                createdBy: existingIdea ? existingIdea.createdBy : currentUser,
+                createdAt: existingIdea ? existingIdea.createdAt : new Date().toISOString(),
+                modifiedBy: currentUser,
+                modifiedAt: new Date().toISOString()
             };
 
             if (id) {
@@ -1526,6 +1892,269 @@
             }
         }
 
+        function voteIdea(id) {
+            const idea = appData.ideas.find(x => x.id === id);
+            if (idea) {
+                if (!idea.votes) idea.votes = 0;
+                idea.votes++;
+                saveData();
+
+                // Mise à jour visuelle immédiate
+                const voteElement = document.getElementById(`votes-${id}`);
+                if (voteElement) {
+                    voteElement.textContent = idea.votes;
+                    voteElement.style.transform = 'scale(1.3)';
+                    voteElement.style.color = '#4CAF50';
+                    setTimeout(() => {
+                        voteElement.style.transform = 'scale(1)';
+                        voteElement.style.color = '#667eea';
+                    }, 200);
+                }
+
+                // Re-render pour trier
+                setTimeout(() => renderIdeas(), 300);
+            }
+        }
+
+        function unvoteIdea(id) {
+            const idea = appData.ideas.find(x => x.id === id);
+            if (idea) {
+                if (!idea.votes) idea.votes = 0;
+                if (idea.votes > 0) {
+                    idea.votes--;
+                    saveData();
+
+                    // Mise à jour visuelle immédiate
+                    const voteElement = document.getElementById(`votes-${id}`);
+                    if (voteElement) {
+                        voteElement.textContent = idea.votes;
+                        voteElement.style.transform = 'scale(0.8)';
+                        voteElement.style.color = '#ff6b6b';
+                        setTimeout(() => {
+                            voteElement.style.transform = 'scale(1)';
+                            voteElement.style.color = '#667eea';
+                        }, 200);
+                    }
+
+                    // Re-render pour trier
+                    setTimeout(() => renderIdeas(), 300);
+                }
+            }
+        }
+
+        // === METRIC FUNCTIONS ===
+        function openMetricModal(id = null) {
+            if (id) {
+                const m = appData.metrics.find(x => x.id === id);
+                document.getElementById('metricId').value = m.id;
+                document.getElementById('metricLabel').value = m.label;
+                document.getElementById('metricValue').value = m.value;
+            } else {
+                document.getElementById('metricForm').reset();
+                document.getElementById('metricId').value = '';
+            }
+            openModal('metricModal');
+        }
+
+        function saveMetric(e) {
+            e.preventDefault();
+            console.log('saveMetric appelée');
+
+            if (!appData.metrics) appData.metrics = [];
+
+            const id = document.getElementById('metricId').value;
+            const metric = {
+                id: id ? parseInt(id) : Date.now(),
+                label: document.getElementById('metricLabel').value,
+                value: document.getElementById('metricValue').value
+            };
+
+            console.log('Métrique à sauvegarder:', metric);
+
+            if (id) {
+                const index = appData.metrics.findIndex(x => x.id === parseInt(id));
+                appData.metrics[index] = metric;
+                console.log('Métrique modifiée');
+            } else {
+                appData.metrics.push(metric);
+                console.log('Nouvelle métrique ajoutée');
+            }
+
+            console.log('Total métriques:', appData.metrics.length);
+            saveData();
+            renderMetrics();
+            closeModal('metricModal');
+        }
+
+        function editMetric(id) {
+            openMetricModal(id);
+        }
+
+        function deleteMetric(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette métrique ?')) {
+                appData.metrics = appData.metrics.filter(x => x.id !== id);
+                saveData();
+                renderMetrics();
+            }
+        }
+
+        // === DEVICE FUNCTIONS ===
+        function openDeviceModal(id = null) {
+            if (id) {
+                const d = appData.devices.find(x => x.id === id);
+                document.getElementById('deviceId').value = d.id;
+                document.getElementById('deviceName').value = d.name;
+                document.getElementById('deviceSessions').value = d.sessions;
+                document.getElementById('devicePercent').value = d.percent;
+                document.getElementById('devicePagesPerSession').value = d.pagesPerSession;
+                document.getElementById('deviceExitRate').value = d.exitRate;
+            } else {
+                document.getElementById('deviceForm').reset();
+                document.getElementById('deviceId').value = '';
+            }
+            openModal('deviceModal');
+        }
+
+        function saveDevice(e) {
+            e.preventDefault();
+            const id = document.getElementById('deviceId').value;
+            const device = {
+                id: id ? parseInt(id) : Date.now(),
+                name: document.getElementById('deviceName').value,
+                sessions: document.getElementById('deviceSessions').value,
+                percent: document.getElementById('devicePercent').value,
+                pagesPerSession: document.getElementById('devicePagesPerSession').value,
+                exitRate: document.getElementById('deviceExitRate').value
+            };
+
+            if (id) {
+                const index = appData.devices.findIndex(x => x.id === parseInt(id));
+                appData.devices[index] = device;
+            } else {
+                appData.devices.push(device);
+            }
+
+            saveData();
+            renderDevices();
+            closeModal('deviceModal');
+        }
+
+        function editDevice(id) {
+            openDeviceModal(id);
+        }
+
+        function deleteDevice(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce device ?')) {
+                appData.devices = appData.devices.filter(x => x.id !== id);
+                saveData();
+                renderDevices();
+            }
+        }
+
+        // === COUNTRY FUNCTIONS ===
+        function openCountryModal(id = null) {
+            if (id) {
+                const c = appData.countries.find(x => x.id === id);
+                document.getElementById('countryId').value = c.id;
+                document.getElementById('countryName').value = c.name;
+                document.getElementById('countrySessions').value = c.sessions;
+                document.getElementById('countryPercent').value = c.percent;
+                document.getElementById('countryBeEntry').value = c.beEntry;
+                document.getElementById('countryConversion').value = c.conversion;
+            } else {
+                document.getElementById('countryForm').reset();
+                document.getElementById('countryId').value = '';
+            }
+            openModal('countryModal');
+        }
+
+        function saveCountry(e) {
+            e.preventDefault();
+            const id = document.getElementById('countryId').value;
+            const country = {
+                id: id ? parseInt(id) : Date.now(),
+                name: document.getElementById('countryName').value,
+                sessions: document.getElementById('countrySessions').value,
+                percent: document.getElementById('countryPercent').value,
+                beEntry: document.getElementById('countryBeEntry').value,
+                conversion: document.getElementById('countryConversion').value
+            };
+
+            if (id) {
+                const index = appData.countries.findIndex(x => x.id === parseInt(id));
+                appData.countries[index] = country;
+            } else {
+                appData.countries.push(country);
+            }
+
+            saveData();
+            renderCountries();
+            closeModal('countryModal');
+        }
+
+        function editCountry(id) {
+            openCountryModal(id);
+        }
+
+        function deleteCountry(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce pays ?')) {
+                appData.countries = appData.countries.filter(x => x.id !== id);
+                saveData();
+                renderCountries();
+            }
+        }
+
+        // === TRAFFIC SOURCE FUNCTIONS ===
+        function openTrafficSourceModal(id = null) {
+            if (id) {
+                const ts = appData.trafficSources.find(x => x.id === id);
+                document.getElementById('trafficSourceId').value = ts.id;
+                document.getElementById('trafficSourceName').value = ts.name;
+                document.getElementById('trafficSourcePercent').value = ts.percent;
+                document.getElementById('trafficSourceBeEntry').value = ts.beEntry;
+                document.getElementById('trafficSourceQuality').value = ts.quality;
+            } else {
+                document.getElementById('trafficSourceForm').reset();
+                document.getElementById('trafficSourceId').value = '';
+            }
+            openModal('trafficSourceModal');
+        }
+
+        function saveTrafficSource(e) {
+            e.preventDefault();
+            const id = document.getElementById('trafficSourceId').value;
+            const trafficSource = {
+                id: id ? parseInt(id) : Date.now(),
+                name: document.getElementById('trafficSourceName').value,
+                percent: document.getElementById('trafficSourcePercent').value,
+                beEntry: document.getElementById('trafficSourceBeEntry').value,
+                quality: document.getElementById('trafficSourceQuality').value
+            };
+
+            if (id) {
+                const index = appData.trafficSources.findIndex(x => x.id === parseInt(id));
+                appData.trafficSources[index] = trafficSource;
+            } else {
+                appData.trafficSources.push(trafficSource);
+            }
+
+            saveData();
+            renderTrafficSources();
+            closeModal('trafficSourceModal');
+        }
+
+        function editTrafficSource(id) {
+            openTrafficSourceModal(id);
+        }
+
+        function deleteTrafficSource(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette source de trafic ?')) {
+                appData.trafficSources = appData.trafficSources.filter(x => x.id !== id);
+                saveData();
+                renderTrafficSources();
+            }
+        }
+
         // Utility functions
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(tab => {
@@ -1563,9 +2192,65 @@
             URL.revokeObjectURL(url);
         }
 
-        // Close modal when clicking outside
+        function exportIdeasToExcel() {
+            if (appData.ideas.length === 0) {
+                alert('Aucune idée à exporter');
+                return;
+            }
+
+            // Préparer les données pour Excel
+            const excelData = appData.ideas.map((idea, index) => ({
+                'N°': index + 1,
+                'Titre': idea.title,
+                'Pages concernées': idea.pages,
+                'Hypothèse liée': idea.hypothese,
+                'Thème(s)': idea.themes,
+                'Description': idea.desc,
+                'Métrique Primaire': idea.metricPrimary,
+                'Métriques Secondaires': idea.metricSecondary,
+                'Priorité (ICE)': idea.priority,
+                'Votes': idea.votes || 0,
+                'Créée par': idea.createdBy || 'N/A',
+                'Date création': idea.createdAt ? new Date(idea.createdAt).toLocaleDateString('fr-FR') : 'N/A',
+                'Modifiée par': idea.modifiedBy || 'N/A',
+                'Date modification': idea.modifiedAt ? new Date(idea.modifiedAt).toLocaleDateString('fr-FR') : 'N/A'
+            }));
+
+            // Créer un workbook et une worksheet
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(excelData);
+
+            // Définir la largeur des colonnes
+            ws['!cols'] = [
+                { wch: 5 },   // N°
+                { wch: 30 },  // Titre
+                { wch: 20 },  // Pages
+                { wch: 40 },  // Hypothèse
+                { wch: 25 },  // Thèmes
+                { wch: 60 },  // Description
+                { wch: 30 },  // Métrique Primaire
+                { wch: 40 },  // Métriques Secondaires
+                { wch: 30 },  // Priorité
+                { wch: 10 },  // Votes
+                { wch: 20 },  // Créée par
+                { wch: 15 },  // Date création
+                { wch: 20 },  // Modifiée par
+                { wch: 15 }   // Date modification
+            ];
+
+            // Ajouter la worksheet au workbook
+            XLSX.utils.book_append_sheet(wb, ws, "Idées AB Test");
+
+            // Générer le fichier et le télécharger
+            const fileName = `idees-ab-test-${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+
+            console.log(`✅ Export Excel réussi : ${fileName}`);
+        }
+
+        // Close modal when clicking outside (except user login modal)
         window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
+            if (event.target.classList.contains('modal') && event.target.id !== 'userLoginModal') {
                 event.target.style.display = 'none';
             }
         }
@@ -1580,38 +2265,423 @@
         firebaseDatabaseScript.src = 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js';
         document.head.appendChild(firebaseDatabaseScript);
 
+        const firebaseAuthScript = document.createElement('script');
+        firebaseAuthScript.src = 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js';
+        document.head.appendChild(firebaseAuthScript);
+
         let database;
+        let auth;
         let isFirebaseReady = false;
+        let isAuthReady = false;
 
         // Firebase configuration - REMPLACEZ PAR VOTRE CONFIG
         const firebaseConfig = {
-            apiKey: "AIzaSyDEMO_REPLACE_WITH_YOUR_KEY",
-            authDomain: "atelier-cro-demo.firebaseapp.com",
-            databaseURL: "https://atelier-cro-demo-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "atelier-cro-demo",
-            storageBucket: "atelier-cro-demo.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "1:123456789:web:demo"
+            apiKey: "AIzaSyA_rfK5OnX_I7Qz9Qx3jkvuKQnYa4Ebaek",
+            authDomain: "atelier-cro-clubmed.firebaseapp.com",
+            databaseURL: "https://atelier-cro-clubmed-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "atelier-cro-clubmed",
+            storageBucket: "atelier-cro-clubmed.firebasestorage.app",
+            messagingSenderId: "933120278959",
+            appId: "1:933120278959:web:19a1bf1f24fb00284d2f5a"
         };
 
         // Initialize Firebase when scripts are loaded
-        firebaseDatabaseScript.onload = function() {
+        firebaseAuthScript.onload = function() {
             try {
                 firebase.initializeApp(firebaseConfig);
                 database = firebase.database();
+                auth = firebase.auth();
                 isFirebaseReady = true;
+                isAuthReady = true;
                 console.log('✅ Firebase connecté - Mode collaboratif activé!');
                 document.getElementById('collaborativeStatus').innerHTML = '🌐 Mode Collaboratif Actif';
                 document.getElementById('collaborativeStatus').style.color = '#27ae60';
-                loadFromFirebase();
+
+                // Listen to auth state changes
+                auth.onAuthStateChanged(onAuthStateChanged);
             } catch (error) {
                 console.warn('⚠️ Firebase non disponible, mode local activé', error);
                 isFirebaseReady = false;
+                isAuthReady = false;
                 document.getElementById('collaborativeStatus').innerHTML = '💾 Mode Local';
                 document.getElementById('collaborativeStatus').style.color = '#f39c12';
-                initData();
+                showUserLoginModal();
             }
         };
+
+        // === USER & GROUP MANAGEMENT ===
+        function showAuthModeSelection() {
+            document.getElementById('authModeSelection').style.display = 'block';
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('signupForm').style.display = 'none';
+            document.getElementById('authModalTitle').textContent = '👤 Connexion à l\'Atelier CRO';
+        }
+
+        function showLoginForm() {
+            document.getElementById('authModeSelection').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('signupForm').style.display = 'none';
+            document.getElementById('authModalTitle').textContent = '🔑 Connexion';
+        }
+
+        function showSignupForm() {
+            document.getElementById('authModeSelection').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('signupForm').style.display = 'block';
+            document.getElementById('authModalTitle').textContent = '📝 Créer un compte';
+        }
+
+
+        // === FIREBASE AUTHENTICATION ===
+        function onAuthStateChanged(user) {
+            console.log('Auth state changed:', user);
+            if (user) {
+                // User is signed in
+                console.log('✅ Utilisateur connecté:', user.email);
+                loadUserProfile(user);
+            } else {
+                // User is signed out
+                console.log('❌ Aucun utilisateur connecté');
+                showUserLoginModal();
+            }
+        }
+
+        async function loadUserProfile(user) {
+            try {
+                const userRef = database.ref(`users/${user.uid}`);
+                const snapshot = await userRef.once('value');
+                const profile = snapshot.val();
+
+                if (profile) {
+                    currentUser = profile.displayName;
+                    currentGroup = null;
+                    document.getElementById('currentUser').textContent = currentUser + ' (' + user.email + ')';
+                    document.getElementById('userLoginModal').style.display = 'none';
+                    console.log(`✅ Profil chargé : ${currentUser}`);
+                    loadGroupDataFromFirebase();
+                } else {
+                    console.warn('Profil utilisateur non trouvé, déconnexion...');
+                    await auth.signOut();
+                    showUserLoginModal();
+                }
+            } catch (error) {
+                console.error('Erreur chargement profil:', error);
+                alert('Erreur lors du chargement du profil');
+            }
+        }
+
+        async function loginWithEmail(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                console.log('Tentative de connexion...', email);
+                await auth.signInWithEmailAndPassword(email, password);
+                // onAuthStateChanged will be called automatically
+            } catch (error) {
+                console.error('Erreur connexion:', error);
+                let message = 'Erreur de connexion';
+                if (error.code === 'auth/user-not-found') {
+                    message = 'Aucun compte trouvé avec cet email';
+                } else if (error.code === 'auth/wrong-password') {
+                    message = 'Mot de passe incorrect';
+                } else if (error.code === 'auth/invalid-email') {
+                    message = 'Email invalide';
+                } else {
+                    message = error.message;
+                }
+                alert(message);
+            }
+        }
+
+        async function signupWithEmail(e) {
+            e.preventDefault();
+            const userName = document.getElementById('signupUserName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const password = document.getElementById('signupPassword').value;
+
+            if (!userName) {
+                alert('Veuillez entrer votre nom');
+                return;
+            }
+
+            try {
+                console.log('Création de compte...', email);
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+
+                // Save user profile
+                await database.ref(`users/${user.uid}`).set({
+                    displayName: userName,
+                    email: email,
+                    createdAt: new Date().toISOString()
+                });
+
+                console.log('✅ Compte créé avec succès');
+                alert('Compte créé avec succès ! Vous êtes maintenant connecté.');
+                // onAuthStateChanged will be called automatically
+            } catch (error) {
+                console.error('Erreur création compte:', error);
+                let message = 'Erreur lors de la création du compte';
+                if (error.code === 'auth/email-already-in-use') {
+                    message = 'Un compte existe déjà avec cet email';
+                } else if (error.code === 'auth/invalid-email') {
+                    message = 'Email invalide';
+                } else if (error.code === 'auth/weak-password') {
+                    message = 'Mot de passe trop faible (min 6 caractères)';
+                } else {
+                    message = error.message;
+                }
+                alert(message);
+            }
+        }
+
+        async function resetPassword() {
+            const email = prompt('Entrez votre adresse email pour réinitialiser votre mot de passe:');
+            if (!email) return;
+
+            try {
+                await auth.sendPasswordResetEmail(email);
+                alert('Email de réinitialisation envoyé ! Vérifiez votre boîte de réception.');
+            } catch (error) {
+                console.error('Erreur reset password:', error);
+                let message = 'Erreur lors de l\'envoi de l\'email';
+                if (error.code === 'auth/user-not-found') {
+                    message = 'Aucun compte trouvé avec cet email';
+                } else if (error.code === 'auth/invalid-email') {
+                    message = 'Email invalide';
+                } else {
+                    message = error.message;
+                }
+                alert(message);
+            }
+        }
+
+        async function logout() {
+            try {
+                await auth.signOut();
+                console.log('✅ Déconnexion réussie');
+                currentUser = null;
+                currentGroup = null;
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('currentGroup');
+                showUserLoginModal();
+            } catch (error) {
+                console.error('Erreur déconnexion:', error);
+                alert('Erreur lors de la déconnexion');
+            }
+        }
+
+
+        function loginUser(e) {
+            e.preventDefault();
+            const userName = document.getElementById('userName').value.trim();
+            const groupSelect = document.getElementById('groupSelect').value;
+            const newGroupName = document.getElementById('newGroupName').value.trim();
+
+            if (!userName) {
+                alert('Veuillez entrer votre nom');
+                return;
+            }
+
+            let groupName;
+            if (groupSelect === 'new') {
+                if (!newGroupName) {
+                    alert('Veuillez entrer un nom de groupe');
+                    return;
+                }
+                groupName = newGroupName;
+                // Add new group to available groups
+                if (!availableGroups.includes(groupName)) {
+                    availableGroups.push(groupName);
+                    saveGroupsToFirebase();
+                }
+            } else if (groupSelect) {
+                groupName = groupSelect;
+            } else {
+                alert('Veuillez sélectionner ou créer un groupe');
+                return;
+            }
+
+            currentUser = userName;
+            currentGroup = groupName;
+
+            // Save to localStorage
+            localStorage.setItem('currentUser', userName);
+            localStorage.setItem('currentGroup', groupName);
+
+            // Update UI
+            document.getElementById('currentUser').textContent = userName;
+            document.getElementById('currentGroup').textContent = groupName;
+            document.getElementById('userLoginModal').style.display = 'none';
+
+            console.log(`✅ Connecté : ${userName} (Groupe: ${groupName})`);
+
+            // Load group data from Firebase
+            loadGroupDataFromFirebase();
+        }
+
+        function changeUser() {
+            if (isAuthReady && auth && auth.currentUser) {
+                // If authenticated, logout first
+                if (confirm('Voulez-vous vous déconnecter pour changer d\'utilisateur ?')) {
+                    logout();
+                }
+            } else {
+                // Guest mode or no auth - just show modal
+                showUserLoginModal();
+            }
+        }
+
+        function continueAsGuest() {
+            const guestName = prompt('Entrez votre nom (pour la traçabilité):', 'Invité');
+            if (!guestName) return;
+
+            currentUser = guestName;
+            currentGroup = null;
+
+            localStorage.setItem('currentUser', currentUser);
+
+            document.getElementById('currentUser').textContent = currentUser + ' (Mode invité)';
+            document.getElementById('userLoginModal').style.display = 'none';
+
+            console.log('✅ Mode invité activé:', currentUser);
+
+            // Load data
+            if (isFirebaseReady && database) {
+                loadGroupDataFromFirebase();
+            } else {
+                initData();
+            }
+        }
+
+        function showUserLoginModal() {
+            document.getElementById('userLoginModal').style.display = 'block';
+            loadAvailableGroups();
+        }
+
+        function loadAvailableGroups() {
+            if (isFirebaseReady && database) {
+                database.ref('groups').once('value', (snapshot) => {
+                    const groups = snapshot.val();
+                    if (groups) {
+                        availableGroups = groups;
+                        updateGroupSelect();
+                    }
+                });
+            }
+        }
+
+        function updateGroupSelect() {
+            const select = document.getElementById('groupSelect');
+            // Clear existing options except first two
+            while (select.options.length > 2) {
+                select.remove(2);
+            }
+            // Add available groups
+            availableGroups.forEach(group => {
+                const option = document.createElement('option');
+                option.value = group;
+                option.textContent = group;
+                select.appendChild(option);
+            });
+        }
+
+        function saveGroupsToFirebase() {
+            if (isFirebaseReady && database) {
+                database.ref('groups').set(availableGroups)
+                    .then(() => console.log('✅ Groupes sauvegardés'))
+                    .catch(error => console.error('❌ Erreur sauvegarde groupes:', error));
+            }
+        }
+
+        function checkUserLogin() {
+            const savedUser = localStorage.getItem('currentUser');
+            const savedGroup = localStorage.getItem('currentGroup');
+
+            if (savedUser && savedGroup) {
+                currentUser = savedUser;
+                currentGroup = savedGroup;
+                document.getElementById('currentUser').textContent = savedUser;
+                document.getElementById('currentGroup').textContent = savedGroup;
+                loadGroupDataFromFirebase();
+            } else {
+                showUserLoginModal();
+            }
+        }
+
+        function loadGroupDataFromFirebase() {
+            if (!isFirebaseReady || !database) return;
+
+            // Use a shared path for all users (not separated by group)
+            const sharedRef = database.ref('sharedWorkshopData');
+
+            // Listen for changes in real-time
+            sharedRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    appData = data;
+                    // Ensure all arrays exist (backward compatibility)
+                    if (!appData.metrics) appData.metrics = [];
+                    if (!appData.devices) appData.devices = [];
+                    if (!appData.countries) appData.countries = [];
+                    if (!appData.trafficSources) appData.trafficSources = [];
+                    if (!appData.parcours) appData.parcours = [];
+                    if (!appData.pages) appData.pages = [];
+                    if (!appData.themes) appData.themes = [];
+                    if (!appData.hypotheses) appData.hypotheses = [];
+                    if (!appData.ideas) appData.ideas = [];
+
+                    // Normalize themes - ensure each theme has frictions array
+                    appData.themes.forEach(theme => {
+                        if (!theme.frictions) theme.frictions = [];
+                    });
+
+                    // Normalize pages - ensure each page has components array
+                    appData.pages.forEach(page => {
+                        if (!page.components) page.components = [];
+                    });
+
+                    renderAll();
+                    console.log(`🔄 Données partagées synchronisées (Utilisateur: ${currentUser}, Groupe: ${currentGroup})`);
+                } else {
+                    // First time - initialize with default data
+                    console.log('Aucune donnée existante, initialisation...');
+                    initData();
+                    saveGroupDataToFirebase();
+                }
+            });
+        }
+
+        function saveGroupDataToFirebase() {
+            if (!isFirebaseReady || !database) {
+                console.log('Sauvegarde locale (Firebase non prêt)');
+                localStorage.setItem('croWorkshopData', JSON.stringify(appData));
+                showSaveIndicator();
+                return;
+            }
+
+            // Add metadata
+            const dataWithMetadata = {
+                ...appData,
+                lastModified: new Date().toISOString(),
+                lastModifiedBy: currentUser || 'Anonyme',
+                lastModifiedGroup: currentGroup || 'default'
+            };
+
+            // Save to shared path (all users see the same data)
+            database.ref('sharedWorkshopData').set(dataWithMetadata)
+                .then(() => {
+                    console.log(`✅ Données partagées sauvegardées (Utilisateur: ${currentUser}, Groupe: ${currentGroup})`);
+                    showSaveIndicator();
+                })
+                .catch((error) => {
+                    console.error('❌ Erreur Firebase:', error);
+                    localStorage.setItem('croWorkshopData', JSON.stringify(appData));
+                    showSaveIndicator();
+                });
+        }
 
         // Load data from Firebase
         function loadFromFirebase() {
@@ -1632,25 +2702,9 @@
             });
         }
 
-        // Save data to Firebase
+        // Save data to Firebase (using new group-based logic)
         function saveToFirebase() {
-            if (isFirebaseReady && database) {
-                database.ref('workshopData').set(appData)
-                    .then(() => {
-                        console.log('✅ Données sauvegardées dans Firebase');
-                        showSaveIndicator();
-                    })
-                    .catch((error) => {
-                        console.error('❌ Erreur Firebase:', error);
-                        // Fallback to localStorage
-                        localStorage.setItem('croWorkshopData', JSON.stringify(appData));
-                        showSaveIndicator();
-                    });
-            } else {
-                // Fallback to localStorage if Firebase not available
-                localStorage.setItem('croWorkshopData', JSON.stringify(appData));
-                showSaveIndicator();
-            }
+            saveGroupDataToFirebase();
         }
 
         // Override saveData to use Firebase
@@ -1759,7 +2813,8 @@
                         desc: "Ajouter dans la hero section (sous le prix) une zone avec 4-5 badges/icônes mettant en avant : \"5 restaurants inclus\", \"Kids Club gratuit\", \"Spa sur place\", \"Piscines\", \"Activités nautiques\". Version A (control) vs Version B (avec badges)",
                         metricPrimary: "Taux d'entrée dans le BE depuis Resort Page",
                         metricSecondary: "Scroll depth, temps sur page, taux de rebond",
-                        priority: "Impact: 8, Confidence: 7, Ease: 6 = Score 7"
+                        priority: "Impact: 8, Confidence: 7, Ease: 6 = Score 7",
+                        votes: 0
                     }
                 ];
             }
