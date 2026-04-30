@@ -707,15 +707,15 @@
         </header>
 
         <nav class="nav-tabs">
-            <button class="tab-btn active" onclick="switchTab('dashboard')">📈 Dashboard</button>
-            <button class="tab-btn" onclick="switchTab('overview')">📊 Vue d'ensemble</button>
-            <button class="tab-btn" onclick="switchTab('parcours')">🗺️ Parcours Utilisateurs</button>
-            <button class="tab-btn" onclick="switchTab('comportement')">👤 Comportement In-Page</button>
-            <button class="tab-btn" onclick="switchTab('frictions')">🎨 Thèmes</button>
-            <button class="tab-btn" onclick="switchTab('benchmark')">🔍 Benchmark</button>
-            <button class="tab-btn" onclick="switchTab('hypotheses')">💡 Hypothèses</button>
-            <button class="tab-btn" onclick="switchTab('idees')">🚀 Idées d'AB Test</button>
-            <button class="tab-btn" onclick="switchTab('presentation')" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; font-weight: 600;">🎯 Mode Présentation</button>
+            <button class="tab-btn active" onclick="switchTab('dashboard', this)">📈 Dashboard</button>
+            <button class="tab-btn" onclick="switchTab('overview', this)">📊 Vue d'ensemble</button>
+            <button class="tab-btn" onclick="switchTab('parcours', this)">🗺️ Parcours Utilisateurs</button>
+            <button class="tab-btn" onclick="switchTab('comportement', this)">👤 Comportement In-Page</button>
+            <button class="tab-btn" onclick="switchTab('frictions', this)">🎨 Thèmes</button>
+            <button class="tab-btn" onclick="switchTab('benchmark', this)">🔍 Benchmark</button>
+            <button class="tab-btn" onclick="switchTab('hypotheses', this)">💡 Hypothèses</button>
+            <button class="tab-btn" onclick="switchTab('idees', this)">🚀 Idées d'AB Test</button>
+            <button class="tab-btn" onclick="switchTab('presentation', this)" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; font-weight: 600;">🎯 Mode Présentation</button>
         </nav>
 
         <!-- TAB 0: DASHBOARD -->
@@ -1054,21 +1054,8 @@
             </div>
             <form id="componentForm" onsubmit="saveComponent(event)">
                 <input type="hidden" id="componentPageId">
-                <div class="form-group">
-                    <label>Nom du Composant</label>
-                    <input type="text" id="componentName" placeholder="Ex: Hero Banner + CTA Principal" required>
-                </div>
-                <div class="form-group">
-                    <label>Scroll Reach (%)</label>
-                    <input type="text" id="componentScroll" placeholder="Ex: 98%">
-                </div>
-                <div class="form-group">
-                    <label>Taux de Clic (%)</label>
-                    <input type="text" id="componentClick" placeholder="Ex: 12%">
-                </div>
-                <div class="form-group">
-                    <label>Observation</label>
-                    <input type="text" id="componentObs" placeholder="Ex: Bonne visibilité, CTR acceptable">
+                <div id="componentFormFields">
+                    <!-- Fields will be generated dynamically based on column configuration -->
                 </div>
                 <button type="submit" class="btn-add">Ajouter Composant</button>
             </form>
@@ -1571,7 +1558,8 @@
             columnNames: {
                 devices: ['Device', 'Sessions', '% Total', 'Pages/Session', 'Exit Rate'],
                 countries: ['Pays', 'Sessions', '% Total', 'Taux d\'Entrée BE', 'Conversion'],
-                trafficSources: ['Source', 'Sessions', '% Total', 'Taux d\'Entrée BE']
+                trafficSources: ['Source', 'Sessions', '% Total', 'Taux d\'Entrée BE'],
+                components: ['Composant', 'Scroll Reach', 'Taux de Clic', 'Engagement', 'Heatmap', 'Observation']
             }
         };
 
@@ -2175,6 +2163,23 @@
             container.innerHTML = '';
 
             if (!appData.pages) appData.pages = [];
+            if (!appData.columnNames) appData.columnNames = {};
+            if (!appData.columnNames.components) appData.columnNames.components = ['Composant', 'Scroll Reach', 'Taux de Clic', 'Engagement', 'Heatmap', 'Observation'];
+
+            const colNames = appData.columnNames.components;
+            const dataKeys = ['name', 'scroll', 'click', 'engagement', 'heatmap', 'observation', 'field6', 'field7'];
+
+            // Add button to rename columns at the top
+            if (appData.pages.length > 0) {
+                const headerRow = document.createElement('div');
+                headerRow.style.marginBottom = '20px';
+                headerRow.style.display = 'flex';
+                headerRow.style.justifyContent = 'flex-end';
+                headerRow.innerHTML = `
+                    <button class="btn-edit" onclick="openEditColumnsModal('components')" style="padding: 8px 15px; font-size: 0.9em;">✏️ Renommer les colonnes du tableau</button>
+                `;
+                container.appendChild(headerRow);
+            }
 
             appData.pages.forEach(page => {
                 const section = document.createElement('div');
@@ -2191,20 +2196,14 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>Composant</th>
-                                <th>Scroll Reach</th>
-                                <th>Taux de Clic</th>
-                                <th>Observation</th>
+                                ${colNames.map(col => `<th>${col}</th>`).join('')}
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="components-${page.id}">
                             ${page.components.map((c, idx) => `
                                 <tr>
-                                    <td><strong>${c.name}</strong></td>
-                                    <td>${c.scroll}</td>
-                                    <td>${c.click}</td>
-                                    <td>${c.observation}</td>
+                                    ${dataKeys.slice(0, colNames.length).map((key, i) => `<td>${i === 0 ? '<strong>' + (c[key] || '') + '</strong>' : (c[key] || '')}</td>`).join('')}
                                     <td><button class="btn-delete" onclick="deleteComponent(${page.id}, ${idx})">🗑️</button></td>
                                 </tr>
                             `).join('')}
@@ -2884,6 +2883,29 @@
         function openComponentModal(pageId) {
             document.getElementById('componentPageId').value = pageId;
             document.getElementById('componentForm').reset();
+
+            // Generate form fields dynamically based on column configuration
+            if (!appData.columnNames) appData.columnNames = {};
+            if (!appData.columnNames.components) appData.columnNames.components = ['Composant', 'Scroll Reach', 'Taux de Clic', 'Engagement', 'Heatmap', 'Observation'];
+
+            const colNames = appData.columnNames.components;
+            const dataKeys = ['name', 'scroll', 'click', 'engagement', 'heatmap', 'observation'];
+
+            const formFields = document.getElementById('componentFormFields');
+            formFields.innerHTML = '';
+
+            colNames.forEach((colName, index) => {
+                const fieldKey = dataKeys[index] || `field${index}`;
+                const isRequired = index === 0; // Only first field (name) is required
+
+                formFields.innerHTML += `
+                    <div class="form-group">
+                        <label>${colName}${isRequired ? ' *' : ''}</label>
+                        <input type="text" id="component_${fieldKey}" placeholder="Ex: ..." ${isRequired ? 'required' : ''}>
+                    </div>
+                `;
+            });
+
             openModal('componentModal');
         }
 
@@ -3079,12 +3101,23 @@
             const pageId = parseInt(document.getElementById('componentPageId').value);
             const page = appData.pages.find(x => x.id === pageId);
 
-            page.components.push({
-                name: document.getElementById('componentName').value,
-                scroll: document.getElementById('componentScroll').value,
-                click: document.getElementById('componentClick').value,
-                observation: document.getElementById('componentObs').value
+            // Get column configuration
+            if (!appData.columnNames) appData.columnNames = {};
+            if (!appData.columnNames.components) appData.columnNames.components = ['Composant', 'Scroll Reach', 'Taux de Clic', 'Engagement', 'Heatmap', 'Observation'];
+
+            const dataKeys = ['name', 'scroll', 'click', 'engagement', 'heatmap', 'observation'];
+
+            // Build component object dynamically
+            const component = {};
+            dataKeys.forEach((key, index) => {
+                const fieldId = `component_${key}`;
+                const fieldElement = document.getElementById(fieldId);
+                if (fieldElement) {
+                    component[key] = fieldElement.value || '';
+                }
             });
+
+            page.components.push(component);
 
             saveData();
             renderPages();
@@ -3137,4 +3170,1677 @@
             });
 
             // Populate themes checkboxes (max 3)
-            const themesContainer = do
+            const themesContainer = document.getElementById('benchmarkThemesContainer');
+            themesContainer.innerHTML = '';
+            appData.themes.forEach(theme => {
+                const checkboxDiv = document.createElement('div');
+                checkboxDiv.style.marginBottom = '8px';
+                checkboxDiv.innerHTML = `
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" class="benchmark-theme-checkbox" value="${theme.name}" style="margin-right: 8px;" onchange="limitBenchmarkThemes(this)">
+                        <span>${theme.emoji} ${theme.name}</span>
+                    </label>
+                `;
+                themesContainer.appendChild(checkboxDiv);
+            });
+
+            if (id) {
+                const b = appData.benchmarks.find(x => x.id === id);
+                document.getElementById('benchmarkId').value = b.id;
+                document.getElementById('benchmarkCompetitor').value = b.competitor;
+                document.getElementById('benchmarkUrl').value = b.url || '';
+                document.getElementById('benchmarkDesc').value = b.desc;
+                document.getElementById('benchmarkHypothese').value = b.hypothese || '';
+                document.getElementById('benchmarkScore').value = b.score || 3;
+
+                // Load selected themes
+                if (b.themes && b.themes.length > 0) {
+                    const checkboxes = document.querySelectorAll('.benchmark-theme-checkbox');
+                    checkboxes.forEach(cb => {
+                        if (b.themes.includes(cb.value)) {
+                            cb.checked = true;
+                        }
+                    });
+                }
+
+                // Load custom categories
+                if (b.customCategories && b.customCategories.length > 0) {
+                    b.customCategories.forEach((cat, idx) => {
+                        if (idx < 3) {
+                            document.getElementById(`benchmarkCustomCategory${idx + 1}`).value = cat;
+                        }
+                    });
+                }
+
+                // Show existing image preview and download link
+                const preview = document.getElementById('benchmarkImagePreview');
+                const downloadContainer = document.getElementById('benchmarkDownloadImageContainer');
+                const downloadLink = document.getElementById('benchmarkDownloadImageLink');
+
+                if (b.image) {
+                    preview.src = b.image;
+                    preview.style.display = 'block';
+                    downloadLink.href = b.image;
+                    downloadContainer.style.display = 'block';
+                } else {
+                    preview.style.display = 'none';
+                    downloadContainer.style.display = 'none';
+                }
+            } else {
+                document.getElementById('benchmarkForm').reset();
+                document.getElementById('benchmarkId').value = '';
+                document.getElementById('benchmarkImagePreview').style.display = 'none';
+                document.getElementById('benchmarkDownloadImageContainer').style.display = 'none';
+
+                // Clear custom categories
+                for (let i = 1; i <= 3; i++) {
+                    document.getElementById(`benchmarkCustomCategory${i}`).value = '';
+                }
+            }
+            openModal('benchmarkModal');
+        }
+
+        function limitBenchmarkThemes(checkbox) {
+            const checkedBoxes = document.querySelectorAll('.benchmark-theme-checkbox:checked');
+            if (checkedBoxes.length > 3) {
+                checkbox.checked = false;
+                alert('Vous ne pouvez sélectionner que 3 thèmes maximum');
+            }
+        }
+
+        function saveBenchmark(e) {
+            e.preventDefault();
+            const id = document.getElementById('benchmarkId').value;
+            const imagePreview = document.getElementById('benchmarkImagePreview');
+
+            // Get selected themes (max 3)
+            const selectedThemes = [];
+            document.querySelectorAll('.benchmark-theme-checkbox:checked').forEach(cb => {
+                selectedThemes.push(cb.value);
+            });
+
+            // Get custom categories (max 3)
+            const customCategories = [];
+            for (let i = 1; i <= 3; i++) {
+                const catValue = document.getElementById(`benchmarkCustomCategory${i}`).value.trim();
+                if (catValue) {
+                    customCategories.push(catValue);
+                }
+            }
+
+            // Ensure user is set
+            const user = currentUser || localStorage.getItem('currentUser') || 'Invité';
+
+            const benchmark = {
+                id: id ? parseInt(id) : Date.now(),
+                competitor: document.getElementById('benchmarkCompetitor').value,
+                url: document.getElementById('benchmarkUrl').value,
+                themes: selectedThemes,
+                customCategories: customCategories,
+                desc: document.getElementById('benchmarkDesc').value,
+                hypothese: document.getElementById('benchmarkHypothese').value,
+                score: parseInt(document.getElementById('benchmarkScore').value),
+                image: imagePreview.style.display !== 'none' ? imagePreview.src : '',
+                createdBy: id ? (appData.benchmarks.find(x => x.id === parseInt(id))?.createdBy || user) : user,
+                createdAt: id ? (appData.benchmarks.find(x => x.id === parseInt(id))?.createdAt || new Date().toISOString()) : new Date().toISOString(),
+                modifiedBy: user,
+                modifiedAt: new Date().toISOString()
+            };
+
+            if (id) {
+                const index = appData.benchmarks.findIndex(x => x.id === parseInt(id));
+                appData.benchmarks[index] = benchmark;
+            } else {
+                appData.benchmarks.push(benchmark);
+            }
+
+            saveData();
+            renderBenchmarks();
+            closeModal('benchmarkModal');
+        }
+
+        function editBenchmark(id) {
+            openBenchmarkModal(id);
+        }
+
+        function saveTheme(e) {
+            e.preventDefault();
+            console.log('saveTheme appelée');
+
+            if (!appData.themes) appData.themes = [];
+
+            const id = document.getElementById('themeId').value;
+            const existingTheme = id ? appData.themes.find(x => x.id === parseInt(id)) : null;
+
+            const theme = {
+                id: id ? parseInt(id) : Date.now(),
+                name: document.getElementById('themeName').value,
+                emoji: document.getElementById('themeEmoji').value,
+                frictions: existingTheme ? existingTheme.frictions : []
+            };
+
+            console.log('Thème à sauvegarder:', theme);
+
+            if (id) {
+                const index = appData.themes.findIndex(x => x.id === parseInt(id));
+                appData.themes[index] = theme;
+                console.log('Thème modifié');
+            } else {
+                appData.themes.push(theme);
+                console.log('Nouveau thème ajouté');
+            }
+
+            console.log('Total thèmes:', appData.themes.length);
+            saveData();
+            renderThemes();
+            closeModal('themeModal');
+        }
+
+        function saveFriction(e) {
+            e.preventDefault();
+            const themeId = parseInt(document.getElementById('frictionThemeId').value);
+            const theme = appData.themes.find(x => x.id === themeId);
+
+            theme.frictions.push({
+                title: document.getElementById('frictionTitle').value,
+                desc: document.getElementById('frictionDesc').value
+            });
+
+            saveData();
+            renderThemes();
+            closeModal('frictionModal');
+        }
+
+        function saveHypothese(e) {
+            e.preventDefault();
+            const id = document.getElementById('hypotheseId').value;
+            const hypothese = {
+                id: id ? parseInt(id) : Date.now(),
+                problematique: document.getElementById('hypotheseProblematique').value,
+                title: document.getElementById('hypotheseTitle').value,
+                si: document.getElementById('hypotheseSi').value,
+                alors: document.getElementById('hypotheseAlors').value,
+                impact: document.getElementById('hypotheseImpact').value,
+                themes: document.getElementById('hypotheseThemes').value
+            };
+
+            if (id) {
+                const index = appData.hypotheses.findIndex(x => x.id === parseInt(id));
+                appData.hypotheses[index] = hypothese;
+            } else {
+                appData.hypotheses.push(hypothese);
+            }
+
+            saveData();
+            renderHypotheses();
+            closeModal('hypotheseModal');
+        }
+
+        function saveIdea(e) {
+            e.preventDefault();
+            const id = document.getElementById('ideaId').value;
+            const existingIdea = id ? appData.ideas.find(x => x.id === parseInt(id)) : null;
+
+            // Ensure currentUser is set
+            const user = currentUser || localStorage.getItem('currentUser') || 'Invité';
+
+            // Get selected themes from multi-select
+            const themesSelect = document.getElementById('ideaThemes');
+            const selectedThemes = Array.from(themesSelect.selectedOptions)
+                .map(option => option.value)
+                .filter(value => value !== '')
+                .join(', ');
+
+            // Get selected benchmarks from multi-select
+            const benchmarksSelect = document.getElementById('ideaBenchmarks');
+            const selectedBenchmarks = Array.from(benchmarksSelect.selectedOptions)
+                .map(option => option.value)
+                .filter(value => value !== '')
+                .join(', ');
+
+            const idea = {
+                id: id ? parseInt(id) : Date.now(),
+                title: document.getElementById('ideaTitle').value,
+                pages: document.getElementById('ideaPages').value,
+                hypothese: document.getElementById('ideaHypothese').value,
+                themes: selectedThemes,
+                benchmarks: selectedBenchmarks,
+                desc: document.getElementById('ideaDesc').value,
+                metricPrimary: document.getElementById('ideaMetricPrimary').value,
+                metricSecondary: document.getElementById('ideaMetricSecondary').value,
+                impact: parseInt(document.getElementById('ideaImpact').value) || 5,
+                effort: parseInt(document.getElementById('ideaEffort').value) || 5,
+                votes: existingIdea ? existingIdea.votes : 0,
+                comments: existingIdea && existingIdea.comments ? existingIdea.comments : [],
+                createdBy: existingIdea ? existingIdea.createdBy : user,
+                createdAt: existingIdea ? existingIdea.createdAt : new Date().toISOString(),
+                modifiedBy: user,
+                modifiedAt: new Date().toISOString()
+            };
+
+            if (id) {
+                const index = appData.ideas.findIndex(x => x.id === parseInt(id));
+                appData.ideas[index] = idea;
+            } else {
+                appData.ideas.push(idea);
+            }
+
+            saveData();
+            renderIdeas();
+            closeModal('ideaModal');
+        }
+
+        // Edit functions
+        function editParcours(id) {
+            openParcoursModal(id);
+        }
+
+        function editPage(id) {
+            openPageModal(id);
+        }
+
+        function editTheme(id) {
+            openThemeModal(id);
+        }
+
+        function editHypothese(id) {
+            openHypotheseModal(id);
+        }
+
+        function editIdea(id) {
+            openIdeaModal(id);
+        }
+
+        // Delete functions
+        function deleteParcours(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce parcours ?')) {
+                appData.parcours = appData.parcours.filter(x => x.id !== id);
+                saveData();
+                renderParcours();
+            }
+        }
+
+        function deletePage(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette page ?')) {
+                appData.pages = appData.pages.filter(x => x.id !== id);
+                saveData();
+                renderPages();
+            }
+        }
+
+        function deleteComponent(pageId, componentIndex) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce composant ?')) {
+                const page = appData.pages.find(x => x.id === pageId);
+                page.components.splice(componentIndex, 1);
+                saveData();
+                renderPages();
+            }
+        }
+
+        function deleteTheme(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce thème ?')) {
+                appData.themes = appData.themes.filter(x => x.id !== id);
+                saveData();
+                renderThemes();
+            }
+        }
+
+        function deleteFriction(themeId, frictionIndex) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette friction ?')) {
+                const theme = appData.themes.find(x => x.id === themeId);
+                theme.frictions.splice(frictionIndex, 1);
+                saveData();
+                renderThemes();
+            }
+        }
+
+        function deleteHypothese(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette hypothèse ?')) {
+                appData.hypotheses = appData.hypotheses.filter(x => x.id !== id);
+                saveData();
+                renderHypotheses();
+            }
+        }
+
+        function deleteBenchmark(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce benchmark ?')) {
+                appData.benchmarks = appData.benchmarks.filter(x => x.id !== id);
+                saveData();
+                renderBenchmarks();
+            }
+        }
+
+        function exportBenchmarksToExcel() {
+            if (!appData.benchmarks || appData.benchmarks.length === 0) {
+                alert('Aucun benchmark à exporter');
+                return;
+            }
+
+            const excelData = appData.benchmarks.map((bench, index) => {
+                // Get themes display
+                let themesText = '';
+                if (bench.themes && bench.themes.length > 0) {
+                    const themeNames = bench.themes.map(themeName => {
+                        const theme = appData.themes.find(t => t.name === themeName);
+                        return theme ? `${theme.emoji} ${theme.name}` : themeName;
+                    });
+                    themesText = themeNames.join(', ');
+                }
+
+                // Get custom categories
+                let categoriesText = '';
+                if (bench.customCategories && bench.customCategories.length > 0) {
+                    categoriesText = bench.customCategories.join(', ');
+                }
+
+                return {
+                    'N°': index + 1,
+                    'Concurrent': bench.competitor,
+                    'URL': bench.url || '',
+                    'Thèmes': themesText,
+                    'Catégories': categoriesText,
+                    'Description': bench.desc,
+                    'Hypothèse liée': bench.hypothese || '',
+                    'Score': bench.score || 3,
+                    'A une image': bench.image ? 'Oui' : 'Non',
+                    'Créé par': bench.createdBy || 'N/A',
+                    'Date création': bench.createdAt ? new Date(bench.createdAt).toLocaleDateString('fr-FR') : 'N/A',
+                    'Modifié par': bench.modifiedBy || 'N/A',
+                    'Date modification': bench.modifiedAt ? new Date(bench.modifiedAt).toLocaleDateString('fr-FR') : 'N/A'
+                };
+            });
+
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(excelData);
+
+            // Définir la largeur des colonnes
+            ws['!cols'] = [
+                { wch: 5 },  // N°
+                { wch: 20 }, // Concurrent
+                { wch: 40 }, // URL
+                { wch: 30 }, // Thèmes
+                { wch: 25 }, // Catégories
+                { wch: 50 }, // Description
+                { wch: 30 }, // Hypothèse liée
+                { wch: 8 },  // Score
+                { wch: 12 }, // A une image
+                { wch: 18 }, // Créé par
+                { wch: 15 }, // Date création
+                { wch: 18 }, // Modifié par
+                { wch: 18 }  // Date modification
+            ];
+
+            XLSX.utils.book_append_sheet(wb, ws, "Benchmarks");
+
+            // Générer le nom du fichier avec la date
+            const fileName = `benchmarks-concurrents-${new Date().toISOString().split('T')[0]}.xlsx`;
+
+            XLSX.writeFile(wb, fileName);
+
+            console.log(`✅ Export Excel réussi : ${fileName}`);
+        }
+
+        function exportAllToExcel() {
+            if (!appData) {
+                alert('Aucune donnée à exporter');
+                return;
+            }
+
+            const wb = XLSX.utils.book_new();
+
+            // Sheet 1: Métriques globales
+            if (appData.metrics && appData.metrics.length > 0) {
+                const metricsData = appData.metrics.map((m, idx) => ({
+                    'N°': idx + 1,
+                    'Métrique': m.label,
+                    'Valeur': m.value
+                }));
+                const ws1 = XLSX.utils.json_to_sheet(metricsData);
+                ws1['!cols'] = [{ wch: 5 }, { wch: 30 }, { wch: 20 }];
+                XLSX.utils.book_append_sheet(wb, ws1, "Métriques");
+            }
+
+            // Sheet 2: Thèmes et Frictions
+            if (appData.themes && appData.themes.length > 0) {
+                const themesData = [];
+                appData.themes.forEach(theme => {
+                    if (theme.frictions && theme.frictions.length > 0) {
+                        theme.frictions.forEach((friction, idx) => {
+                            themesData.push({
+                                'Thème': `${theme.emoji} ${theme.name}`,
+                                'Friction #': idx + 1,
+                                'Titre Friction': friction.title,
+                                'Description': friction.desc
+                            });
+                        });
+                    } else {
+                        themesData.push({
+                            'Thème': `${theme.emoji} ${theme.name}`,
+                            'Friction #': '-',
+                            'Titre Friction': '-',
+                            'Description': '-'
+                        });
+                    }
+                });
+                const ws2 = XLSX.utils.json_to_sheet(themesData);
+                ws2['!cols'] = [{ wch: 20 }, { wch: 12 }, { wch: 40 }, { wch: 60 }];
+                XLSX.utils.book_append_sheet(wb, ws2, "Thèmes et Frictions");
+            }
+
+            // Sheet 3: Hypothèses
+            if (appData.hypotheses && appData.hypotheses.length > 0) {
+                const hypothesesData = appData.hypotheses.map((h, idx) => ({
+                    'N°': idx + 1,
+                    'Problématique': h.problematique || '',
+                    'Titre': h.title,
+                    'Si': h.si,
+                    'Alors': h.alors,
+                    'Impact': h.impact,
+                    'Thèmes': h.themes
+                }));
+                const ws3 = XLSX.utils.json_to_sheet(hypothesesData);
+                ws3['!cols'] = [{ wch: 5 }, { wch: 40 }, { wch: 30 }, { wch: 50 }, { wch: 50 }, { wch: 50 }, { wch: 30 }];
+                XLSX.utils.book_append_sheet(wb, ws3, "Hypothèses");
+            }
+
+            // Sheet 4: Benchmarks
+            if (appData.benchmarks && appData.benchmarks.length > 0) {
+                const benchmarksData = appData.benchmarks.map((bench, idx) => {
+                    let themesText = '';
+                    if (bench.themes && bench.themes.length > 0) {
+                        const themeNames = bench.themes.map(themeName => {
+                            const theme = appData.themes.find(t => t.name === themeName);
+                            return theme ? `${theme.emoji} ${theme.name}` : themeName;
+                        });
+                        themesText = themeNames.join(', ');
+                    }
+                    let categoriesText = '';
+                    if (bench.customCategories && bench.customCategories.length > 0) {
+                        categoriesText = bench.customCategories.join(', ');
+                    }
+                    return {
+                        'N°': idx + 1,
+                        'Concurrent': bench.competitor,
+                        'URL': bench.url || '',
+                        'Thèmes': themesText,
+                        'Catégories': categoriesText,
+                        'Description': bench.desc,
+                        'Hypothèse liée': bench.hypothese || '',
+                        'Score': bench.score || 3,
+                        'Créé par': bench.createdBy || 'N/A',
+                        'Date création': bench.createdAt ? new Date(bench.createdAt).toLocaleDateString('fr-FR') : 'N/A'
+                    };
+                });
+                const ws4 = XLSX.utils.json_to_sheet(benchmarksData);
+                ws4['!cols'] = [{ wch: 5 }, { wch: 20 }, { wch: 40 }, { wch: 30 }, { wch: 25 }, { wch: 50 }, { wch: 30 }, { wch: 8 }, { wch: 18 }, { wch: 15 }];
+                XLSX.utils.book_append_sheet(wb, ws4, "Benchmarks");
+            }
+
+            // Sheet 5: Idées AB Test (avec commentaires)
+            if (appData.ideas && appData.ideas.length > 0) {
+                const ideasData = appData.ideas.map((idea, idx) => {
+                    const commentsText = (idea.comments || []).map(c => `[${c.author}]: ${c.text}`).join(' | ');
+
+                    // Find problematique from hypothesis
+                    let problematique = '';
+                    if (idea.hypothese) {
+                        const hypothesis = appData.hypotheses.find(h => h.title === idea.hypothese);
+                        if (hypothesis && hypothesis.problematique) {
+                            problematique = hypothesis.problematique;
+                        }
+                    }
+
+                    // Find benchmarks names
+                    let benchmarksText = '';
+                    if (idea.benchmarks) {
+                        const benchmarkIds = idea.benchmarks.split(',').map(b => b.trim()).filter(b => b !== '');
+                        benchmarksText = benchmarkIds.map(benchId => {
+                            const bench = appData.benchmarks.find(b => b.id === parseInt(benchId));
+                            return bench ? bench.competitor : '';
+                        }).filter(b => b !== '').join(', ');
+                    }
+
+                    return {
+                        'N°': idx + 1,
+                        'Titre': idea.title,
+                        'Pages': idea.pages,
+                        'Hypothèse': idea.hypothese,
+                        'Problématique': problematique,
+                        'Thèmes': idea.themes,
+                        'Benchmark(s)': benchmarksText,
+                        'Description': idea.desc,
+                        'Métrique Primaire': idea.metricPrimary,
+                        'Métriques Secondaires': idea.metricSecondary,
+                        'Impact (1-10)': idea.impact || 5,
+                        'Effort (1-10)': idea.effort || 5,
+                        'Votes': idea.votes || 0,
+                        'Commentaires': commentsText || '-',
+                        'Créée par': idea.createdBy || 'N/A',
+                        'Date création': idea.createdAt ? new Date(idea.createdAt).toLocaleDateString('fr-FR') : 'N/A',
+                        'Modifiée par': idea.modifiedBy || 'N/A',
+                        'Date modification': idea.modifiedAt ? new Date(idea.modifiedAt).toLocaleDateString('fr-FR') : 'N/A'
+                    };
+                });
+                const ws5 = XLSX.utils.json_to_sheet(ideasData);
+                ws5['!cols'] = [
+                    { wch: 5 }, { wch: 35 }, { wch: 20 }, { wch: 30 }, { wch: 50 },
+                    { wch: 30 }, { wch: 30 }, { wch: 60 }, { wch: 30 }, { wch: 30 },
+                    { wch: 12 }, { wch: 12 }, { wch: 8 }, { wch: 80 }, { wch: 18 },
+                    { wch: 15 }, { wch: 18 }, { wch: 18 }
+                ];
+                XLSX.utils.book_append_sheet(wb, ws5, "Idées AB Test");
+            }
+
+            // Generate filename
+            const fileName = `atelier-cro-complet-${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+
+            console.log(`✅ Export complet Excel réussi : ${fileName}`);
+            alert(`✅ Export réussi !\n\nFichier : ${fileName}\n\nOnglets inclus :\n- Métriques\n- Thèmes et Frictions\n- Hypothèses\n- Benchmarks\n- Idées AB Test (avec commentaires)`);
+        }
+
+        function deleteIdea(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette idée ?')) {
+                appData.ideas = appData.ideas.filter(x => x.id !== id);
+                saveData();
+                renderIdeas();
+            }
+        }
+
+        function voteIdea(id) {
+            const idea = appData.ideas.find(x => x.id === id);
+            if (idea) {
+                if (!idea.votes) idea.votes = 0;
+                idea.votes++;
+                saveData();
+
+                // Mise à jour visuelle immédiate
+                const voteElement = document.getElementById(`votes-${id}`);
+                if (voteElement) {
+                    voteElement.textContent = idea.votes;
+                    voteElement.style.transform = 'scale(1.3)';
+                    voteElement.style.color = '#4CAF50';
+                    setTimeout(() => {
+                        voteElement.style.transform = 'scale(1)';
+                        voteElement.style.color = '#667eea';
+                    }, 200);
+                }
+
+                // Re-render pour trier
+                setTimeout(() => renderIdeas(), 300);
+            }
+        }
+
+        function unvoteIdea(id) {
+            const idea = appData.ideas.find(x => x.id === id);
+            if (idea) {
+                if (!idea.votes) idea.votes = 0;
+                if (idea.votes > 0) {
+                    idea.votes--;
+                    saveData();
+
+                    // Mise à jour visuelle immédiate
+                    const voteElement = document.getElementById(`votes-${id}`);
+                    if (voteElement) {
+                        voteElement.textContent = idea.votes;
+                        voteElement.style.transform = 'scale(0.8)';
+                        voteElement.style.color = '#ff6b6b';
+                        setTimeout(() => {
+                            voteElement.style.transform = 'scale(1)';
+                            voteElement.style.color = '#667eea';
+                        }, 200);
+                    }
+
+                    // Re-render pour trier
+                    setTimeout(() => renderIdeas(), 300);
+                }
+            }
+        }
+
+        // === METRIC FUNCTIONS ===
+        function openMetricModal(id = null) {
+            if (id) {
+                const m = appData.metrics.find(x => x.id === id);
+                document.getElementById('metricId').value = m.id;
+                document.getElementById('metricLabel').value = m.label;
+                document.getElementById('metricValue').value = m.value;
+            } else {
+                document.getElementById('metricForm').reset();
+                document.getElementById('metricId').value = '';
+            }
+            openModal('metricModal');
+        }
+
+        function saveMetric(e) {
+            e.preventDefault();
+            console.log('saveMetric appelée');
+
+            if (!appData.metrics) appData.metrics = [];
+
+            const id = document.getElementById('metricId').value;
+            const metric = {
+                id: id ? parseInt(id) : Date.now(),
+                label: document.getElementById('metricLabel').value,
+                value: document.getElementById('metricValue').value
+            };
+
+            console.log('Métrique à sauvegarder:', metric);
+
+            if (id) {
+                const index = appData.metrics.findIndex(x => x.id === parseInt(id));
+                appData.metrics[index] = metric;
+                console.log('Métrique modifiée');
+            } else {
+                appData.metrics.push(metric);
+                console.log('Nouvelle métrique ajoutée');
+            }
+
+            console.log('Total métriques:', appData.metrics.length);
+            saveData();
+            renderMetrics();
+            closeModal('metricModal');
+        }
+
+        function editMetric(id) {
+            openMetricModal(id);
+        }
+
+        function deleteMetric(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette métrique ?')) {
+                appData.metrics = appData.metrics.filter(x => x.id !== id);
+                saveData();
+                renderMetrics();
+            }
+        }
+
+        // === DEVICE FUNCTIONS ===
+        function openDeviceModal(id = null) {
+            if (id) {
+                const d = appData.devices.find(x => x.id === id);
+                document.getElementById('deviceId').value = d.id;
+                document.getElementById('deviceName').value = d.name;
+                document.getElementById('deviceSessions').value = d.sessions;
+                document.getElementById('devicePercent').value = d.percent;
+                document.getElementById('devicePagesPerSession').value = d.pagesPerSession;
+                document.getElementById('deviceExitRate').value = d.exitRate;
+            } else {
+                document.getElementById('deviceForm').reset();
+                document.getElementById('deviceId').value = '';
+            }
+            openModal('deviceModal');
+        }
+
+        function saveDevice(e) {
+            e.preventDefault();
+            const id = document.getElementById('deviceId').value;
+            const device = {
+                id: id ? parseInt(id) : Date.now(),
+                name: document.getElementById('deviceName').value,
+                sessions: document.getElementById('deviceSessions').value,
+                percent: document.getElementById('devicePercent').value,
+                pagesPerSession: document.getElementById('devicePagesPerSession').value,
+                exitRate: document.getElementById('deviceExitRate').value
+            };
+
+            if (id) {
+                const index = appData.devices.findIndex(x => x.id === parseInt(id));
+                appData.devices[index] = device;
+            } else {
+                appData.devices.push(device);
+            }
+
+            saveData();
+            renderDevices();
+            closeModal('deviceModal');
+        }
+
+        function editDevice(id) {
+            openDeviceModal(id);
+        }
+
+        function deleteDevice(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce device ?')) {
+                appData.devices = appData.devices.filter(x => x.id !== id);
+                saveData();
+                renderDevices();
+            }
+        }
+
+        // === COUNTRY FUNCTIONS ===
+        function openCountryModal(id = null) {
+            if (id) {
+                const c = appData.countries.find(x => x.id === id);
+                document.getElementById('countryId').value = c.id;
+                document.getElementById('countryName').value = c.name;
+                document.getElementById('countrySessions').value = c.sessions;
+                document.getElementById('countryPercent').value = c.percent;
+                document.getElementById('countryBeEntry').value = c.beEntry;
+                document.getElementById('countryConversion').value = c.conversion;
+            } else {
+                document.getElementById('countryForm').reset();
+                document.getElementById('countryId').value = '';
+            }
+            openModal('countryModal');
+        }
+
+        function saveCountry(e) {
+            e.preventDefault();
+            const id = document.getElementById('countryId').value;
+            const country = {
+                id: id ? parseInt(id) : Date.now(),
+                name: document.getElementById('countryName').value,
+                sessions: document.getElementById('countrySessions').value,
+                percent: document.getElementById('countryPercent').value,
+                beEntry: document.getElementById('countryBeEntry').value,
+                conversion: document.getElementById('countryConversion').value
+            };
+
+            if (id) {
+                const index = appData.countries.findIndex(x => x.id === parseInt(id));
+                appData.countries[index] = country;
+            } else {
+                appData.countries.push(country);
+            }
+
+            saveData();
+            renderCountries();
+            closeModal('countryModal');
+        }
+
+        function editCountry(id) {
+            openCountryModal(id);
+        }
+
+        function deleteCountry(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce pays ?')) {
+                appData.countries = appData.countries.filter(x => x.id !== id);
+                saveData();
+                renderCountries();
+            }
+        }
+
+        // === TRAFFIC SOURCE FUNCTIONS ===
+        function openTrafficSourceModal(id = null) {
+            if (id) {
+                const ts = appData.trafficSources.find(x => x.id === id);
+                document.getElementById('trafficSourceId').value = ts.id;
+                document.getElementById('trafficSourceName').value = ts.name;
+                document.getElementById('trafficSourcePercent').value = ts.percent;
+                document.getElementById('trafficSourceBeEntry').value = ts.beEntry;
+                document.getElementById('trafficSourceQuality').value = ts.quality;
+            } else {
+                document.getElementById('trafficSourceForm').reset();
+                document.getElementById('trafficSourceId').value = '';
+            }
+            openModal('trafficSourceModal');
+        }
+
+        function saveTrafficSource(e) {
+            e.preventDefault();
+            const id = document.getElementById('trafficSourceId').value;
+            const trafficSource = {
+                id: id ? parseInt(id) : Date.now(),
+                name: document.getElementById('trafficSourceName').value,
+                percent: document.getElementById('trafficSourcePercent').value,
+                beEntry: document.getElementById('trafficSourceBeEntry').value,
+                quality: document.getElementById('trafficSourceQuality').value
+            };
+
+            if (id) {
+                const index = appData.trafficSources.findIndex(x => x.id === parseInt(id));
+                appData.trafficSources[index] = trafficSource;
+            } else {
+                appData.trafficSources.push(trafficSource);
+            }
+
+            saveData();
+            renderTrafficSources();
+            closeModal('trafficSourceModal');
+        }
+
+        function editTrafficSource(id) {
+            openTrafficSourceModal(id);
+        }
+
+        function deleteTrafficSource(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette source de trafic ?')) {
+                appData.trafficSources = appData.trafficSources.filter(x => x.id !== id);
+                saveData();
+                renderTrafficSources();
+            }
+        }
+
+        // === CUSTOM SEGMENTS FUNCTIONS ===
+        function openCreateSegmentModal(id = null) {
+            if (id) {
+                const segment = appData.customSegments.find(x => x.id === id);
+                if (segment) {
+                    document.getElementById('segmentId').value = segment.id;
+                    document.getElementById('segmentName').value = segment.name;
+                    document.getElementById('segmentColumns').value = segment.columns.join(', ');
+                    document.getElementById('segmentModalTitle').textContent = 'Modifier le Segment';
+                    document.getElementById('segmentSubmitBtn').textContent = 'Enregistrer les modifications';
+                    document.getElementById('segmentSubmitBtn').className = 'btn-edit';
+                }
+            } else {
+                document.getElementById('createSegmentForm').reset();
+                document.getElementById('segmentId').value = '';
+                document.getElementById('segmentModalTitle').textContent = 'Créer un Segment Personnalisé';
+                document.getElementById('segmentSubmitBtn').textContent = 'Créer le Segment';
+                document.getElementById('segmentSubmitBtn').className = 'btn-add';
+            }
+            openModal('createSegmentModal');
+        }
+
+        function saveSegment(e) {
+            e.preventDefault();
+            console.log('saveSegment appelée');
+
+            if (!appData.customSegments) appData.customSegments = [];
+
+            const id = document.getElementById('segmentId').value;
+            const name = document.getElementById('segmentName').value;
+            const columnsStr = document.getElementById('segmentColumns').value;
+            const columns = columnsStr.split(',').map(c => c.trim()).filter(c => c);
+
+            let existingRows = [];
+            let oldColumns = [];
+
+            if (id) {
+                const existingSegment = appData.customSegments.find(x => x.id === parseInt(id));
+                if (existingSegment) {
+                    existingRows = existingSegment.rows || [];
+                    oldColumns = existingSegment.columns || [];
+                }
+            }
+
+            // If editing and columns changed, migrate data
+            if (id && oldColumns.length > 0 && JSON.stringify(oldColumns) !== JSON.stringify(columns)) {
+                console.log('Migration des colonnes détectée:', oldColumns, '->', columns);
+
+                // Map old column names to new column names (in order)
+                const updatedRows = existingRows.map(row => {
+                    const newRow = {};
+                    columns.forEach((newCol, index) => {
+                        // If there's a matching old column at same position, use its value
+                        if (oldColumns[index]) {
+                            newRow[newCol] = row[oldColumns[index]] || '';
+                        } else {
+                            newRow[newCol] = '';
+                        }
+                    });
+                    return newRow;
+                });
+                existingRows = updatedRows;
+            }
+
+            const segment = {
+                id: id ? parseInt(id) : Date.now(),
+                name: name,
+                columns: columns,
+                rows: existingRows
+            };
+
+            console.log('Segment à sauvegarder:', segment);
+
+            if (id) {
+                const index = appData.customSegments.findIndex(x => x.id === parseInt(id));
+                appData.customSegments[index] = segment;
+                console.log('Segment modifié');
+            } else {
+                appData.customSegments.push(segment);
+                console.log('Nouveau segment ajouté');
+            }
+
+            console.log('Total segments:', appData.customSegments.length);
+            saveData();
+            renderCustomSegments();
+            closeModal('createSegmentModal');
+        }
+
+        function editSegment(id) {
+            openCreateSegmentModal(id);
+        }
+
+        function deleteSegment(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce segment et toutes ses données ?')) {
+                appData.customSegments = appData.customSegments.filter(x => x.id !== id);
+                saveData();
+                renderCustomSegments();
+            }
+        }
+
+        // === EDIT COLUMN NAMES FOR DEVICES, COUNTRIES, TRAFFIC SOURCES ===
+        function openEditColumnsModal(type) {
+            document.getElementById('editColumnsType').value = type;
+
+            if (!appData.columnNames) appData.columnNames = {};
+
+            let currentColumns = [];
+            if (type === 'devices') {
+                currentColumns = appData.columnNames.devices || ['Device', 'Sessions', '% Total', 'Pages/Session', 'Exit Rate'];
+            } else if (type === 'countries') {
+                currentColumns = appData.columnNames.countries || ['Pays', 'Sessions', '% Total', 'Taux d\'Entrée BE', 'Conversion'];
+            } else if (type === 'trafficSources') {
+                currentColumns = appData.columnNames.trafficSources || ['Source', '% Sessions', 'Taux d\'Entrée BE', 'Quality Score'];
+            } else if (type === 'components') {
+                currentColumns = appData.columnNames.components || ['Composant', 'Scroll Reach', 'Taux de Clic', 'Observation'];
+            }
+
+            document.getElementById('editColumnsInput').value = currentColumns.join(', ');
+            openModal('editColumnsModal');
+        }
+
+        function saveColumnNames(e) {
+            e.preventDefault();
+
+            const type = document.getElementById('editColumnsType').value;
+            const columnsStr = document.getElementById('editColumnsInput').value;
+            const newColumns = columnsStr.split(',').map(c => c.trim()).filter(c => c);
+
+            if (!appData.columnNames) appData.columnNames = {};
+
+            // Get old columns to check expected length
+            let oldColumns = [];
+            let expectedLength = 0;
+            if (type === 'devices') {
+                oldColumns = appData.columnNames.devices || ['Device', 'Sessions', '% Total', 'Pages/Session', 'Exit Rate'];
+                expectedLength = 5;
+            } else if (type === 'countries') {
+                oldColumns = appData.columnNames.countries || ['Pays', 'Sessions', '% Total', 'Taux d\'Entrée BE', 'Conversion'];
+                expectedLength = 5;
+            } else if (type === 'trafficSources') {
+                oldColumns = appData.columnNames.trafficSources || ['Source', '% Sessions', 'Taux d\'Entrée BE', 'Quality Score'];
+                expectedLength = 4;
+            } else if (type === 'components') {
+                oldColumns = appData.columnNames.components || ['Composant', 'Scroll Reach', 'Taux de Clic', 'Engagement', 'Heatmap', 'Observation'];
+                expectedLength = null; // Flexible: between 4 and 8 columns
+            }
+
+            // Validation: exact count for fixed tables, range for components
+            if (type === 'components') {
+                if (newColumns.length < 4 || newColumns.length > 8) {
+                    alert(`Erreur : Vous devez fournir entre 4 et 8 colonnes (actuellement ${newColumns.length})`);
+                    return;
+                }
+            } else if (expectedLength !== null && newColumns.length !== expectedLength) {
+                alert(`Erreur : Vous devez fournir exactement ${expectedLength} colonnes (actuellement ${newColumns.length})`);
+                return;
+            }
+
+            // Save new column names
+            appData.columnNames[type] = newColumns;
+
+            console.log(`Colonnes ${type} mises à jour:`, newColumns);
+
+            saveData();
+
+            // Re-render the appropriate section
+            if (type === 'devices') renderDevices();
+            else if (type === 'countries') renderCountries();
+            else if (type === 'trafficSources') renderTrafficSources();
+            else if (type === 'components') renderPages();
+
+            closeModal('editColumnsModal');
+        }
+
+        function openAddSegmentRowModal(segmentId, rowIndex = null) {
+            const segment = appData.customSegments.find(x => x.id === segmentId);
+            if (!segment) return;
+
+            document.getElementById('rowSegmentId').value = segmentId;
+            document.getElementById('rowIndex').value = rowIndex !== null ? rowIndex : '';
+
+            const fieldsContainer = document.getElementById('segmentRowFields');
+            fieldsContainer.innerHTML = '';
+
+            segment.columns.forEach(col => {
+                const value = rowIndex !== null ? (segment.rows[rowIndex][col] || '') : '';
+                fieldsContainer.innerHTML += `
+                    <div class="form-group">
+                        <label>${col}</label>
+                        <input type="text" id="field_${col}" value="${value}" placeholder="Ex: ...">
+                    </div>
+                `;
+            });
+
+            openModal('addSegmentRowModal');
+        }
+
+        function saveSegmentRow(e) {
+            e.preventDefault();
+            const segmentId = parseInt(document.getElementById('rowSegmentId').value);
+            const rowIndex = document.getElementById('rowIndex').value;
+
+            const segment = appData.customSegments.find(x => x.id === segmentId);
+            if (!segment) return;
+
+            const rowData = {};
+            segment.columns.forEach(col => {
+                const input = document.getElementById('field_' + col);
+                if (input) {
+                    rowData[col] = input.value;
+                }
+            });
+
+            if (rowIndex !== '') {
+                // Edit existing row
+                segment.rows[parseInt(rowIndex)] = rowData;
+            } else {
+                // Add new row
+                if (!segment.rows) segment.rows = [];
+                segment.rows.push(rowData);
+            }
+
+            saveData();
+            renderCustomSegments();
+            closeModal('addSegmentRowModal');
+        }
+
+        function editSegmentRow(segmentId, rowIndex) {
+            openAddSegmentRowModal(segmentId, rowIndex);
+        }
+
+        function deleteSegmentRow(segmentId, rowIndex) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette ligne ?')) {
+                const segment = appData.customSegments.find(x => x.id === segmentId);
+                if (segment && segment.rows) {
+                    segment.rows.splice(rowIndex, 1);
+                    saveData();
+                    renderCustomSegments();
+                }
+            }
+        }
+
+        // Utility functions
+        function switchTab(tabName, element) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
+            if (element) {
+                element.classList.add('active');
+            } else {
+                // Fallback: find button by tab name
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    if (btn.getAttribute('onclick').includes(tabName)) {
+                        btn.classList.add('active');
+                    }
+                });
+            }
+            localStorage.setItem('currentTab', tabName);
+        }
+
+        function saveData() {
+            localStorage.setItem('croWorkshopData', JSON.stringify(appData));
+            showSaveIndicator();
+        }
+
+        function showSaveIndicator() {
+            const indicator = document.getElementById('saveIndicator');
+            indicator.style.display = 'block';
+            setTimeout(() => {
+                indicator.style.display = 'none';
+            }, 2000);
+        }
+
+        function exportData() {
+            const dataStr = JSON.stringify(appData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `atelier-cro-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function exportIdeasToExcel() {
+            if (appData.ideas.length === 0) {
+                alert('Aucune idée à exporter');
+                return;
+            }
+
+            // Préparer les données pour Excel
+            const excelData = appData.ideas.map((idea, index) => {
+                // Find problematique from hypothesis
+                let problematique = '';
+                if (idea.hypothese) {
+                    const hypothesis = appData.hypotheses.find(h => h.title === idea.hypothese);
+                    if (hypothesis && hypothesis.problematique) {
+                        problematique = hypothesis.problematique;
+                    }
+                }
+
+                // Find benchmarks names
+                let benchmarksText = '';
+                if (idea.benchmarks) {
+                    const benchmarkIds = idea.benchmarks.split(',').map(b => b.trim()).filter(b => b !== '');
+                    benchmarksText = benchmarkIds.map(benchId => {
+                        const bench = appData.benchmarks.find(b => b.id === parseInt(benchId));
+                        return bench ? bench.competitor : '';
+                    }).filter(b => b !== '').join(', ');
+                }
+
+                return {
+                    'N°': index + 1,
+                    'Titre': idea.title,
+                    'Pages concernées': idea.pages,
+                    'Hypothèse liée': idea.hypothese,
+                    'Problématique': problematique,
+                    'Thème(s)': idea.themes,
+                    'Benchmark(s)': benchmarksText,
+                    'Description': idea.desc,
+                    'Métrique Primaire': idea.metricPrimary,
+                    'Métriques Secondaires': idea.metricSecondary,
+                    'Impact Business (1-10)': idea.impact || 5,
+                    'Effort (1-10)': idea.effort || 5,
+                    'Votes': idea.votes || 0,
+                    'Créée par': idea.createdBy || 'N/A',
+                    'Date création': idea.createdAt ? new Date(idea.createdAt).toLocaleDateString('fr-FR') : 'N/A',
+                    'Modifiée par': idea.modifiedBy || 'N/A',
+                    'Date modification': idea.modifiedAt ? new Date(idea.modifiedAt).toLocaleDateString('fr-FR') : 'N/A'
+                };
+            });
+
+            // Créer un workbook et une worksheet
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(excelData);
+
+            // Définir la largeur des colonnes
+            ws['!cols'] = [
+                { wch: 5 },   // N°
+                { wch: 30 },  // Titre
+                { wch: 20 },  // Pages
+                { wch: 40 },  // Hypothèse
+                { wch: 50 },  // Problématique
+                { wch: 25 },  // Thèmes
+                { wch: 30 },  // Benchmarks
+                { wch: 60 },  // Description
+                { wch: 30 },  // Métrique Primaire
+                { wch: 40 },  // Métriques Secondaires
+                { wch: 15 },  // Impact
+                { wch: 15 },  // Effort
+                { wch: 10 },  // Votes
+                { wch: 20 },  // Créée par
+                { wch: 15 },  // Date création
+                { wch: 20 },  // Modifiée par
+                { wch: 15 }   // Date modification
+            ];
+
+            // Ajouter la worksheet au workbook
+            XLSX.utils.book_append_sheet(wb, ws, "Idées AB Test");
+
+            // Générer le fichier et le télécharger
+            const fileName = `idees-ab-test-${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+
+            console.log(`✅ Export Excel réussi : ${fileName}`);
+        }
+
+        // Close modal when clicking outside (except user login modal)
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal') && event.target.id !== 'userLoginModal') {
+                event.target.style.display = 'none';
+            }
+        }
+
+        // ===== FIREBASE INTEGRATION =====
+        // Import Firebase scripts
+        const firebaseScript = document.createElement('script');
+        firebaseScript.src = 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js';
+        document.head.appendChild(firebaseScript);
+
+        const firebaseDatabaseScript = document.createElement('script');
+        firebaseDatabaseScript.src = 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js';
+        document.head.appendChild(firebaseDatabaseScript);
+
+        let database;
+        let isFirebaseReady = false;
+        let currentGroup = 'default'; // Default group for guest mode
+
+        // Firebase configuration - REMPLACEZ PAR VOTRE CONFIG
+        const firebaseConfig = {
+            apiKey: "AIzaSyA_rfK5OnX_I7Qz9Qx3jkvuKQnYa4Ebaek",
+            authDomain: "atelier-cro-clubmed.firebaseapp.com",
+            databaseURL: "https://atelier-cro-clubmed-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "atelier-cro-clubmed",
+            storageBucket: "atelier-cro-clubmed.firebasestorage.app",
+            messagingSenderId: "933120278959",
+            appId: "1:933120278959:web:19a1bf1f24fb00284d2f5a"
+        };
+
+        // Initialize Firebase when scripts are loaded
+        firebaseDatabaseScript.onload = function() {
+            try {
+                firebase.initializeApp(firebaseConfig);
+                database = firebase.database();
+                isFirebaseReady = true;
+                console.log('✅ Firebase connecté - Mode collaboratif activé!');
+                document.getElementById('collaborativeStatus').innerHTML = '🌐 Mode Collaboratif Actif';
+                document.getElementById('collaborativeStatus').style.color = '#27ae60';
+
+                // Load header settings
+                loadHeaderSettings();
+
+                // Check if user name is saved
+                checkUserLogin();
+            } catch (error) {
+                console.warn('⚠️ Firebase non disponible, mode local activé', error);
+                isFirebaseReady = false;
+                document.getElementById('collaborativeStatus').innerHTML = '💾 Mode Local';
+                document.getElementById('collaborativeStatus').style.color = '#f39c12';
+                checkUserLogin();
+            }
+        };
+
+        // === USER MANAGEMENT ===
+        function saveHeaderSettings() {
+            const headerData = {
+                title: document.getElementById('headerTitle').textContent,
+                subtitle: document.getElementById('headerSubtitle').textContent,
+                timer: document.getElementById('timer').textContent
+            };
+
+            localStorage.setItem('headerSettings', JSON.stringify(headerData));
+
+            if (isFirebaseReady && database) {
+                database.ref('headerSettings').set(headerData)
+                    .then(() => console.log('✅ Header sauvegardé'))
+                    .catch(error => console.error('Erreur sauvegarde header:', error));
+            }
+        }
+
+        function loadHeaderSettings() {
+            // Try from Firebase first
+            if (isFirebaseReady && database) {
+                database.ref('headerSettings').once('value', (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        document.getElementById('headerTitle').textContent = data.title || '🎯 Atelier d\'Idéation CRO';
+                        document.getElementById('headerSubtitle').textContent = data.subtitle || 'Analyse Shopping Section - France & US | Roadmap AB Testing';
+                        document.getElementById('timer').textContent = data.timer || '2h30';
+                    }
+                });
+            } else {
+                // Fallback to localStorage
+                const saved = localStorage.getItem('headerSettings');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    document.getElementById('headerTitle').textContent = data.title;
+                    document.getElementById('headerSubtitle').textContent = data.subtitle;
+                    document.getElementById('timer').textContent = data.timer;
+                }
+            }
+        }
+
+
+        function checkUserLogin() {
+            const savedUser = localStorage.getItem('currentUser');
+            const savedGroup = localStorage.getItem('currentGroup');
+
+            if (savedUser) {
+                currentUser = savedUser;
+                currentGroup = savedGroup || 'default'; // Fallback to default if not saved
+                document.getElementById('currentUser').textContent = savedUser;
+                loadGroupDataFromFirebase();
+            } else {
+                showUserLoginModal();
+            }
+        }
+
+        function showUserLoginModal() {
+            document.getElementById('userLoginModal').style.display = 'block';
+        }
+
+
+        function loginUser(e) {
+            e.preventDefault();
+            const userName = document.getElementById('userName').value.trim();
+            const groupSelect = document.getElementById('groupSelect').value;
+            const newGroupName = document.getElementById('newGroupName').value.trim();
+
+            if (!userName) {
+                alert('Veuillez entrer votre nom');
+                return;
+            }
+
+            let groupName;
+            if (groupSelect === 'new') {
+                if (!newGroupName) {
+                    alert('Veuillez entrer un nom de groupe');
+                    return;
+                }
+                groupName = newGroupName;
+                // Add new group to available groups
+                if (!availableGroups.includes(groupName)) {
+                    availableGroups.push(groupName);
+                    saveGroupsToFirebase();
+                }
+            } else if (groupSelect) {
+                groupName = groupSelect;
+            } else {
+                alert('Veuillez sélectionner ou créer un groupe');
+                return;
+            }
+
+            currentUser = userName;
+            currentGroup = groupName;
+
+            // Save to localStorage
+            localStorage.setItem('currentUser', userName);
+            localStorage.setItem('currentGroup', groupName);
+
+            // Update UI
+            document.getElementById('currentUser').textContent = userName;
+            document.getElementById('currentGroup').textContent = groupName;
+            document.getElementById('userLoginModal').style.display = 'none';
+
+            console.log(`✅ Connecté : ${userName} (Groupe: ${groupName})`);
+
+            // Load group data from Firebase
+            loadGroupDataFromFirebase();
+        }
+
+
+        function continueAsGuest(e) {
+            if (e) e.preventDefault();
+
+            const guestName = document.getElementById('guestUserName').value.trim();
+            if (!guestName) {
+                alert('Veuillez entrer votre nom');
+                return;
+            }
+
+            currentUser = guestName;
+            currentGroup = 'default'; // Guest users use default group
+
+            localStorage.setItem('currentUser', currentUser);
+            localStorage.setItem('currentGroup', currentGroup);
+
+            document.getElementById('currentUser').textContent = currentUser;
+            document.getElementById('userLoginModal').style.display = 'none';
+
+            console.log('✅ Utilisateur connecté:', currentUser);
+
+            // Load data
+            if (isFirebaseReady && database) {
+                loadGroupDataFromFirebase();
+            } else {
+                initData();
+            }
+        }
+
+        function changeUserName() {
+            const newName = prompt('Entrez votre nouveau nom:', currentUser || '');
+            if (newName && newName.trim()) {
+                currentUser = newName.trim();
+                localStorage.setItem('currentUser', currentUser);
+                document.getElementById('currentUser').textContent = currentUser;
+                console.log('✅ Nom changé:', currentUser);
+            }
+        }
+
+
+        function loadGroupDataFromFirebase() {
+            if (!isFirebaseReady || !database) return;
+
+            // Use a shared path for all users (not separated by group)
+            const sharedRef = database.ref('sharedWorkshopData');
+
+            // Listen for changes in real-time
+            sharedRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    appData = data;
+                    // Ensure all arrays exist (backward compatibility)
+                    if (!appData.metrics) appData.metrics = [];
+                    if (!appData.devices) appData.devices = [];
+                    if (!appData.countries) appData.countries = [];
+                    if (!appData.trafficSources) appData.trafficSources = [];
+                    if (!appData.parcours) appData.parcours = [];
+                    if (!appData.pages) appData.pages = [];
+                    if (!appData.themes) appData.themes = [];
+                    if (!appData.hypotheses) appData.hypotheses = [];
+                    if (!appData.ideas) appData.ideas = [];
+                    if (!appData.customSegments) appData.customSegments = [];
+                    if (!appData.benchmarks) appData.benchmarks = [];
+
+                    // Normalize themes - ensure each theme has frictions array
+                    appData.themes.forEach(theme => {
+                        if (!theme.frictions) theme.frictions = [];
+                    });
+
+                    // Normalize ideas - ensure createdBy and modifiedBy are never undefined
+                    appData.ideas.forEach(idea => {
+                        if (!idea.createdBy || idea.createdBy === undefined || idea.createdBy === null) {
+                            idea.createdBy = 'Invité';
+                        }
+                        if (!idea.modifiedBy || idea.modifiedBy === undefined || idea.modifiedBy === null) {
+                            idea.modifiedBy = 'Invité';
+                        }
+                        if (!idea.comments) idea.comments = [];
+                    });
+
+                    // Normalize benchmarks - ensure createdBy and modifiedBy are never undefined
+                    appData.benchmarks.forEach(benchmark => {
+                        if (!benchmark.createdBy || benchmark.createdBy === undefined || benchmark.createdBy === null) {
+                            benchmark.createdBy = 'Invité';
+                        }
+                        if (!benchmark.modifiedBy || benchmark.modifiedBy === undefined || benchmark.modifiedBy === null) {
+                            benchmark.modifiedBy = 'Invité';
+                        }
+                    });
+
+                    // Normalize pages - ensure each page has components array
+                    appData.pages.forEach(page => {
+                        if (!page.components) page.components = [];
+                    });
+
+                    renderAll();
+                    console.log(`🔄 Données partagées synchronisées (Utilisateur: ${currentUser}, Groupe: ${currentGroup})`);
+                } else {
+                    // First time - initialize with default data
+                    console.log('Aucune donnée existante, initialisation...');
+                    initData();
+                    saveGroupDataToFirebase();
+                }
+            });
+        }
+
+        function saveGroupDataToFirebase() {
+            if (!isFirebaseReady || !database) {
+                console.log('Sauvegarde locale (Firebase non prêt)');
+                localStorage.setItem('croWorkshopData', JSON.stringify(appData));
+                showSaveIndicator();
+                return;
+            }
+
+            // Add metadata
+            const dataWithMetadata = {
+                ...appData,
+                lastModified: new Date().toISOString(),
+                lastModifiedBy: currentUser || 'Anonyme',
+                lastModifiedGroup: currentGroup || 'default'
+            };
+
+            // Save to shared path (all users see the same data)
+            database.ref('sharedWorkshopData').set(dataWithMetadata)
+                .then(() => {
+                    console.log(`✅ Données partagées sauvegardées (Utilisateur: ${currentUser}, Groupe: ${currentGroup})`);
+                    showSaveIndicator();
+                })
+                .catch((error) => {
+                    console.error('❌ Erreur Firebase:', error);
+                    localStorage.setItem('croWorkshopData', JSON.stringify(appData));
+                    showSaveIndicator();
+                });
+        }
+
+        // Load data from Firebase
+        function loadFromFirebase() {
+            const dataRef = database.ref('workshopData');
+
+            // Listen for changes in real-time
+            dataRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    appData = data;
+                    renderAll();
+                    console.log('🔄 Données synchronisées depuis Firebase');
+                } else {
+                    // First time - initialize with default data
+                    initData();
+                    saveToFirebase();
+                }
+            });
+        }
+
+        // Save data to Firebase (using new group-based logic)
+        function saveToFirebase() {
+            saveGroupDataToFirebase();
+        }
+
+        // Override saveData to use Firebase
+        function saveData() {
+            saveToFirebase();
+        }
+
+        // Modified initData to work with both Firebase and localStorage
+        function initData() {
+            const saved = localStorage.getItem('croWorkshopData');
+            if (saved) {
+                appData = JSON.parse(saved);
+            } else {
+                // Default data
+                appData.parcours = [
+                    {
+                        id: 1,
+                        name: "Homepage → Resort Page → Offer Page → BE Entry",
+                        type: "good",
+                        users: "32%",
+                        conversion: "8.5%",
+                        time: "6:45",
+                        insights: "Parcours direct et efficace. Les utilisateurs qui passent par une offre spécifique convertissent mieux."
+                    },
+                    {
+                        id: 2,
+                        name: "Search → Resort Page → BE Entry",
+                        type: "good",
+                        users: "28%",
+                        conversion: "7.2%",
+                        time: "5:20",
+                        insights: "Utilisateurs avec une intention claire. La search est un accélérateur de conversion."
+                    },
+                    {
+                        id: 3,
+                        name: "Homepage → Resort Page → Homepage → Exit",
+                        type: "bad",
+                        users: "18%",
+                        conversion: "0.5%",
+                        time: "3:15",
+                        insights: "Boucle de navigation. Les utilisateurs ne trouvent pas ce qu'ils cherchent sur la resort page."
+                    }
+                ];
+
+                appData.pages = [
+                    {
+                        id: 1,
+                        name: "Homepage",
+                        emoji: "🏠",
+                        components: [
+                            { name: "Hero Banner + CTA Principal", scroll: "98%", click: "12%", observation: "Bonne visibilité, CTR acceptable" },
+                            { name: "Search Bar", scroll: "95%", click: "18%", observation: "Forte utilisation, élément clé" },
+                            { name: "Resorts Populaires", scroll: "72%", click: "22%", observation: "Bon engagement" }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        name: "Resort Page",
+                        emoji: "🏨",
+                        components: [
+                            { name: "Hero Image + Prix Principal", scroll: "100%", click: "-", observation: "Attention immédiate" },
+                            { name: "CTA Réserver", scroll: "98%", click: "38%", observation: "Conversion élevée" },
+                            { name: "Tab Vue d'ensemble", scroll: "85%", click: "65%", observation: "Tab par défaut, forte consultation" }
+                        ]
+                    }
+                ];
+
+                appData.themes = [
+                    {
+                        id: 1,
+                        name: "Prix",
+                        emoji: "💰",
+                        frictions: [
+                            { title: "Manque de transparence sur le prix final", desc: "Utilisateurs US particulièrement sensibles, besoin de voir taxes incluses dès le début" },
+                            { title: "Comparaison de prix difficile", desc: "Sur Search Page, prix affichés de manière inconsistante (par nuit vs total, avec/sans promos)" }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        name: "Search",
+                        emoji: "🔍",
+                        frictions: [
+                            { title: "Résultats de recherche non pertinents", desc: "Taux de sortie 42% sur Search Page, les utilisateurs ne trouvent pas ce qu'ils cherchent" }
+                        ]
+                    }
+                ];
+
+                appData.hypotheses = [
+                    {
+                        id: 1,
+                        title: "Propositions de valeur Resort",
+                        si: "nous mettons en avant plus haut sur la page les propositions de valeur clés du resort (activités, services inclus, types de chambres)",
+                        alors: "les utilisateurs comprendront plus rapidement l'offre du resort",
+                        impact: "augmenter l'engagement sur la page et le taux d'entrée dans le booking engine",
+                        themes: "Informations Resort, Activités"
+                    }
+                ];
+
+                appData.ideas = [
+                    {
+                        id: 1,
+                        title: "Hero Resort avec propositions de valeur",
+                        pages: "Resort Page",
+                        hypothese: "Hypothèse #1 - Propositions de valeur Resort",
+                        themes: "Informations Resort, Activités",
+                        desc: "Ajouter dans la hero section (sous le prix) une zone avec 4-5 badges/icônes mettant en avant : \"5 restaurants inclus\", \"Kids Club gratuit\", \"Spa sur place\", \"Piscines\", \"Activités nautiques\". Version A (control) vs Version B (avec badges)",
+                        metricPrimary: "Taux d'entrée dans le BE depuis Resort Page",
+                        metricSecondary: "Scroll depth, temps sur page, taux de rebond",
+                        priority: "Impact: 8, Confidence: 7, Ease: 6 = Score 7",
+                        votes: 0
+                    }
+                ];
+            }
+            renderAll();
+        }
+
+        // Initialize on load
+        window.addEventListener('load', function() {
+            // Firebase will call initData or loadFromFirebase when ready
+            // If Firebase fails to load after 3 seconds, fallback to local
+            setTimeout(() => {
+                if (!isFirebaseReady) {
+                    console.log('⚠️ Timeout Firebase - Mode local activé');
+                    document.getElementById('collaborativeStatus').innerHTML = '💾 Mode Local';
+                    document.getElementById('collaborativeStatus').style.color = '#f39c12';
+                    initData();
+                }
+            }, 3000);
+
+            const savedTab = localStorage.getItem('currentTab');
+            if (savedTab && savedTab !== 'overview') {
+                setTimeout(() => {
+                    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+                    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                    document.getElementById(savedTab).classList.add('active');
+                    document.querySelector(`[onclick="switchTab('${savedTab}')"]`).classList.add('active');
+                }, 500);
+            }
+        });
+    </script>
+</body>
+</html>
