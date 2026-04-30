@@ -15,7 +15,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f5f7fa;
             color: #333;
             line-height: 1.6;
         }
@@ -29,14 +29,15 @@
         header {
             background: white;
             padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
             margin-bottom: 30px;
             text-align: center;
+            border-bottom: 2px solid #2c3e50;
         }
 
         h1 {
-            color: #667eea;
+            color: #2c3e50;
             font-size: 2.5em;
             margin-bottom: 10px;
         }
@@ -61,33 +62,35 @@
             flex: 1;
             min-width: 150px;
             padding: 15px 25px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
+            background: #ffffff;
+            color: #5a6c7d;
+            border: 1px solid #e1e8ed;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 1em;
-            font-weight: 600;
-            transition: all 0.3s ease;
+            font-weight: 500;
+            transition: all 0.2s ease;
         }
 
         .tab-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            background: #f8f9fa;
+            border-color: #2c3e50;
+            color: #2c3e50;
         }
 
         .tab-btn.active {
-            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.5);
+            background: #2c3e50;
+            color: white;
+            border-color: #2c3e50;
         }
 
         .tab-content {
             display: none;
             background: white;
             padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            animation: fadeIn 0.5s;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            animation: fadeIn 0.3s;
         }
 
         .tab-content.active {
@@ -100,17 +103,19 @@
         }
 
         h2 {
-            color: #667eea;
+            color: #2c3e50;
             margin-bottom: 20px;
             padding-bottom: 10px;
-            border-bottom: 3px solid #667eea;
+            border-bottom: 2px solid #e1e8ed;
             font-size: 1.8em;
+            font-weight: 600;
         }
 
         h3 {
-            color: #764ba2;
+            color: #34495e;
             margin: 25px 0 15px 0;
             font-size: 1.4em;
+            font-weight: 600;
         }
 
         .metric-grid {
@@ -121,40 +126,42 @@
         }
 
         .metric-card {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: #f8f9fa;
             padding: 20px;
-            border-radius: 10px;
-            border-left: 5px solid #667eea;
-            transition: all 0.3s ease;
+            border-radius: 6px;
+            border: 1px solid #e1e8ed;
+            transition: all 0.2s ease;
         }
 
         .metric-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border-color: #2c3e50;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
 
         .metric-label {
             font-size: 0.9em;
-            color: #666;
+            color: #5a6c7d;
             margin-bottom: 8px;
-            font-weight: 600;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .metric-value {
             font-size: 2em;
-            font-weight: bold;
-            color: #667eea;
+            font-weight: 600;
+            color: #2c3e50;
             border: none;
             background: transparent;
             width: 100%;
             padding: 5px;
-            border-radius: 5px;
-            transition: background 0.3s;
+            border-radius: 4px;
+            transition: background 0.2s;
         }
 
         .metric-value:focus {
             outline: none;
-            background: rgba(102, 126, 234, 0.1);
+            background: rgba(44, 62, 80, 0.05);
         }
 
         table {
@@ -165,11 +172,14 @@
         }
 
         th {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #2c3e50;
             color: white;
             padding: 15px;
             text-align: left;
-            font-weight: 600;
+            font-weight: 500;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         td {
@@ -191,7 +201,7 @@
 
         input:focus, textarea:focus, select:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #2c3e50;
         }
 
         .editable {
@@ -200,85 +210,105 @@
         }
 
         .editable:hover {
-            background: rgba(102, 126, 234, 0.05);
+            background: rgba(44, 62, 80, 0.03);
         }
 
         .hypothesis-section, .friction-section {
-            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            background: #ffffff;
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 6px;
             margin: 20px 0;
-            border-left: 5px solid #ff6b6b;
+            border: 1px solid #e1e8ed;
+            border-left: 3px solid #5a6c7d;
         }
 
         .idea-section {
-            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            background: #ffffff;
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 6px;
             margin: 20px 0;
-            border-left: 5px solid #48c6ef;
+            border: 1px solid #e1e8ed;
+            border-left: 3px solid #2c3e50;
         }
 
         .btn-add {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #2c3e50;
             color: white;
             padding: 12px 25px;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 1em;
-            font-weight: 600;
+            font-size: 0.95em;
+            font-weight: 500;
             margin: 10px 5px;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
 
         .btn-add:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            background: #34495e;
         }
 
         .btn-delete, .btn-edit {
             color: white;
             padding: 8px 15px;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 0.9em;
-            transition: all 0.3s ease;
+            font-size: 0.85em;
+            transition: all 0.2s ease;
             margin: 0 3px;
+            font-weight: 500;
         }
 
         .btn-delete {
-            background: #ff6b6b;
+            background: #95a5a6;
         }
 
         .btn-delete:hover {
-            background: #ff5252;
+            background: #7f8c8d;
         }
 
         .btn-edit {
-            background: #4CAF50;
+            background: #5a6c7d;
         }
 
         .btn-edit:hover {
-            background: #45a049;
+            background: #4a5c6d;
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: #5a6c7d;
+            border: 1px solid #e1e8ed;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 500;
+            margin: 10px 5px;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f9fa;
+            border-color: #5a6c7d;
+            color: #2c3e50;
         }
 
         .btn-vote {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #2c3e50;
             color: white;
             border: none;
             padding: 8px 16px;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 1.2em;
-            transition: transform 0.2s, box-shadow 0.2s;
-            font-weight: 600;
+            transition: all 0.2s;
+            font-weight: 500;
         }
 
         .btn-vote:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            background: #34495e;
         }
 
         .btn-vote:active {
@@ -286,14 +316,14 @@
         }
 
         .btn-vote-down {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            background: #95a5a6;
             color: white;
             border: none;
             padding: 8px 16px;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 1.2em;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.2s;
             font-weight: 600;
         }
 
@@ -307,25 +337,27 @@
         }
 
         .alert {
-            background: #d4edda;
-            color: #155724;
+            background: #f8f9fa;
+            color: #2c3e50;
             padding: 15px;
-            border-radius: 8px;
+            border-radius: 6px;
             margin: 20px 0;
-            border-left: 5px solid #28a745;
+            border: 1px solid #e1e8ed;
+            border-left: 3px solid #5a6c7d;
         }
 
         .parcours-card {
             background: white;
             padding: 20px;
             margin: 15px 0;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
             position: relative;
+            border: 1px solid #e1e8ed;
         }
 
         .parcours-card.good {
-            border-left: 5px solid #27ae60;
+            border-left: 3px solid #2c3e50;
         }
 
         /* Responsive benchmark grid */
@@ -342,7 +374,7 @@
         }
 
         .parcours-card.bad {
-            border-left: 5px solid #e74c3c;
+            border-left: 3px solid #95a5a6;
         }
 
         .parcours-actions {
@@ -702,7 +734,7 @@
                 <span id="collaborativeStatus">🔄 Connexion...</span> |
                 👤 <span id="currentUser"></span>
                 <button onclick="changeUserName()" style="margin-left: 10px; padding: 5px 10px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">✏️ Changer de nom</button>
-                <button onclick="exportAllToExcel()" style="margin-left: 10px; padding: 5px 15px; background: #27ae60; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: 600;">📥 Export Complet Excel</button>
+                <button onclick="exportAllToExcel()" style="margin-left: 10px; padding: 8px 18px; background: #2c3e50; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">📥 Export Complet Excel</button>
             </div>
         </header>
 
@@ -715,7 +747,7 @@
             <button class="tab-btn" onclick="switchTab('benchmark', this)">🔍 Benchmark</button>
             <button class="tab-btn" onclick="switchTab('hypotheses', this)">💡 Hypothèses</button>
             <button class="tab-btn" onclick="switchTab('idees', this)">🚀 Idées d'AB Test</button>
-            <button class="tab-btn" onclick="switchTab('presentation', this)" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; font-weight: 600;">🎯 Mode Présentation</button>
+            <button class="tab-btn" onclick="switchTab('presentation', this)">🎯 Mode Présentation</button>
         </nav>
 
         <!-- TAB 0: DASHBOARD -->
@@ -924,14 +956,14 @@
 
             <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
                 <button class="btn-add" onclick="openIdeaModal()">+ Ajouter une Idée d'AB Test</button>
-                <button class="btn-add" onclick="openTemplatesModal()" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">📋 Utiliser un Template</button>
-                <button class="btn-add" onclick="openMatrixModal()" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">📊 Matrice de Priorisation</button>
+                <button class="btn-secondary" onclick="openTemplatesModal()">📋 Utiliser un Template</button>
+                <button class="btn-secondary" onclick="openMatrixModal()">📊 Matrice de Priorisation</button>
             </div>
 
             <div class="export-section">
                 <h3>📥 Export et Partage</h3>
-                <button class="btn-add" onclick="exportIdeasToExcel()" style="background: linear-gradient(135deg, #1e7e34 0%, #27ae60 100%);">📊 Exporter Idées en Excel</button>
-                <button class="btn-add" onclick="exportData()">💾 Télécharger les Données (JSON)</button>
+                <button class="btn-secondary" onclick="exportIdeasToExcel()">📊 Exporter Idées en Excel</button>
+                <button class="btn-secondary" onclick="exportData()">💾 Télécharger les Données (JSON)</button>
                 <button class="btn-add" onclick="window.print()" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">🖨️ Imprimer / PDF</button>
             </div>
         </div>
@@ -4839,8 +4871,3 @@
                     document.getElementById(savedTab).classList.add('active');
                     document.querySelector(`[onclick="switchTab('${savedTab}')"]`).classList.add('active');
                 }, 500);
-            }
-        });
-    </script>
-</body>
-</html>
