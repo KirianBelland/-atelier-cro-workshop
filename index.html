@@ -328,6 +328,19 @@
             border-left: 5px solid #27ae60;
         }
 
+        /* Responsive benchmark grid */
+        @media (max-width: 768px) {
+            #benchmarkContainer > div {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)) !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #benchmarkContainer > div {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
         .parcours-card.bad {
             border-left: 5px solid #e74c3c;
         }
@@ -448,14 +461,60 @@
             background: rgba(0,0,0,0.5);
         }
 
+        #imageLightboxModal {
+            z-index: 10000;
+            background: rgba(0,0,0,0.9);
+        }
+
         .modal-content {
             background: white;
             margin: 5% auto;
             padding: 30px;
             border-radius: 15px;
-            width: 80%;
+            width: 90%;
             max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        /* Responsive modal */
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                margin: 2% auto;
+                padding: 20px;
+                max-height: 95vh;
+            }
+
+            .modal-header h2 {
+                font-size: 1.3em;
+            }
+
+            .form-group {
+                margin: 10px 0;
+            }
+
+            .btn-add, .btn-edit, .btn-delete {
+                font-size: 0.85em;
+                padding: 8px 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 98%;
+                padding: 15px;
+                border-radius: 10px;
+            }
+
+            .modal-header h2 {
+                font-size: 1.1em;
+            }
+
+            .modal-close {
+                font-size: 1.5em;
+            }
         }
 
         .modal-header {
@@ -511,6 +570,124 @@
             background: #e74c3c;
             color: white;
         }
+
+        /* Responsive design for main content */
+        @media (max-width: 1024px) {
+            .container {
+                padding: 15px;
+            }
+
+            .metric-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            table {
+                font-size: 0.9em;
+            }
+
+            .nav-tabs {
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .tab-btn {
+                font-size: 0.85em;
+                padding: 10px 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.5em;
+            }
+
+            .subtitle {
+                font-size: 0.9em;
+            }
+
+            .workshop-timer {
+                font-size: 0.85em;
+                flex-wrap: wrap;
+            }
+
+            .metric-grid {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 0.85em;
+            }
+
+            table th,
+            table td {
+                padding: 8px 5px;
+            }
+
+            /* Make tables scrollable on mobile */
+            .table-wrapper {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .btn-add, .btn-edit, .btn-delete {
+                font-size: 0.8em;
+                padding: 6px 10px;
+                margin: 2px;
+            }
+
+            .idea-section,
+            .page-section,
+            .theme-card,
+            .parcours-card {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 1.2em;
+            }
+
+            .tab-btn {
+                font-size: 0.75em;
+                padding: 8px 10px;
+            }
+
+            table {
+                font-size: 0.75em;
+            }
+
+            table th,
+            table td {
+                padding: 5px 3px;
+            }
+
+            .metric-card {
+                padding: 12px;
+            }
+
+            .metric-label {
+                font-size: 0.8em;
+            }
+
+            .metric-value {
+                font-size: 1.3em;
+            }
+
+            /* Stack buttons vertically on very small screens */
+            .idea-section > div,
+            .page-section > div {
+                flex-direction: column;
+                align-items: flex-start !important;
+            }
+
+            .idea-section > div > div,
+            .page-section > div > div {
+                margin-top: 10px;
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -518,13 +695,13 @@
 
     <div class="container">
         <header>
-            <h1>🎯 Atelier d'Idéation CRO</h1>
-            <p class="subtitle">Analyse Shopping Section - France & US | Roadmap AB Testing</p>
+            <h1 contenteditable="true" id="headerTitle" onblur="saveHeaderSettings()" style="cursor: text; padding: 5px;">🎯 Atelier d'Idéation CRO</h1>
+            <p class="subtitle" contenteditable="true" id="headerSubtitle" onblur="saveHeaderSettings()" style="cursor: text; padding: 5px;">Analyse Shopping Section - France & US | Roadmap AB Testing</p>
             <div class="workshop-timer">
-                ⏱️ Durée atelier : <span id="timer">2h30</span> |
+                ⏱️ Durée atelier : <span contenteditable="true" id="timer" onblur="saveHeaderSettings()" style="cursor: text; padding: 2px; border-bottom: 1px dashed #999;">2h30</span> |
                 <span id="collaborativeStatus">🔄 Connexion...</span> |
                 👤 <span id="currentUser"></span>
-                <button onclick="logout()" style="margin-left: 10px; padding: 5px 10px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">🚪 Déconnexion</button>
+                <button onclick="changeUserName()" style="margin-left: 10px; padding: 5px 10px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">✏️ Changer de nom</button>
             </div>
         </header>
 
@@ -533,6 +710,7 @@
             <button class="tab-btn" onclick="switchTab('parcours')">🗺️ Parcours Utilisateurs</button>
             <button class="tab-btn" onclick="switchTab('comportement')">👤 Comportement In-Page</button>
             <button class="tab-btn" onclick="switchTab('frictions')">🎨 Thèmes</button>
+            <button class="tab-btn" onclick="switchTab('benchmark')">🔍 Benchmark</button>
             <button class="tab-btn" onclick="switchTab('hypotheses')">💡 Hypothèses</button>
             <button class="tab-btn" onclick="switchTab('idees')">🚀 Idées d'AB Test</button>
         </nav>
@@ -559,6 +737,15 @@
             <h3>Sources de Trafic</h3>
             <div id="trafficSourcesTableContainer"></div>
             <button class="btn-add" onclick="openTrafficSourceModal()">+ Ajouter une Source</button>
+
+            <hr style="margin: 40px 0; border: none; border-top: 2px solid #eee;">
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0;">📊 Segments Personnalisés</h3>
+                <button class="btn-add" onclick="openCreateSegmentModal()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">+ Créer un Segment</button>
+            </div>
+
+            <div id="customSegmentsContainer"></div>
         </div>
 
         <!-- TAB 2: PARCOURS -->
@@ -597,6 +784,27 @@
             <div id="themesContainer"></div>
 
             <button class="btn-add" onclick="openThemeModal()">+ Ajouter un Thème</button>
+        </div>
+
+        <!-- TAB 5: BENCHMARK -->
+        <div id="benchmark" class="tab-content">
+            <h2>🔍 Benchmark Concurrentiel</h2>
+            <div class="alert">
+                <strong>Objectif :</strong> Analyser les bonnes pratiques des concurrents, capturer des screenshots, identifier des opportunités d'amélioration.
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                <div>
+                    <button class="btn-add" onclick="switchBenchmarkView('grid')" id="btnGridView" style="margin-right: 10px;">📊 Vue Grille</button>
+                    <button class="btn-add" onclick="switchBenchmarkView('list')" id="btnListView" style="background: #95a5a6;">📋 Vue Liste</button>
+                </div>
+                <div>
+                    <button class="btn-add" onclick="exportBenchmarksToExcel()" style="background: #27ae60; margin-right: 10px;">📥 Exporter Excel</button>
+                    <button class="btn-add" onclick="openBenchmarkModal()">+ Ajouter un Benchmark</button>
+                </div>
+            </div>
+
+            <div id="benchmarkContainer"></div>
         </div>
 
         <!-- TAB 5: HYPOTHESES -->
@@ -768,6 +976,71 @@
         </div>
     </div>
 
+    <!-- MODAL BENCHMARK -->
+    <div id="benchmarkModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Ajouter/Modifier un Benchmark</h2>
+                <span class="modal-close" onclick="closeModal('benchmarkModal')">&times;</span>
+            </div>
+            <form id="benchmarkForm" onsubmit="saveBenchmark(event)">
+                <input type="hidden" id="benchmarkId">
+                <div class="form-group">
+                    <label>Nom du Concurrent</label>
+                    <input type="text" id="benchmarkCompetitor" placeholder="Ex: Booking.com, Airbnb..." required>
+                </div>
+                <div class="form-group">
+                    <label>URL du Site</label>
+                    <input type="url" id="benchmarkUrl" placeholder="https://www.exemple.com">
+                </div>
+                <div class="form-group">
+                    <label>Thèmes (max 3)</label>
+                    <div id="benchmarkThemesContainer" style="margin-bottom: 10px;"></div>
+                </div>
+                <div class="form-group">
+                    <label>Catégories personnalisées (max 3)</label>
+                    <div id="benchmarkCustomCategoriesContainer" style="margin-bottom: 10px;">
+                        <div style="display: flex; gap: 5px; margin-bottom: 5px;">
+                            <input type="text" id="benchmarkCustomCategory1" placeholder="Ex: Mobile">
+                            <button type="button" class="btn-delete" onclick="clearBenchmarkCategory(1)" style="padding: 5px 10px;">✕</button>
+                        </div>
+                        <div style="display: flex; gap: 5px; margin-bottom: 5px;">
+                            <input type="text" id="benchmarkCustomCategory2" placeholder="Ex: Homepage">
+                            <button type="button" class="btn-delete" onclick="clearBenchmarkCategory(2)" style="padding: 5px 10px;">✕</button>
+                        </div>
+                        <div style="display: flex; gap: 5px; margin-bottom: 5px;">
+                            <input type="text" id="benchmarkCustomCategory3" placeholder="Ex: Checkout">
+                            <button type="button" class="btn-delete" onclick="clearBenchmarkCategory(3)" style="padding: 5px 10px;">✕</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Image / Screenshot</label>
+                    <input type="file" id="benchmarkImage" accept="image/*" onchange="previewBenchmarkImage(event)">
+                    <img id="benchmarkImagePreview" style="max-width: 100%; max-height: 200px; margin-top: 10px; display: none; border-radius: 8px; border: 1px solid #ddd;">
+                    <div id="benchmarkDownloadImageContainer" style="margin-top: 10px; display: none;">
+                        <a id="benchmarkDownloadImageLink" download="benchmark-image.png" class="btn-add" style="display: inline-block; text-decoration: none; padding: 8px 15px; font-size: 0.9em;">📥 Télécharger l'image</a>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Description / Observations</label>
+                    <textarea id="benchmarkDesc" rows="3" placeholder="Décrivez ce qui est intéressant dans cet exemple" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Hypothèse liée (optionnel)</label>
+                    <select id="benchmarkHypothese">
+                        <option value="">-- Aucune --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Score / Note (sur 5)</label>
+                    <input type="number" id="benchmarkScore" min="1" max="5" value="3">
+                </div>
+                <button type="submit" class="btn-add">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
     <!-- MODAL HYPOTHESE -->
     <div id="hypotheseModal" class="modal">
         <div class="modal-content">
@@ -845,6 +1118,14 @@
                 </div>
                 <button type="submit" class="btn-add">Enregistrer</button>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL IMAGE LIGHTBOX -->
+    <div id="imageLightboxModal" class="modal" onclick="closeImageLightbox()">
+        <div style="position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+            <span class="modal-close" style="position: absolute; top: 20px; right: 40px; font-size: 3em; z-index: 10001; cursor: pointer; color: white; text-shadow: 0 0 10px black;">&times;</span>
+            <img id="lightboxImage" style="max-width: 90%; max-height: 90%; border-radius: 10px; box-shadow: 0 10px 50px rgba(0,0,0,0.5);" onclick="event.stopPropagation()">
         </div>
     </div>
 
@@ -968,68 +1249,61 @@
         </div>
     </div>
 
-    <!-- MODAL USER LOGIN -->
-    <div id="userLoginModal" class="modal" style="display: none;">
-        <div class="modal-content" style="max-width: 550px;">
+    <!-- MODAL CREATE SEGMENT -->
+    <div id="createSegmentModal" class="modal">
+        <div class="modal-content">
             <div class="modal-header">
-                <h2 id="authModalTitle">👤 Connexion à l'Atelier CRO</h2>
+                <h2>Créer un Segment Personnalisé</h2>
+                <span class="modal-close" onclick="closeModal('createSegmentModal')">&times;</span>
             </div>
-
-            <!-- Mode Selection -->
-            <div id="authModeSelection" style="text-align: center; margin-bottom: 20px;">
-                <button type="button" class="btn-add" onclick="showLoginForm()" style="margin: 5px; padding: 12px 20px;">🔑 Se connecter</button>
-                <button type="button" class="btn-add" onclick="showSignupForm()" style="margin: 5px; padding: 12px 20px; background: #27ae60;">📝 Créer un compte</button>
-                <button type="button" class="btn-add" onclick="continueAsGuest()" style="margin: 5px; padding: 12px 20px; background: #95a5a6;">👥 Mode invité</button>
-            </div>
-
-            <!-- Login Form -->
-            <form id="loginForm" onsubmit="loginWithEmail(event)" style="display: none;">
-                <div class="alert" style="margin-bottom: 20px;">
-                    <strong>Connexion</strong> avec votre compte email
-                </div>
-
+            <form id="createSegmentForm" onsubmit="saveSegment(event)">
+                <input type="hidden" id="segmentId">
                 <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" id="loginEmail" placeholder="votre.email@exemple.com" required>
+                    <label>Nom du Segment</label>
+                    <input type="text" id="segmentName" placeholder="Ex: Répartition par âge, Segments comportementaux..." required>
                 </div>
-
                 <div class="form-group">
-                    <label>Mot de passe</label>
-                    <input type="password" id="loginPassword" placeholder="••••••••" required>
+                    <label>Colonnes du tableau (séparées par des virgules)</label>
+                    <input type="text" id="segmentColumns" placeholder="Ex: Segment, Sessions, Conversion, Revenue" required>
+                    <small style="color: #666;">Tapez les noms des colonnes séparés par des virgules</small>
                 </div>
-
-                <button type="submit" class="btn-add" style="width: 100%; padding: 12px;">Se connecter</button>
-                <button type="button" onclick="showAuthModeSelection()" class="btn-add" style="width: 100%; padding: 10px; margin-top: 10px; background: #95a5a6;">Retour</button>
-
-                <p style="margin-top: 15px; text-align: center;">
-                    <a href="#" onclick="resetPassword(); return false;" style="color: #667eea; text-decoration: none;">Mot de passe oublié ?</a>
-                </p>
+                <button type="submit" class="btn-add">Créer le Segment</button>
             </form>
+        </div>
+    </div>
 
-            <!-- Signup Form -->
-            <form id="signupForm" onsubmit="signupWithEmail(event)" style="display: none;">
-                <div class="alert" style="margin-bottom: 20px;">
-                    <strong>Créer un compte</strong><br>
-                    <small style="color: #666;">💡 Toutes les données sont partagées entre tous les utilisateurs.</small>
-                </div>
+    <!-- MODAL ADD SEGMENT ROW -->
+    <div id="addSegmentRowModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Ajouter une Ligne</h2>
+                <span class="modal-close" onclick="closeModal('addSegmentRowModal')">&times;</span>
+            </div>
+            <form id="addSegmentRowForm" onsubmit="saveSegmentRow(event)">
+                <input type="hidden" id="rowSegmentId">
+                <input type="hidden" id="rowIndex">
+                <div id="segmentRowFields"></div>
+                <button type="submit" class="btn-add">Enregistrer</button>
+            </form>
+        </div>
+    </div>
 
+    <!-- MODAL USER NAME -->
+    <div id="userLoginModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-header">
+                <h2>👤 Bienvenue !</h2>
+            </div>
+            <div class="alert" style="margin-bottom: 20px;">
+                <strong>Entrez votre nom</strong> pour commencer à collaborer.<br>
+                <small style="color: #666;">💡 Toutes les données sont partagées et synchronisées en temps réel.</small>
+            </div>
+            <form onsubmit="continueAsGuest(event)">
                 <div class="form-group">
                     <label>Votre nom / pseudonyme</label>
-                    <input type="text" id="signupUserName" placeholder="Ex: Marie, Jean..." required>
+                    <input type="text" id="guestUserName" placeholder="Ex: Marie, Jean, Équipe Paris..." required autofocus>
                 </div>
-
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" id="signupEmail" placeholder="votre.email@exemple.com" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Mot de passe (min 6 caractères)</label>
-                    <input type="password" id="signupPassword" placeholder="••••••••" minlength="6" required>
-                </div>
-
-                <button type="submit" class="btn-add" style="width: 100%; padding: 12px;">Créer mon compte</button>
-                <button type="button" onclick="showAuthModeSelection()" class="btn-add" style="width: 100%; padding: 10px; margin-top: 10px; background: #95a5a6;">Retour</button>
+                <button type="submit" class="btn-add" style="width: 100%; padding: 12px;">Commencer</button>
             </form>
         </div>
     </div>
@@ -1044,6 +1318,7 @@
             devices: [],
             countries: [],
             trafficSources: [],
+            customSegments: [],  // New: custom segments
             parcours: [],
             pages: [],
             themes: [],
@@ -1324,6 +1599,189 @@
             container.appendChild(table);
         }
 
+        function renderCustomSegments() {
+            const container = document.getElementById('customSegmentsContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (!appData.customSegments) appData.customSegments = [];
+
+            if (appData.customSegments.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">Aucun segment personnalisé. Créez-en un pour commencer !</p>';
+                return;
+            }
+
+            appData.customSegments.forEach(segment => {
+                const segmentDiv = document.createElement('div');
+                segmentDiv.style.marginBottom = '30px';
+
+                const columns = segment.columns || [];
+                const rows = segment.rows || [];
+
+                segmentDiv.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h4 style="margin: 0;">${segment.name}</h4>
+                        <div>
+                            <button class="btn-add" onclick="openAddSegmentRowModal(${segment.id})" style="padding: 5px 10px; font-size: 0.9em;">+ Ajouter une ligne</button>
+                            <button class="btn-edit" onclick="editSegment(${segment.id})" style="padding: 5px 10px; font-size: 0.8em;">✏️ Modifier</button>
+                            <button class="btn-delete" onclick="deleteSegment(${segment.id})" style="padding: 5px 10px; font-size: 0.8em;">🗑️ Supprimer</button>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                ${columns.map(col => `<th>${col}</th>`).join('')}
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rows.map((row, idx) => `
+                                <tr>
+                                    ${columns.map(col => `<td>${row[col] || ''}</td>`).join('')}
+                                    <td>
+                                        <button class="btn-edit" onclick="editSegmentRow(${segment.id}, ${idx})" style="padding: 5px 10px; font-size: 0.8em;">✏️</button>
+                                        <button class="btn-delete" onclick="deleteSegmentRow(${segment.id}, ${idx})" style="padding: 5px 10px; font-size: 0.8em;">🗑️</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                            ${rows.length === 0 ? '<tr><td colspan="' + (columns.length + 1) + '" style="text-align: center; color: #999;">Aucune donnée</td></tr>' : ''}
+                        </tbody>
+                    </table>
+                `;
+
+                container.appendChild(segmentDiv);
+            });
+        }
+
+        // Benchmark view mode
+        let benchmarkViewMode = 'grid'; // 'grid' or 'list'
+
+        function switchBenchmarkView(mode) {
+            benchmarkViewMode = mode;
+            document.getElementById('btnGridView').style.background = mode === 'grid' ? '#667eea' : '#95a5a6';
+            document.getElementById('btnListView').style.background = mode === 'list' ? '#667eea' : '#95a5a6';
+            renderBenchmarks();
+        }
+
+        function renderBenchmarks() {
+            const container = document.getElementById('benchmarkContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (!appData.benchmarks) appData.benchmarks = [];
+
+            if (appData.benchmarks.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">Aucun benchmark pour le moment. Ajoutez-en un pour commencer !</p>';
+                return;
+            }
+
+            if (benchmarkViewMode === 'grid') {
+                // Vue Grille - Cards avec images
+                const grid = document.createElement('div');
+                grid.style.display = 'grid';
+                grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(300px, 1fr))';
+                grid.style.gap = '20px';
+
+                appData.benchmarks.forEach(bench => {
+                    const card = document.createElement('div');
+                    card.style.border = '1px solid #ddd';
+                    card.style.borderRadius = '10px';
+                    card.style.overflow = 'hidden';
+                    card.style.background = 'white';
+                    card.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+
+                    const stars = '⭐'.repeat(bench.score || 3);
+
+                    // Get theme info for display
+                    let themesDisplay = '';
+                    if (bench.themes && bench.themes.length > 0) {
+                        const themeEmojis = bench.themes.map(themeName => {
+                            const theme = appData.themes.find(t => t.name === themeName);
+                            return theme ? `${theme.emoji} ${theme.name}` : themeName;
+                        });
+                        themesDisplay = `<p style="margin: 5px 0; font-size: 0.85em;"><strong>🎯 Thèmes:</strong> ${themeEmojis.join(', ')}</p>`;
+                    }
+
+                    // Get custom categories for display
+                    let customCatDisplay = '';
+                    if (bench.customCategories && bench.customCategories.length > 0) {
+                        customCatDisplay = `<p style="margin: 5px 0; font-size: 0.85em;"><strong>🏷️ Catégories:</strong> ${bench.customCategories.join(', ')}</p>`;
+                    }
+
+                    card.innerHTML = `
+                        ${bench.image ? `<img src="${bench.image}" style="width: 100%; height: 180px; object-fit: cover; cursor: pointer;" onclick="openImageLightbox('${bench.image.replace(/'/g, "\\'")}')">` : '<div style="width: 100%; height: 180px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 3em;">🔍</div>'}
+                        <div style="padding: 15px;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                                <h4 style="margin: 0; color: #333;">${bench.competitor}</h4>
+                                <span style="font-size: 1.2em;">${stars}</span>
+                            </div>
+                            <p style="color: #666; font-size: 0.9em; margin: 10px 0;">${bench.desc}</p>
+                            ${bench.url ? `<p style="margin: 5px 0;"><a href="${bench.url}" target="_blank" style="color: #667eea; font-size: 0.85em; text-decoration: none;">🔗 Voir le site</a></p>` : ''}
+                            ${themesDisplay}
+                            ${customCatDisplay}
+                            ${bench.hypothese ? `<p style="margin: 5px 0; font-size: 0.85em; color: #888;">💡 ${bench.hypothese}</p>` : ''}
+                            <div style="display: flex; justify-content: flex-end; gap: 5px; margin-top: 15px;">
+                                <button class="btn-edit" onclick="editBenchmark(${bench.id})" style="padding: 5px 10px; font-size: 0.8em;">✏️</button>
+                                <button class="btn-delete" onclick="deleteBenchmark(${bench.id})" style="padding: 5px 10px; font-size: 0.8em;">🗑️</button>
+                            </div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+
+                container.appendChild(grid);
+            } else {
+                // Vue Liste - Tableau
+                const table = document.createElement('table');
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th>Concurrent</th>
+                            <th>Thèmes</th>
+                            <th>Catégories</th>
+                            <th>Description</th>
+                            <th>Hypothèse</th>
+                            <th>Score</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${appData.benchmarks.map(bench => {
+                            let themesText = '-';
+                            if (bench.themes && bench.themes.length > 0) {
+                                const themeEmojis = bench.themes.map(themeName => {
+                                    const theme = appData.themes.find(t => t.name === themeName);
+                                    return theme ? `${theme.emoji} ${theme.name}` : themeName;
+                                });
+                                themesText = themeEmojis.join(', ');
+                            }
+
+                            let categoriesText = '-';
+                            if (bench.customCategories && bench.customCategories.length > 0) {
+                                categoriesText = bench.customCategories.join(', ');
+                            }
+
+                            return `
+                            <tr>
+                                <td><strong>${bench.competitor}</strong>${bench.url ? `<br><a href="${bench.url}" target="_blank" style="font-size: 0.8em; color: #667eea;">🔗 Lien</a>` : ''}</td>
+                                <td style="font-size: 0.85em;">${themesText}</td>
+                                <td style="font-size: 0.85em;">${categoriesText}</td>
+                                <td>${bench.desc}</td>
+                                <td style="font-size: 0.9em;">${bench.hypothese || '-'}</td>
+                                <td>${'⭐'.repeat(bench.score || 3)}</td>
+                                <td>
+                                    <button class="btn-edit" onclick="editBenchmark(${bench.id})" style="padding: 5px 10px; font-size: 0.8em;">✏️</button>
+                                    <button class="btn-delete" onclick="deleteBenchmark(${bench.id})" style="padding: 5px 10px; font-size: 0.8em;">🗑️</button>
+                                </td>
+                            </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                `;
+                container.appendChild(table);
+            }
+        }
+
         function renderParcours() {
             const container = document.getElementById('parcoursContainer');
             if (!container) return;
@@ -1527,9 +1985,11 @@
             renderDevices();
             renderCountries();
             renderTrafficSources();
+            renderCustomSegments();
             renderParcours();
             renderPages();
             renderThemes();
+            renderBenchmarks();
             renderHypotheses();
             renderIdeas();
         }
@@ -1704,6 +2164,182 @@
             saveData();
             renderPages();
             closeModal('componentModal');
+        }
+
+        function openImageLightbox(imageSrc) {
+            document.getElementById('lightboxImage').src = imageSrc;
+            document.getElementById('imageLightboxModal').style.display = 'block';
+        }
+
+        function closeImageLightbox() {
+            document.getElementById('imageLightboxModal').style.display = 'none';
+        }
+
+        function previewBenchmarkImage(event) {
+            const file = event.target.files[0];
+            const preview = document.getElementById('benchmarkImagePreview');
+            const downloadContainer = document.getElementById('benchmarkDownloadImageContainer');
+            const downloadLink = document.getElementById('benchmarkDownloadImageLink');
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+
+                    // Setup download link
+                    downloadLink.href = e.target.result;
+                    downloadLink.download = file.name || 'benchmark-image.png';
+                    downloadContainer.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.style.display = 'none';
+                downloadContainer.style.display = 'none';
+            }
+        }
+
+        function clearBenchmarkCategory(num) {
+            document.getElementById(`benchmarkCustomCategory${num}`).value = '';
+        }
+
+        function openBenchmarkModal(id = null) {
+            // Populate hypotheses dropdown
+            const hypotheseSelect = document.getElementById('benchmarkHypothese');
+            hypotheseSelect.innerHTML = '<option value="">-- Aucune --</option>';
+            appData.hypotheses.forEach(h => {
+                hypotheseSelect.innerHTML += `<option value="${h.title}">${h.title}</option>`;
+            });
+
+            // Populate themes checkboxes (max 3)
+            const themesContainer = document.getElementById('benchmarkThemesContainer');
+            themesContainer.innerHTML = '';
+            appData.themes.forEach(theme => {
+                const checkboxDiv = document.createElement('div');
+                checkboxDiv.style.marginBottom = '8px';
+                checkboxDiv.innerHTML = `
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" class="benchmark-theme-checkbox" value="${theme.name}" style="margin-right: 8px;" onchange="limitBenchmarkThemes(this)">
+                        <span>${theme.emoji} ${theme.name}</span>
+                    </label>
+                `;
+                themesContainer.appendChild(checkboxDiv);
+            });
+
+            if (id) {
+                const b = appData.benchmarks.find(x => x.id === id);
+                document.getElementById('benchmarkId').value = b.id;
+                document.getElementById('benchmarkCompetitor').value = b.competitor;
+                document.getElementById('benchmarkUrl').value = b.url || '';
+                document.getElementById('benchmarkDesc').value = b.desc;
+                document.getElementById('benchmarkHypothese').value = b.hypothese || '';
+                document.getElementById('benchmarkScore').value = b.score || 3;
+
+                // Load selected themes
+                if (b.themes && b.themes.length > 0) {
+                    const checkboxes = document.querySelectorAll('.benchmark-theme-checkbox');
+                    checkboxes.forEach(cb => {
+                        if (b.themes.includes(cb.value)) {
+                            cb.checked = true;
+                        }
+                    });
+                }
+
+                // Load custom categories
+                if (b.customCategories && b.customCategories.length > 0) {
+                    b.customCategories.forEach((cat, idx) => {
+                        if (idx < 3) {
+                            document.getElementById(`benchmarkCustomCategory${idx + 1}`).value = cat;
+                        }
+                    });
+                }
+
+                // Show existing image preview and download link
+                const preview = document.getElementById('benchmarkImagePreview');
+                const downloadContainer = document.getElementById('benchmarkDownloadImageContainer');
+                const downloadLink = document.getElementById('benchmarkDownloadImageLink');
+
+                if (b.image) {
+                    preview.src = b.image;
+                    preview.style.display = 'block';
+                    downloadLink.href = b.image;
+                    downloadContainer.style.display = 'block';
+                } else {
+                    preview.style.display = 'none';
+                    downloadContainer.style.display = 'none';
+                }
+            } else {
+                document.getElementById('benchmarkForm').reset();
+                document.getElementById('benchmarkId').value = '';
+                document.getElementById('benchmarkImagePreview').style.display = 'none';
+                document.getElementById('benchmarkDownloadImageContainer').style.display = 'none';
+
+                // Clear custom categories
+                for (let i = 1; i <= 3; i++) {
+                    document.getElementById(`benchmarkCustomCategory${i}`).value = '';
+                }
+            }
+            openModal('benchmarkModal');
+        }
+
+        function limitBenchmarkThemes(checkbox) {
+            const checkedBoxes = document.querySelectorAll('.benchmark-theme-checkbox:checked');
+            if (checkedBoxes.length > 3) {
+                checkbox.checked = false;
+                alert('Vous ne pouvez sélectionner que 3 thèmes maximum');
+            }
+        }
+
+        function saveBenchmark(e) {
+            e.preventDefault();
+            const id = document.getElementById('benchmarkId').value;
+            const imagePreview = document.getElementById('benchmarkImagePreview');
+
+            // Get selected themes (max 3)
+            const selectedThemes = [];
+            document.querySelectorAll('.benchmark-theme-checkbox:checked').forEach(cb => {
+                selectedThemes.push(cb.value);
+            });
+
+            // Get custom categories (max 3)
+            const customCategories = [];
+            for (let i = 1; i <= 3; i++) {
+                const catValue = document.getElementById(`benchmarkCustomCategory${i}`).value.trim();
+                if (catValue) {
+                    customCategories.push(catValue);
+                }
+            }
+
+            const benchmark = {
+                id: id ? parseInt(id) : Date.now(),
+                competitor: document.getElementById('benchmarkCompetitor').value,
+                url: document.getElementById('benchmarkUrl').value,
+                themes: selectedThemes,
+                customCategories: customCategories,
+                desc: document.getElementById('benchmarkDesc').value,
+                hypothese: document.getElementById('benchmarkHypothese').value,
+                score: parseInt(document.getElementById('benchmarkScore').value),
+                image: imagePreview.style.display !== 'none' ? imagePreview.src : '',
+                createdBy: currentUser,
+                createdAt: id ? (appData.benchmarks.find(x => x.id === parseInt(id))?.createdAt || new Date().toISOString()) : new Date().toISOString(),
+                modifiedBy: currentUser,
+                modifiedAt: new Date().toISOString()
+            };
+
+            if (id) {
+                const index = appData.benchmarks.findIndex(x => x.id === parseInt(id));
+                appData.benchmarks[index] = benchmark;
+            } else {
+                appData.benchmarks.push(benchmark);
+            }
+
+            saveData();
+            renderBenchmarks();
+            closeModal('benchmarkModal');
+        }
+
+        function editBenchmark(id) {
+            openBenchmarkModal(id);
         }
 
         function saveTheme(e) {
@@ -1882,6 +2518,84 @@
                 saveData();
                 renderHypotheses();
             }
+        }
+
+        function deleteBenchmark(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce benchmark ?')) {
+                appData.benchmarks = appData.benchmarks.filter(x => x.id !== id);
+                saveData();
+                renderBenchmarks();
+            }
+        }
+
+        function exportBenchmarksToExcel() {
+            if (!appData.benchmarks || appData.benchmarks.length === 0) {
+                alert('Aucun benchmark à exporter');
+                return;
+            }
+
+            const excelData = appData.benchmarks.map((bench, index) => {
+                // Get themes display
+                let themesText = '';
+                if (bench.themes && bench.themes.length > 0) {
+                    const themeNames = bench.themes.map(themeName => {
+                        const theme = appData.themes.find(t => t.name === themeName);
+                        return theme ? `${theme.emoji} ${theme.name}` : themeName;
+                    });
+                    themesText = themeNames.join(', ');
+                }
+
+                // Get custom categories
+                let categoriesText = '';
+                if (bench.customCategories && bench.customCategories.length > 0) {
+                    categoriesText = bench.customCategories.join(', ');
+                }
+
+                return {
+                    'N°': index + 1,
+                    'Concurrent': bench.competitor,
+                    'URL': bench.url || '',
+                    'Thèmes': themesText,
+                    'Catégories': categoriesText,
+                    'Description': bench.desc,
+                    'Hypothèse liée': bench.hypothese || '',
+                    'Score': bench.score || 3,
+                    'A une image': bench.image ? 'Oui' : 'Non',
+                    'Créé par': bench.createdBy || 'N/A',
+                    'Date création': bench.createdAt ? new Date(bench.createdAt).toLocaleDateString('fr-FR') : 'N/A',
+                    'Modifié par': bench.modifiedBy || 'N/A',
+                    'Date modification': bench.modifiedAt ? new Date(bench.modifiedAt).toLocaleDateString('fr-FR') : 'N/A'
+                };
+            });
+
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(excelData);
+
+            // Définir la largeur des colonnes
+            ws['!cols'] = [
+                { wch: 5 },  // N°
+                { wch: 20 }, // Concurrent
+                { wch: 40 }, // URL
+                { wch: 30 }, // Thèmes
+                { wch: 25 }, // Catégories
+                { wch: 50 }, // Description
+                { wch: 30 }, // Hypothèse liée
+                { wch: 8 },  // Score
+                { wch: 12 }, // A une image
+                { wch: 18 }, // Créé par
+                { wch: 15 }, // Date création
+                { wch: 18 }, // Modifié par
+                { wch: 18 }  // Date modification
+            ];
+
+            XLSX.utils.book_append_sheet(wb, ws, "Benchmarks");
+
+            // Générer le nom du fichier avec la date
+            const fileName = `benchmarks-concurrents-${new Date().toISOString().split('T')[0]}.xlsx`;
+
+            XLSX.writeFile(wb, fileName);
+
+            console.log(`✅ Export Excel réussi : ${fileName}`);
         }
 
         function deleteIdea(id) {
@@ -2155,6 +2869,137 @@
             }
         }
 
+        // === CUSTOM SEGMENTS FUNCTIONS ===
+        function openCreateSegmentModal(id = null) {
+            if (id) {
+                const segment = appData.customSegments.find(x => x.id === id);
+                if (segment) {
+                    document.getElementById('segmentId').value = segment.id;
+                    document.getElementById('segmentName').value = segment.name;
+                    document.getElementById('segmentColumns').value = segment.columns.join(', ');
+                }
+            } else {
+                document.getElementById('createSegmentForm').reset();
+                document.getElementById('segmentId').value = '';
+            }
+            openModal('createSegmentModal');
+        }
+
+        function saveSegment(e) {
+            e.preventDefault();
+            console.log('saveSegment appelée');
+
+            if (!appData.customSegments) appData.customSegments = [];
+
+            const id = document.getElementById('segmentId').value;
+            const name = document.getElementById('segmentName').value;
+            const columnsStr = document.getElementById('segmentColumns').value;
+            const columns = columnsStr.split(',').map(c => c.trim()).filter(c => c);
+
+            const segment = {
+                id: id ? parseInt(id) : Date.now(),
+                name: name,
+                columns: columns,
+                rows: id ? appData.customSegments.find(x => x.id === parseInt(id)).rows : []
+            };
+
+            console.log('Segment à sauvegarder:', segment);
+
+            if (id) {
+                const index = appData.customSegments.findIndex(x => x.id === parseInt(id));
+                appData.customSegments[index] = segment;
+                console.log('Segment modifié');
+            } else {
+                appData.customSegments.push(segment);
+                console.log('Nouveau segment ajouté');
+            }
+
+            console.log('Total segments:', appData.customSegments.length);
+            saveData();
+            renderCustomSegments();
+            closeModal('createSegmentModal');
+        }
+
+        function editSegment(id) {
+            openCreateSegmentModal(id);
+        }
+
+        function deleteSegment(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce segment et toutes ses données ?')) {
+                appData.customSegments = appData.customSegments.filter(x => x.id !== id);
+                saveData();
+                renderCustomSegments();
+            }
+        }
+
+        function openAddSegmentRowModal(segmentId, rowIndex = null) {
+            const segment = appData.customSegments.find(x => x.id === segmentId);
+            if (!segment) return;
+
+            document.getElementById('rowSegmentId').value = segmentId;
+            document.getElementById('rowIndex').value = rowIndex !== null ? rowIndex : '';
+
+            const fieldsContainer = document.getElementById('segmentRowFields');
+            fieldsContainer.innerHTML = '';
+
+            segment.columns.forEach(col => {
+                const value = rowIndex !== null ? (segment.rows[rowIndex][col] || '') : '';
+                fieldsContainer.innerHTML += `
+                    <div class="form-group">
+                        <label>${col}</label>
+                        <input type="text" id="field_${col}" value="${value}" placeholder="Ex: ...">
+                    </div>
+                `;
+            });
+
+            openModal('addSegmentRowModal');
+        }
+
+        function saveSegmentRow(e) {
+            e.preventDefault();
+            const segmentId = parseInt(document.getElementById('rowSegmentId').value);
+            const rowIndex = document.getElementById('rowIndex').value;
+
+            const segment = appData.customSegments.find(x => x.id === segmentId);
+            if (!segment) return;
+
+            const rowData = {};
+            segment.columns.forEach(col => {
+                const input = document.getElementById('field_' + col);
+                if (input) {
+                    rowData[col] = input.value;
+                }
+            });
+
+            if (rowIndex !== '') {
+                // Edit existing row
+                segment.rows[parseInt(rowIndex)] = rowData;
+            } else {
+                // Add new row
+                if (!segment.rows) segment.rows = [];
+                segment.rows.push(rowData);
+            }
+
+            saveData();
+            renderCustomSegments();
+            closeModal('addSegmentRowModal');
+        }
+
+        function editSegmentRow(segmentId, rowIndex) {
+            openAddSegmentRowModal(segmentId, rowIndex);
+        }
+
+        function deleteSegmentRow(segmentId, rowIndex) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette ligne ?')) {
+                const segment = appData.customSegments.find(x => x.id === segmentId);
+                if (segment && segment.rows) {
+                    segment.rows.splice(rowIndex, 1);
+                    saveData();
+                    renderCustomSegments();
+                }
+            }
+        }
+
         // Utility functions
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(tab => {
@@ -2265,14 +3110,9 @@
         firebaseDatabaseScript.src = 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js';
         document.head.appendChild(firebaseDatabaseScript);
 
-        const firebaseAuthScript = document.createElement('script');
-        firebaseAuthScript.src = 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js';
-        document.head.appendChild(firebaseAuthScript);
-
         let database;
-        let auth;
         let isFirebaseReady = false;
-        let isAuthReady = false;
+        let currentGroup = 'default'; // Default group for guest mode
 
         // Firebase configuration - REMPLACEZ PAR VOTRE CONFIG
         const firebaseConfig = {
@@ -2286,191 +3126,86 @@
         };
 
         // Initialize Firebase when scripts are loaded
-        firebaseAuthScript.onload = function() {
+        firebaseDatabaseScript.onload = function() {
             try {
                 firebase.initializeApp(firebaseConfig);
                 database = firebase.database();
-                auth = firebase.auth();
                 isFirebaseReady = true;
-                isAuthReady = true;
                 console.log('✅ Firebase connecté - Mode collaboratif activé!');
                 document.getElementById('collaborativeStatus').innerHTML = '🌐 Mode Collaboratif Actif';
                 document.getElementById('collaborativeStatus').style.color = '#27ae60';
 
-                // Listen to auth state changes
-                auth.onAuthStateChanged(onAuthStateChanged);
+                // Load header settings
+                loadHeaderSettings();
+
+                // Check if user name is saved
+                checkUserLogin();
             } catch (error) {
                 console.warn('⚠️ Firebase non disponible, mode local activé', error);
                 isFirebaseReady = false;
-                isAuthReady = false;
                 document.getElementById('collaborativeStatus').innerHTML = '💾 Mode Local';
                 document.getElementById('collaborativeStatus').style.color = '#f39c12';
-                showUserLoginModal();
+                checkUserLogin();
             }
         };
 
-        // === USER & GROUP MANAGEMENT ===
-        function showAuthModeSelection() {
-            document.getElementById('authModeSelection').style.display = 'block';
-            document.getElementById('loginForm').style.display = 'none';
-            document.getElementById('signupForm').style.display = 'none';
-            document.getElementById('authModalTitle').textContent = '👤 Connexion à l\'Atelier CRO';
-        }
+        // === USER MANAGEMENT ===
+        function saveHeaderSettings() {
+            const headerData = {
+                title: document.getElementById('headerTitle').textContent,
+                subtitle: document.getElementById('headerSubtitle').textContent,
+                timer: document.getElementById('timer').textContent
+            };
 
-        function showLoginForm() {
-            document.getElementById('authModeSelection').style.display = 'none';
-            document.getElementById('loginForm').style.display = 'block';
-            document.getElementById('signupForm').style.display = 'none';
-            document.getElementById('authModalTitle').textContent = '🔑 Connexion';
-        }
+            localStorage.setItem('headerSettings', JSON.stringify(headerData));
 
-        function showSignupForm() {
-            document.getElementById('authModeSelection').style.display = 'none';
-            document.getElementById('loginForm').style.display = 'none';
-            document.getElementById('signupForm').style.display = 'block';
-            document.getElementById('authModalTitle').textContent = '📝 Créer un compte';
-        }
-
-
-        // === FIREBASE AUTHENTICATION ===
-        function onAuthStateChanged(user) {
-            console.log('Auth state changed:', user);
-            if (user) {
-                // User is signed in
-                console.log('✅ Utilisateur connecté:', user.email);
-                loadUserProfile(user);
-            } else {
-                // User is signed out
-                console.log('❌ Aucun utilisateur connecté');
-                showUserLoginModal();
+            if (isFirebaseReady && database) {
+                database.ref('headerSettings').set(headerData)
+                    .then(() => console.log('✅ Header sauvegardé'))
+                    .catch(error => console.error('Erreur sauvegarde header:', error));
             }
         }
 
-        async function loadUserProfile(user) {
-            try {
-                const userRef = database.ref(`users/${user.uid}`);
-                const snapshot = await userRef.once('value');
-                const profile = snapshot.val();
-
-                if (profile) {
-                    currentUser = profile.displayName;
-                    currentGroup = null;
-                    document.getElementById('currentUser').textContent = currentUser + ' (' + user.email + ')';
-                    document.getElementById('userLoginModal').style.display = 'none';
-                    console.log(`✅ Profil chargé : ${currentUser}`);
-                    loadGroupDataFromFirebase();
-                } else {
-                    console.warn('Profil utilisateur non trouvé, déconnexion...');
-                    await auth.signOut();
-                    showUserLoginModal();
-                }
-            } catch (error) {
-                console.error('Erreur chargement profil:', error);
-                alert('Erreur lors du chargement du profil');
-            }
-        }
-
-        async function loginWithEmail(e) {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-
-            try {
-                console.log('Tentative de connexion...', email);
-                await auth.signInWithEmailAndPassword(email, password);
-                // onAuthStateChanged will be called automatically
-            } catch (error) {
-                console.error('Erreur connexion:', error);
-                let message = 'Erreur de connexion';
-                if (error.code === 'auth/user-not-found') {
-                    message = 'Aucun compte trouvé avec cet email';
-                } else if (error.code === 'auth/wrong-password') {
-                    message = 'Mot de passe incorrect';
-                } else if (error.code === 'auth/invalid-email') {
-                    message = 'Email invalide';
-                } else {
-                    message = error.message;
-                }
-                alert(message);
-            }
-        }
-
-        async function signupWithEmail(e) {
-            e.preventDefault();
-            const userName = document.getElementById('signupUserName').value.trim();
-            const email = document.getElementById('signupEmail').value.trim();
-            const password = document.getElementById('signupPassword').value;
-
-            if (!userName) {
-                alert('Veuillez entrer votre nom');
-                return;
-            }
-
-            try {
-                console.log('Création de compte...', email);
-                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                const user = userCredential.user;
-
-                // Save user profile
-                await database.ref(`users/${user.uid}`).set({
-                    displayName: userName,
-                    email: email,
-                    createdAt: new Date().toISOString()
+        function loadHeaderSettings() {
+            // Try from Firebase first
+            if (isFirebaseReady && database) {
+                database.ref('headerSettings').once('value', (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        document.getElementById('headerTitle').textContent = data.title || '🎯 Atelier d\'Idéation CRO';
+                        document.getElementById('headerSubtitle').textContent = data.subtitle || 'Analyse Shopping Section - France & US | Roadmap AB Testing';
+                        document.getElementById('timer').textContent = data.timer || '2h30';
+                    }
                 });
-
-                console.log('✅ Compte créé avec succès');
-                alert('Compte créé avec succès ! Vous êtes maintenant connecté.');
-                // onAuthStateChanged will be called automatically
-            } catch (error) {
-                console.error('Erreur création compte:', error);
-                let message = 'Erreur lors de la création du compte';
-                if (error.code === 'auth/email-already-in-use') {
-                    message = 'Un compte existe déjà avec cet email';
-                } else if (error.code === 'auth/invalid-email') {
-                    message = 'Email invalide';
-                } else if (error.code === 'auth/weak-password') {
-                    message = 'Mot de passe trop faible (min 6 caractères)';
-                } else {
-                    message = error.message;
+            } else {
+                // Fallback to localStorage
+                const saved = localStorage.getItem('headerSettings');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    document.getElementById('headerTitle').textContent = data.title;
+                    document.getElementById('headerSubtitle').textContent = data.subtitle;
+                    document.getElementById('timer').textContent = data.timer;
                 }
-                alert(message);
             }
         }
 
-        async function resetPassword() {
-            const email = prompt('Entrez votre adresse email pour réinitialiser votre mot de passe:');
-            if (!email) return;
 
-            try {
-                await auth.sendPasswordResetEmail(email);
-                alert('Email de réinitialisation envoyé ! Vérifiez votre boîte de réception.');
-            } catch (error) {
-                console.error('Erreur reset password:', error);
-                let message = 'Erreur lors de l\'envoi de l\'email';
-                if (error.code === 'auth/user-not-found') {
-                    message = 'Aucun compte trouvé avec cet email';
-                } else if (error.code === 'auth/invalid-email') {
-                    message = 'Email invalide';
-                } else {
-                    message = error.message;
-                }
-                alert(message);
-            }
-        }
+        function checkUserLogin() {
+            const savedUser = localStorage.getItem('currentUser');
+            const savedGroup = localStorage.getItem('currentGroup');
 
-        async function logout() {
-            try {
-                await auth.signOut();
-                console.log('✅ Déconnexion réussie');
-                currentUser = null;
-                currentGroup = null;
-                localStorage.removeItem('currentUser');
-                localStorage.removeItem('currentGroup');
+            if (savedUser) {
+                currentUser = savedUser;
+                currentGroup = savedGroup || 'default'; // Fallback to default if not saved
+                document.getElementById('currentUser').textContent = savedUser;
+                loadGroupDataFromFirebase();
+            } else {
                 showUserLoginModal();
-            } catch (error) {
-                console.error('Erreur déconnexion:', error);
-                alert('Erreur lors de la déconnexion');
             }
+        }
+
+        function showUserLoginModal() {
+            document.getElementById('userLoginModal').style.display = 'block';
         }
 
 
@@ -2522,31 +3257,26 @@
             loadGroupDataFromFirebase();
         }
 
-        function changeUser() {
-            if (isAuthReady && auth && auth.currentUser) {
-                // If authenticated, logout first
-                if (confirm('Voulez-vous vous déconnecter pour changer d\'utilisateur ?')) {
-                    logout();
-                }
-            } else {
-                // Guest mode or no auth - just show modal
-                showUserLoginModal();
-            }
-        }
 
-        function continueAsGuest() {
-            const guestName = prompt('Entrez votre nom (pour la traçabilité):', 'Invité');
-            if (!guestName) return;
+        function continueAsGuest(e) {
+            if (e) e.preventDefault();
+
+            const guestName = document.getElementById('guestUserName').value.trim();
+            if (!guestName) {
+                alert('Veuillez entrer votre nom');
+                return;
+            }
 
             currentUser = guestName;
-            currentGroup = null;
+            currentGroup = 'default'; // Guest users use default group
 
             localStorage.setItem('currentUser', currentUser);
+            localStorage.setItem('currentGroup', currentGroup);
 
-            document.getElementById('currentUser').textContent = currentUser + ' (Mode invité)';
+            document.getElementById('currentUser').textContent = currentUser;
             document.getElementById('userLoginModal').style.display = 'none';
 
-            console.log('✅ Mode invité activé:', currentUser);
+            console.log('✅ Utilisateur connecté:', currentUser);
 
             // Load data
             if (isFirebaseReady && database) {
@@ -2556,60 +3286,16 @@
             }
         }
 
-        function showUserLoginModal() {
-            document.getElementById('userLoginModal').style.display = 'block';
-            loadAvailableGroups();
-        }
-
-        function loadAvailableGroups() {
-            if (isFirebaseReady && database) {
-                database.ref('groups').once('value', (snapshot) => {
-                    const groups = snapshot.val();
-                    if (groups) {
-                        availableGroups = groups;
-                        updateGroupSelect();
-                    }
-                });
+        function changeUserName() {
+            const newName = prompt('Entrez votre nouveau nom:', currentUser || '');
+            if (newName && newName.trim()) {
+                currentUser = newName.trim();
+                localStorage.setItem('currentUser', currentUser);
+                document.getElementById('currentUser').textContent = currentUser;
+                console.log('✅ Nom changé:', currentUser);
             }
         }
 
-        function updateGroupSelect() {
-            const select = document.getElementById('groupSelect');
-            // Clear existing options except first two
-            while (select.options.length > 2) {
-                select.remove(2);
-            }
-            // Add available groups
-            availableGroups.forEach(group => {
-                const option = document.createElement('option');
-                option.value = group;
-                option.textContent = group;
-                select.appendChild(option);
-            });
-        }
-
-        function saveGroupsToFirebase() {
-            if (isFirebaseReady && database) {
-                database.ref('groups').set(availableGroups)
-                    .then(() => console.log('✅ Groupes sauvegardés'))
-                    .catch(error => console.error('❌ Erreur sauvegarde groupes:', error));
-            }
-        }
-
-        function checkUserLogin() {
-            const savedUser = localStorage.getItem('currentUser');
-            const savedGroup = localStorage.getItem('currentGroup');
-
-            if (savedUser && savedGroup) {
-                currentUser = savedUser;
-                currentGroup = savedGroup;
-                document.getElementById('currentUser').textContent = savedUser;
-                document.getElementById('currentGroup').textContent = savedGroup;
-                loadGroupDataFromFirebase();
-            } else {
-                showUserLoginModal();
-            }
-        }
 
         function loadGroupDataFromFirebase() {
             if (!isFirebaseReady || !database) return;
@@ -2632,6 +3318,8 @@
                     if (!appData.themes) appData.themes = [];
                     if (!appData.hypotheses) appData.hypotheses = [];
                     if (!appData.ideas) appData.ideas = [];
+                    if (!appData.customSegments) appData.customSegments = [];
+                    if (!appData.benchmarks) appData.benchmarks = [];
 
                     // Normalize themes - ensure each theme has frictions array
                     appData.themes.forEach(theme => {
