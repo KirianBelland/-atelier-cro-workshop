@@ -702,21 +702,81 @@
                 <span id="collaborativeStatus">🔄 Connexion...</span> |
                 👤 <span id="currentUser"></span>
                 <button onclick="changeUserName()" style="margin-left: 10px; padding: 5px 10px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">✏️ Changer de nom</button>
+                <button onclick="exportAllToExcel()" style="margin-left: 10px; padding: 5px 15px; background: #27ae60; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: 600;">📥 Export Complet Excel</button>
             </div>
         </header>
 
         <nav class="nav-tabs">
-            <button class="tab-btn active" onclick="switchTab('overview')">📊 Vue d'ensemble</button>
+            <button class="tab-btn active" onclick="switchTab('dashboard')">📈 Dashboard</button>
+            <button class="tab-btn" onclick="switchTab('overview')">📊 Vue d'ensemble</button>
             <button class="tab-btn" onclick="switchTab('parcours')">🗺️ Parcours Utilisateurs</button>
             <button class="tab-btn" onclick="switchTab('comportement')">👤 Comportement In-Page</button>
             <button class="tab-btn" onclick="switchTab('frictions')">🎨 Thèmes</button>
             <button class="tab-btn" onclick="switchTab('benchmark')">🔍 Benchmark</button>
             <button class="tab-btn" onclick="switchTab('hypotheses')">💡 Hypothèses</button>
             <button class="tab-btn" onclick="switchTab('idees')">🚀 Idées d'AB Test</button>
+            <button class="tab-btn" onclick="switchTab('presentation')" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; font-weight: 600;">🎯 Mode Présentation</button>
         </nav>
 
+        <!-- TAB 0: DASHBOARD -->
+        <div id="dashboard" class="tab-content active">
+            <h2>📈 Dashboard Atelier CRO</h2>
+            <div class="alert">
+                <strong>Vue d'ensemble :</strong> Statistiques et visualisations de l'atelier en temps réel.
+            </div>
+
+            <!-- Stats cards -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+                    <div style="font-size: 2.5em; font-weight: bold;" id="statsIdeasCount">0</div>
+                    <div style="font-size: 0.9em; opacity: 0.9;">💡 Idées d'AB Test</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+                    <div style="font-size: 2.5em; font-weight: bold;" id="statsTotalVotes">0</div>
+                    <div style="font-size: 0.9em; opacity: 0.9;">👍 Votes totaux</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+                    <div style="font-size: 2.5em; font-weight: bold;" id="statsHypothesesCount">0</div>
+                    <div style="font-size: 0.9em; opacity: 0.9;">💭 Hypothèses</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+                    <div style="font-size: 2.5em; font-weight: bold;" id="statsThemesCount">0</div>
+                    <div style="font-size: 0.9em; opacity: 0.9;">🎨 Thèmes</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+                    <div style="font-size: 2.5em; font-weight: bold;" id="statsBenchmarksCount">0</div>
+                    <div style="font-size: 0.9em; opacity: 0.9;">🔍 Benchmarks</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); color: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+                    <div style="font-size: 2.5em; font-weight: bold;" id="statsCommentsCount">0</div>
+                    <div style="font-size: 0.9em; opacity: 0.9;">💬 Commentaires</div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                <!-- Top 10 idées -->
+                <div style="background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                    <h3 style="margin-top: 0;">🏆 Top 10 Idées par Votes</h3>
+                    <div id="topIdeasChart"></div>
+                </div>
+
+                <!-- Répartition par thème -->
+                <div style="background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                    <h3 style="margin-top: 0;">🎯 Idées par Thème</h3>
+                    <div id="themesChart"></div>
+                </div>
+            </div>
+
+            <!-- Top contributeurs -->
+            <div style="background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                <h3 style="margin-top: 0;">👥 Top Contributeurs</h3>
+                <div id="contributorsChart"></div>
+            </div>
+        </div>
+
         <!-- TAB 1: OVERVIEW -->
-        <div id="overview" class="tab-content active">
+        <div id="overview" class="tab-content">
             <h2>📊 Analyse Overview - Shopping Section</h2>
             <div class="alert">
                 <strong>Objectif :</strong> Comprendre le volume global, la répartition par device/pays et identifier les grandes tendances.
@@ -743,6 +803,10 @@
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h3 style="margin: 0;">📊 Segments Personnalisés</h3>
                 <button class="btn-add" onclick="openCreateSegmentModal()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">+ Créer un Segment</button>
+            </div>
+
+            <div class="alert" style="background: #e8f4f8; border-left: 4px solid #3498db;">
+                <strong>💡 Astuce :</strong> Vous pouvez renommer les colonnes de vos segments à tout moment en cliquant sur "✏️ Modifier". Les données existantes seront automatiquement migrées dans le même ordre (la 1ère colonne reste la 1ère, etc.).
             </div>
 
             <div id="customSegmentsContainer"></div>
@@ -826,9 +890,43 @@
                 <strong>Instructions :</strong> Pour chaque idée, préciser le test, la page concernée, l'hypothèse liée et la priorité estimée.
             </div>
 
+            <!-- Filtres et recherche -->
+            <div style="background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px;">
+                    <div>
+                        <label style="display: block; font-weight: 600; margin-bottom: 5px;">🔍 Recherche</label>
+                        <input type="text" id="searchIdeas" placeholder="Chercher dans titre, description..." style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;" oninput="applyIdeasFilters()">
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; margin-bottom: 5px;">🎯 Thème</label>
+                        <select id="filterTheme" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;" onchange="applyIdeasFilters()">
+                            <option value="">-- Tous --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; margin-bottom: 5px;">👤 Créateur</label>
+                        <select id="filterCreator" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;" onchange="applyIdeasFilters()">
+                            <option value="">-- Tous --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; margin-bottom: 5px;">⭐ Votes minimum</label>
+                        <input type="number" id="filterMinVotes" placeholder="0" min="0" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;" oninput="applyIdeasFilters()">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <button class="btn-add" onclick="resetIdeasFilters()" style="background: #95a5a6; padding: 8px 15px; font-size: 0.9em;">🔄 Réinitialiser</button>
+                    <span id="ideasFilterCount" style="color: #666; font-size: 0.9em;"></span>
+                </div>
+            </div>
+
             <div id="ideesContainer"></div>
 
-            <button class="btn-add" onclick="openIdeaModal()">+ Ajouter une Idée d'AB Test</button>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
+                <button class="btn-add" onclick="openIdeaModal()">+ Ajouter une Idée d'AB Test</button>
+                <button class="btn-add" onclick="openTemplatesModal()" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">📋 Utiliser un Template</button>
+                <button class="btn-add" onclick="openMatrixModal()" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">📊 Matrice de Priorisation</button>
+            </div>
 
             <div class="export-section">
                 <h3>📥 Export et Partage</h3>
@@ -836,6 +934,51 @@
                 <button class="btn-add" onclick="exportData()">💾 Télécharger les Données (JSON)</button>
                 <button class="btn-add" onclick="window.print()" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">🖨️ Imprimer / PDF</button>
             </div>
+        </div>
+
+        <!-- TAB MODE PRESENTATION -->
+        <div id="presentation" class="tab-content">
+            <h2>🎯 Mode Présentation - Résumé Exécutif</h2>
+
+            <div style="text-align: center; margin-bottom: 30px;">
+                <button class="btn-add" onclick="window.print()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); font-size: 1.1em; padding: 12px 30px;">🖨️ Imprimer / Exporter PDF</button>
+            </div>
+
+            <!-- Résumé de l'atelier -->
+            <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); margin-bottom: 30px;">
+                <h3 style="color: #667eea; border-bottom: 3px solid #667eea; padding-bottom: 10px;">📊 Vue d'ensemble de l'atelier</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 3em; font-weight: bold; color: #667eea;" id="presentIdeasCount">0</div>
+                        <div style="color: #666;">Idées générées</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 3em; font-weight: bold; color: #f093fb;" id="presentVotesCount">0</div>
+                        <div style="color: #666;">Votes totaux</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 3em; font-weight: bold; color: #4facfe;" id="presentThemesCount">0</div>
+                        <div style="color: #666;">Thèmes explorés</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 3em; font-weight: bold; color: #43e97b;" id="presentContributorsCount">0</div>
+                        <div style="color: #666;">Participants</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top 10 idées priorisées -->
+            <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); margin-bottom: 30px;">
+                <h3 style="color: #667eea; border-bottom: 3px solid #667eea; padding-bottom: 10px;">🏆 Top 10 Idées Priorisées par Vote</h3>
+                <div id="presentationTop10"></div>
+            </div>
+
+            <!-- Répartition par thème -->
+            <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); margin-bottom: 30px;">
+                <h3 style="color: #667eea; border-bottom: 3px solid #667eea; padding-bottom: 10px;">🎯 Répartition par Thème</h3>
+                <div id="presentationByTheme"></div>
+            </div>
+
         </div>
     </div>
 
@@ -1051,6 +1194,11 @@
             <form id="hypotheseForm" onsubmit="saveHypothese(event)">
                 <input type="hidden" id="hypotheseId">
                 <div class="form-group">
+                    <label>Problématique identifiée 🔍</label>
+                    <textarea id="hypotheseProblematique" rows="2" placeholder="Ex: Taux de rebond de 65% sur la page produit / Abandon panier élevé au checkout" required></textarea>
+                    <small style="color: #666;">Décrivez l'insight ou la barrière observée (données analytics, heatmaps, feedbacks...)</small>
+                </div>
+                <div class="form-group">
                     <label>Titre de l'Hypothèse</label>
                     <input type="text" id="hypotheseTitle" placeholder="Ex: Propositions de valeur Resort" required>
                 </div>
@@ -1093,12 +1241,28 @@
                     <input type="text" id="ideaPages" placeholder="Ex: Resort Page, Homepage" required>
                 </div>
                 <div class="form-group">
-                    <label>Hypothèse liée</label>
-                    <input type="text" id="ideaHypothese" placeholder="Ex: Hypothèse #1">
+                    <label>Thème(s) associé(s)</label>
+                    <select id="ideaThemes" multiple size="5" style="height: auto;">
+                        <option value="">-- Aucun --</option>
+                    </select>
+                    <small style="color: #666;">Maintenez Ctrl (ou Cmd) pour sélectionner plusieurs thèmes</small>
                 </div>
                 <div class="form-group">
-                    <label>Thème(s)</label>
-                    <input type="text" id="ideaThemes" placeholder="Ex: Informations Resort, Activités">
+                    <label>Hypothèse liée</label>
+                    <select id="ideaHypothese" onchange="loadProblematique()">
+                        <option value="">-- Aucune --</option>
+                    </select>
+                </div>
+                <div class="form-group" id="ideaProblematiqueContainer" style="display: none;">
+                    <label>🔍 Problématique identifiée</label>
+                    <div id="ideaProblematique" style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 12px; border-radius: 8px; color: #856404; font-size: 0.95em;"></div>
+                </div>
+                <div class="form-group">
+                    <label>Benchmark(s) lié(s)</label>
+                    <select id="ideaBenchmarks" multiple size="4" style="height: auto;">
+                        <option value="">-- Aucun --</option>
+                    </select>
+                    <small style="color: #666;">Maintenez Ctrl (ou Cmd) pour sélectionner plusieurs benchmarks</small>
                 </div>
                 <div class="form-group">
                     <label>Description du Test</label>
@@ -1112,10 +1276,21 @@
                     <label>Métriques Secondaires</label>
                     <input type="text" id="ideaMetricSecondary" placeholder="Ex: Scroll depth, temps sur page">
                 </div>
-                <div class="form-group">
-                    <label>Priorité (ICE Score)</label>
-                    <input type="text" id="ideaPriority" placeholder="Ex: Impact: 8, Confidence: 7, Ease: 6 = Score 7">
+
+                <!-- Impact & Effort for Matrix -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label>Impact Business (1-10)</label>
+                        <input type="number" id="ideaImpact" min="1" max="10" placeholder="1 = Faible, 10 = Fort" value="5">
+                        <small style="color: #666;">Impact potentiel sur les conversions/revenus</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Effort de Mise en Œuvre (1-10)</label>
+                        <input type="number" id="ideaEffort" min="1" max="10" placeholder="1 = Faible, 10 = Fort" value="5">
+                        <small style="color: #666;">Complexité technique et temps nécessaire</small>
+                    </div>
                 </div>
+
                 <button type="submit" class="btn-add">Enregistrer</button>
             </form>
         </div>
@@ -1126,6 +1301,52 @@
         <div style="position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
             <span class="modal-close" style="position: absolute; top: 20px; right: 40px; font-size: 3em; z-index: 10001; cursor: pointer; color: white; text-shadow: 0 0 10px black;">&times;</span>
             <img id="lightboxImage" style="max-width: 90%; max-height: 90%; border-radius: 10px; box-shadow: 0 10px 50px rgba(0,0,0,0.5);" onclick="event.stopPropagation()">
+        </div>
+    </div>
+
+    <!-- MODAL TEMPLATES -->
+    <div id="templatesModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📋 Templates d'Idées d'AB Test</h2>
+                <span class="modal-close" onclick="closeModal('templatesModal')">&times;</span>
+            </div>
+            <p style="color: #666; margin-bottom: 20px;">Sélectionnez un template pour créer rapidement une idée pré-remplie :</p>
+            <div id="templatesContainer" style="display: grid; gap: 15px;"></div>
+        </div>
+    </div>
+
+    <!-- MODAL MATRIX -->
+    <div id="matrixModal" class="modal">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h2>📊 Matrice de Priorisation (Impact / Effort)</h2>
+                <span class="modal-close" onclick="closeModal('matrixModal')">&times;</span>
+            </div>
+            <p style="color: #666; margin-bottom: 20px;">Visualisez vos idées sur une matrice Impact / Effort. Cliquez sur une idée pour la repositionner.</p>
+
+            <div style="position: relative; width: 100%; height: 600px; border: 2px solid #ddd; border-radius: 10px; background: linear-gradient(to top, #fff5f5 0%, #fff 50%, #f0fff0 100%);">
+                <!-- Axes labels -->
+                <div style="position: absolute; top: 50%; left: -80px; transform: rotate(-90deg); font-weight: bold; color: #667eea;">IMPACT</div>
+                <div style="position: absolute; bottom: -30px; left: 50%; transform: translateX(-50%); font-weight: bold; color: #667eea;">EFFORT</div>
+
+                <!-- Quadrants labels -->
+                <div style="position: absolute; top: 10px; left: 10px; font-size: 0.85em; color: #999; font-weight: 600;">Fort Impact / Faible Effort<br>🚀 PRIORITÉ MAX</div>
+                <div style="position: absolute; top: 10px; right: 10px; font-size: 0.85em; color: #999; font-weight: 600; text-align: right;">Fort Impact / Fort Effort<br>📅 PLANIFIER</div>
+                <div style="position: absolute; bottom: 10px; left: 10px; font-size: 0.85em; color: #999; font-weight: 600;">Faible Impact / Faible Effort<br>💡 QUICK WINS</div>
+                <div style="position: absolute; bottom: 10px; right: 10px; font-size: 0.85em; color: #999; font-weight: 600; text-align: right;">Faible Impact / Fort Effort<br>❌ ÉVITER</div>
+
+                <!-- Center lines -->
+                <div style="position: absolute; top: 0; left: 50%; width: 1px; height: 100%; background: #ddd;"></div>
+                <div style="position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: #ddd;"></div>
+
+                <!-- Matrix content -->
+                <div id="matrixContent" style="position: relative; width: 100%; height: 100%;"></div>
+            </div>
+
+            <div style="margin-top: 20px; padding: 15px; background: #f0f8ff; border-radius: 8px; border-left: 4px solid #667eea;">
+                <strong>💡 Astuce :</strong> Les idées avec le plus de votes apparaissent en plus grand. Double-cliquez sur une idée pour l'éditer.
+            </div>
         </div>
     </div>
 
@@ -1253,7 +1474,7 @@
     <div id="createSegmentModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Créer un Segment Personnalisé</h2>
+                <h2 id="segmentModalTitle">Créer un Segment Personnalisé</h2>
                 <span class="modal-close" onclick="closeModal('createSegmentModal')">&times;</span>
             </div>
             <form id="createSegmentForm" onsubmit="saveSegment(event)">
@@ -1264,10 +1485,10 @@
                 </div>
                 <div class="form-group">
                     <label>Colonnes du tableau (séparées par des virgules)</label>
-                    <input type="text" id="segmentColumns" placeholder="Ex: Segment, Sessions, Conversion, Revenue" required>
-                    <small style="color: #666;">Tapez les noms des colonnes séparés par des virgules</small>
+                    <input type="text" id="segmentColumns" placeholder="Ex: Segment, Sessions, % Total, Taux d'entrée dans le BE" required>
+                    <small style="color: #666;">💡 Vous pouvez renommer les colonnes comme vous voulez. Les données existantes seront conservées dans le même ordre.</small>
                 </div>
-                <button type="submit" class="btn-add">Créer le Segment</button>
+                <button type="submit" class="btn-add" id="segmentSubmitBtn">Créer le Segment</button>
             </form>
         </div>
     </div>
@@ -1283,6 +1504,27 @@
                 <input type="hidden" id="rowSegmentId">
                 <input type="hidden" id="rowIndex">
                 <div id="segmentRowFields"></div>
+                <button type="submit" class="btn-add">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL EDIT COLUMNS -->
+    <div id="editColumnsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✏️ Renommer les Colonnes</h2>
+                <span class="modal-close" onclick="closeModal('editColumnsModal')">&times;</span>
+            </div>
+            <form id="editColumnsForm" onsubmit="saveColumnNames(event)">
+                <input type="hidden" id="editColumnsType">
+                <div class="alert" style="background: #e8f4f8; border-left: 4px solid #3498db; margin-bottom: 20px;">
+                    <strong>💡 Astuce :</strong> Séparez les noms par des virgules. L'ordre et le nombre de colonnes sont conservés.
+                </div>
+                <div class="form-group">
+                    <label>Noms des Colonnes</label>
+                    <input type="text" id="editColumnsInput" placeholder="Ex: Device, Sessions, % Total, Pages/Session..." required>
+                </div>
                 <button type="submit" class="btn-add">Enregistrer</button>
             </form>
         </div>
@@ -1310,7 +1552,7 @@
 
     <script>
         // User management
-        let currentUser = null;
+        let currentUser = 'Invité';
 
         // Data storage
         let appData = {
@@ -1318,13 +1560,96 @@
             devices: [],
             countries: [],
             trafficSources: [],
-            customSegments: [],  // New: custom segments
+            customSegments: [],
             parcours: [],
             pages: [],
             themes: [],
             hypotheses: [],
-            ideas: []
+            ideas: [],
+            benchmarks: [],
+            // Column names configuration
+            columnNames: {
+                devices: ['Device', 'Sessions', '% Total', 'Pages/Session', 'Exit Rate'],
+                countries: ['Pays', 'Sessions', '% Total', 'Taux d\'Entrée BE', 'Conversion'],
+                trafficSources: ['Source', 'Sessions', '% Total', 'Taux d\'Entrée BE']
+            }
         };
+
+        // Templates prédéfinis
+        const ideaTemplates = [
+            {
+                name: "🎨 Optimisation Hero Section",
+                title: "Optimiser la Hero Section",
+                pages: "Homepage",
+                themes: "Design, UX",
+                desc: "Tester une nouvelle version de la hero section avec :\n- Proposition de valeur plus claire\n- CTA plus visible\n- Image plus engageante",
+                metricPrimary: "Taux de clic sur CTA principal",
+                metricSecondary: "Scroll depth, temps sur page",
+                priority: "Impact: 8, Confidence: 7, Ease: 7 = Score 7.3",
+                impact: 8,
+                effort: 3
+            },
+            {
+                name: "💰 Test Prix",
+                title: "Affichage Prix Transparent",
+                pages: "Search Page, Resort Page",
+                themes: "Prix",
+                desc: "Tester l'affichage du prix avec :\n- Taxes incluses dès le départ\n- Comparaison prix par nuit vs prix total\n- Badge \"Meilleur prix garanti\"",
+                metricPrimary: "Taux d'entrée dans le Booking Engine",
+                metricSecondary: "Taux de rebond, temps avant conversion",
+                priority: "Impact: 9, Confidence: 8, Ease: 6 = Score 7.7",
+                impact: 9,
+                effort: 4
+            },
+            {
+                name: "🔍 Amélioration Search",
+                title: "Optimiser la Barre de Recherche",
+                pages: "Homepage, Search Page",
+                themes: "Search, UX",
+                desc: "Améliorer la search avec :\n- Autocomplete plus pertinent\n- Filtres visibles dès le début\n- Suggestions populaires",
+                metricPrimary: "Taux d'utilisation de la search",
+                metricSecondary: "Taux de résultats pertinents, conversions",
+                priority: "Impact: 7, Confidence: 7, Ease: 5 = Score 6.3",
+                impact: 7,
+                effort: 7
+            },
+            {
+                name: "📱 Optimisation Mobile",
+                title: "Expérience Mobile Optimisée",
+                pages: "Toutes pages",
+                themes: "Mobile, UX",
+                desc: "Améliorer l'expérience mobile avec :\n- Navigation simplifiée\n- Boutons plus grands\n- Scroll sticky CTA",
+                metricPrimary: "Conversion rate Mobile",
+                metricSecondary: "Bounce rate mobile, pages par session",
+                priority: "Impact: 8, Confidence: 6, Ease: 6 = Score 6.7",
+                impact: 8,
+                effort: 6
+            },
+            {
+                name: "🏷️ Réassurance",
+                title: "Éléments de Réassurance",
+                pages: "Resort Page, Checkout",
+                themes: "Réassurance, Conversion",
+                desc: "Ajouter des éléments de réassurance :\n- Avis clients mis en avant\n- Badges \"Paiement sécurisé\"\n- Politique d'annulation claire",
+                metricPrimary: "Taux de conversion",
+                metricSecondary: "Taux d'abandon panier, temps de décision",
+                priority: "Impact: 7, Confidence: 8, Ease: 8 = Score 7.7",
+                impact: 7,
+                effort: 2
+            },
+            {
+                name: "🚀 Quick Win - Copy CTA",
+                title: "Amélioration Copy CTA",
+                pages: "Toutes pages",
+                themes: "Copy, Conversion",
+                desc: "Tester différentes formulations de CTA :\n- \"Réserver maintenant\" vs \"Voir les disponibilités\"\n- Ajout d'urgence \"Places limitées\"\n- Personnalisation selon le device",
+                metricPrimary: "Taux de clic CTA",
+                metricSecondary: "Conversion rate",
+                priority: "Impact: 6, Confidence: 8, Ease: 9 = Score 7.7",
+                impact: 6,
+                effort: 1
+            }
+        ];
 
         // Initialize data
         function initData() {
@@ -1493,27 +1818,35 @@
             container.innerHTML = '';
 
             if (!appData.devices) appData.devices = [];
+            if (!appData.columnNames) appData.columnNames = {};
+            if (!appData.columnNames.devices) appData.columnNames.devices = ['Device', 'Sessions', '% Total', 'Pages/Session', 'Exit Rate'];
+
+            const colNames = appData.columnNames.devices;
+            const dataKeys = ['name', 'sessions', 'percent', 'pagesPerSession', 'exitRate'];
+
+            const headerRow = document.createElement('div');
+            headerRow.style.marginBottom = '10px';
+            headerRow.style.display = 'flex';
+            headerRow.style.justifyContent = 'space-between';
+            headerRow.style.alignItems = 'center';
+            headerRow.innerHTML = `
+                <div></div>
+                <button class="btn-edit" onclick="openEditColumnsModal('devices')" style="padding: 5px 12px; font-size: 0.85em;">✏️ Renommer les colonnes</button>
+            `;
+            container.appendChild(headerRow);
 
             const table = document.createElement('table');
             table.innerHTML = `
                 <thead>
                     <tr>
-                        <th>Device</th>
-                        <th>Sessions</th>
-                        <th>% Total</th>
-                        <th>Pages/Session</th>
-                        <th>Exit Rate</th>
+                        ${colNames.map(col => `<th>${col}</th>`).join('')}
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     ${appData.devices.map(d => `
                         <tr>
-                            <td><strong>${d.name}</strong></td>
-                            <td>${d.sessions}</td>
-                            <td>${d.percent}</td>
-                            <td>${d.pagesPerSession}</td>
-                            <td>${d.exitRate}</td>
+                            ${dataKeys.map(key => `<td>${key === 'name' ? '<strong>' + d[key] + '</strong>' : d[key]}</td>`).join('')}
                             <td>
                                 <button class="btn-edit" onclick="editDevice(${d.id})" style="padding: 5px 10px; font-size: 0.8em;">✏️</button>
                                 <button class="btn-delete" onclick="deleteDevice(${d.id})" style="padding: 5px 10px; font-size: 0.8em;">🗑️</button>
@@ -1531,27 +1864,35 @@
             container.innerHTML = '';
 
             if (!appData.countries) appData.countries = [];
+            if (!appData.columnNames) appData.columnNames = {};
+            if (!appData.columnNames.countries) appData.columnNames.countries = ['Pays', 'Sessions', '% Total', 'Taux d\'Entrée BE', 'Conversion'];
+
+            const colNames = appData.columnNames.countries;
+            const dataKeys = ['name', 'sessions', 'percent', 'beEntry', 'conversion'];
+
+            const headerRow = document.createElement('div');
+            headerRow.style.marginBottom = '10px';
+            headerRow.style.display = 'flex';
+            headerRow.style.justifyContent = 'space-between';
+            headerRow.style.alignItems = 'center';
+            headerRow.innerHTML = `
+                <div></div>
+                <button class="btn-edit" onclick="openEditColumnsModal('countries')" style="padding: 5px 12px; font-size: 0.85em;">✏️ Renommer les colonnes</button>
+            `;
+            container.appendChild(headerRow);
 
             const table = document.createElement('table');
             table.innerHTML = `
                 <thead>
                     <tr>
-                        <th>Pays</th>
-                        <th>Sessions</th>
-                        <th>% Total</th>
-                        <th>Taux d'Entrée BE</th>
-                        <th>Conversion</th>
+                        ${colNames.map(col => `<th>${col}</th>`).join('')}
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     ${appData.countries.map(c => `
                         <tr>
-                            <td><strong>${c.name}</strong></td>
-                            <td>${c.sessions}</td>
-                            <td>${c.percent}</td>
-                            <td>${c.beEntry}</td>
-                            <td>${c.conversion}</td>
+                            ${dataKeys.map(key => `<td>${key === 'name' ? '<strong>' + c[key] + '</strong>' : c[key]}</td>`).join('')}
                             <td>
                                 <button class="btn-edit" onclick="editCountry(${c.id})" style="padding: 5px 10px; font-size: 0.8em;">✏️</button>
                                 <button class="btn-delete" onclick="deleteCountry(${c.id})" style="padding: 5px 10px; font-size: 0.8em;">🗑️</button>
@@ -1569,25 +1910,35 @@
             container.innerHTML = '';
 
             if (!appData.trafficSources) appData.trafficSources = [];
+            if (!appData.columnNames) appData.columnNames = {};
+            if (!appData.columnNames.trafficSources) appData.columnNames.trafficSources = ['Source', '% Sessions', 'Taux d\'Entrée BE', 'Quality Score'];
+
+            const colNames = appData.columnNames.trafficSources;
+            const dataKeys = ['name', 'percent', 'beEntry', 'quality'];
+
+            const headerRow = document.createElement('div');
+            headerRow.style.marginBottom = '10px';
+            headerRow.style.display = 'flex';
+            headerRow.style.justifyContent = 'space-between';
+            headerRow.style.alignItems = 'center';
+            headerRow.innerHTML = `
+                <div></div>
+                <button class="btn-edit" onclick="openEditColumnsModal('trafficSources')" style="padding: 5px 12px; font-size: 0.85em;">✏️ Renommer les colonnes</button>
+            `;
+            container.appendChild(headerRow);
 
             const table = document.createElement('table');
             table.innerHTML = `
                 <thead>
                     <tr>
-                        <th>Source</th>
-                        <th>% Sessions</th>
-                        <th>Taux d'Entrée BE</th>
-                        <th>Quality Score</th>
+                        ${colNames.map(col => `<th>${col}</th>`).join('')}
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     ${appData.trafficSources.map(ts => `
                         <tr>
-                            <td><strong>${ts.name}</strong></td>
-                            <td>${ts.percent}</td>
-                            <td>${ts.beEntry}</td>
-                            <td>${ts.quality}</td>
+                            ${dataKeys.map(key => `<td>${key === 'name' ? '<strong>' + ts[key] + '</strong>' : ts[key]}</td>`).join('')}
                             <td>
                                 <button class="btn-edit" onclick="editTrafficSource(${ts.id})" style="padding: 5px 10px; font-size: 0.8em;">✏️</button>
                                 <button class="btn-delete" onclick="deleteTrafficSource(${ts.id})" style="padding: 5px 10px; font-size: 0.8em;">🗑️</button>
@@ -1921,6 +2272,12 @@
                             <button class="btn-delete" onclick="deleteHypothese(${h.id})">🗑️ Supprimer</button>
                         </div>
                     </div>
+                    ${h.problematique ? `
+                    <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 12px; border-radius: 8px; margin: 10px 0;">
+                        <strong style="color: #856404;">🔍 Problématique identifiée :</strong>
+                        <p style="margin: 5px 0 0 0; color: #856404;">${h.problematique}</p>
+                    </div>
+                    ` : ''}
                     <div style="background: white; padding: 15px; border-radius: 8px; margin: 10px 0;">
                         <p><strong>Si</strong> ${h.si}</p>
                         <p style="margin-top: 10px;"><strong>Alors</strong> ${h.alors}</p>
@@ -1932,6 +2289,69 @@
             });
         }
 
+        // Variables globales pour filtres
+        let ideasFilters = {
+            search: '',
+            theme: '',
+            creator: '',
+            minVotes: 0
+        };
+
+        function populateIdeasFilters() {
+            // Populate theme filter
+            const themeSelect = document.getElementById('filterTheme');
+            if (themeSelect) {
+                themeSelect.innerHTML = '<option value="">-- Tous --</option>';
+                const uniqueThemes = new Set();
+                appData.ideas.forEach(idea => {
+                    if (idea.themes) {
+                        idea.themes.split(',').forEach(theme => uniqueThemes.add(theme.trim()));
+                    }
+                });
+                uniqueThemes.forEach(theme => {
+                    themeSelect.innerHTML += `<option value="${theme}">${theme}</option>`;
+                });
+            }
+
+            // Populate creator filter
+            const creatorSelect = document.getElementById('filterCreator');
+            if (creatorSelect) {
+                creatorSelect.innerHTML = '<option value="">-- Tous --</option>';
+                const uniqueCreators = new Set();
+                appData.ideas.forEach(idea => {
+                    if (idea.createdBy) uniqueCreators.add(idea.createdBy);
+                });
+                uniqueCreators.forEach(creator => {
+                    creatorSelect.innerHTML += `<option value="${creator}">${creator}</option>`;
+                });
+            }
+        }
+
+        function applyIdeasFilters() {
+            ideasFilters.search = document.getElementById('searchIdeas')?.value.toLowerCase() || '';
+            ideasFilters.theme = document.getElementById('filterTheme')?.value || '';
+            ideasFilters.creator = document.getElementById('filterCreator')?.value || '';
+            ideasFilters.minVotes = parseInt(document.getElementById('filterMinVotes')?.value) || 0;
+
+            renderIdeas();
+        }
+
+        function resetIdeasFilters() {
+            if (document.getElementById('searchIdeas')) document.getElementById('searchIdeas').value = '';
+            if (document.getElementById('filterTheme')) document.getElementById('filterTheme').value = '';
+            if (document.getElementById('filterCreator')) document.getElementById('filterCreator').value = '';
+            if (document.getElementById('filterMinVotes')) document.getElementById('filterMinVotes').value = '';
+
+            ideasFilters = {
+                search: '',
+                theme: '',
+                creator: '',
+                minVotes: 0
+            };
+
+            renderIdeas();
+        }
+
         function renderIdeas() {
             const container = document.getElementById('ideesContainer');
             if (!container) return;
@@ -1939,8 +2359,43 @@
 
             if (!appData.ideas) appData.ideas = [];
 
+            // Populate filters
+            populateIdeasFilters();
+
             // Trier les idées par nombre de votes (décroissant)
-            const sortedIdeas = [...appData.ideas].sort((a, b) => (b.votes || 0) - (a.votes || 0));
+            let sortedIdeas = [...appData.ideas].sort((a, b) => (b.votes || 0) - (a.votes || 0));
+
+            // Apply filters
+            sortedIdeas = sortedIdeas.filter(idea => {
+                // Search filter
+                if (ideasFilters.search) {
+                    const searchText = `${idea.title} ${idea.desc}`.toLowerCase();
+                    if (!searchText.includes(ideasFilters.search)) return false;
+                }
+
+                // Theme filter
+                if (ideasFilters.theme) {
+                    if (!idea.themes || !idea.themes.includes(ideasFilters.theme)) return false;
+                }
+
+                // Creator filter
+                if (ideasFilters.creator) {
+                    if (idea.createdBy !== ideasFilters.creator) return false;
+                }
+
+                // Min votes filter
+                if (ideasFilters.minVotes > 0) {
+                    if ((idea.votes || 0) < ideasFilters.minVotes) return false;
+                }
+
+                return true;
+            });
+
+            // Update filter count
+            const filterCountEl = document.getElementById('ideasFilterCount');
+            if (filterCountEl) {
+                filterCountEl.textContent = `${sortedIdeas.length} idée(s) affichée(s) sur ${appData.ideas.length} au total`;
+            }
 
             sortedIdeas.forEach(idea => {
                 const section = document.createElement('div');
@@ -1966,18 +2421,88 @@
                     <table style="margin-top: 15px;">
                         <tr><td style="width: 200px;"><strong>Page(s) concernée(s)</strong></td><td>${idea.pages}</td></tr>
                         <tr><td><strong>Hypothèse liée</strong></td><td>${idea.hypothese}</td></tr>
+                        ${idea.hypothese && appData.hypotheses ? (() => {
+                            const hypothesis = appData.hypotheses.find(h => h.title === idea.hypothese);
+                            return hypothesis && hypothesis.problematique ?
+                                `<tr><td><strong>🔍 Problématique</strong></td><td style="background: #fff3cd; padding: 8px; border-left: 3px solid #ffc107; border-radius: 5px; color: #856404;">${hypothesis.problematique}</td></tr>` : '';
+                        })() : ''}
                         <tr><td><strong>Thème(s)</strong></td><td>${idea.themes}</td></tr>
+                        ${idea.benchmarks ? (() => {
+                            const benchmarkIds = idea.benchmarks.split(',').map(b => b.trim()).filter(b => b !== '');
+                            if (benchmarkIds.length === 0) return '';
+                            const benchmarksList = benchmarkIds.map(benchId => {
+                                const bench = appData.benchmarks.find(b => b.id === parseInt(benchId));
+                                return bench ? `<a href="#" onclick="openBenchmarkModal(${bench.id}); return false;" style="color: #667eea; text-decoration: underline;">🔍 ${bench.competitor}</a>` : '';
+                            }).filter(b => b !== '').join(', ');
+                            return benchmarksList ? `<tr><td><strong>Benchmark(s) lié(s)</strong></td><td>${benchmarksList}</td></tr>` : '';
+                        })() : ''}
                         <tr><td><strong>Description</strong></td><td>${idea.desc}</td></tr>
                         <tr><td><strong>Métrique Primaire</strong></td><td>${idea.metricPrimary}</td></tr>
                         <tr><td><strong>Métriques Secondaires</strong></td><td>${idea.metricSecondary}</td></tr>
-                        <tr><td><strong>Priorité (ICE)</strong></td><td>${idea.priority}</td></tr>
+                        <tr><td><strong>Impact Business</strong></td><td><span style="background: linear-gradient(90deg, #43e97b, #38f9d7); color: white; padding: 3px 12px; border-radius: 15px; font-weight: bold;">${idea.impact || 5}/10</span></td></tr>
+                        <tr><td><strong>Effort de Mise en Œuvre</strong></td><td><span style="background: linear-gradient(90deg, #fa709a, #fee140); color: white; padding: 3px 12px; border-radius: 15px; font-weight: bold;">${idea.effort || 5}/10</span></td></tr>
                         <tr><td><strong>Votes</strong></td><td><span style="font-size: 1.3em; font-weight: bold; color: #667eea;">👍 ${voteCount}</span></td></tr>
                         ${idea.createdBy ? `<tr><td><strong>Créée par</strong></td><td>👤 ${idea.createdBy} ${idea.createdAt ? `<span style="color: #888; font-size: 0.9em;">(${new Date(idea.createdAt).toLocaleDateString('fr-FR')})</span>` : ''}</td></tr>` : ''}
                         ${idea.modifiedBy ? `<tr><td><strong>Modifiée par</strong></td><td>✏️ ${idea.modifiedBy} ${idea.modifiedAt ? `<span style="color: #888; font-size: 0.9em;">(${new Date(idea.modifiedAt).toLocaleDateString('fr-FR')})</span>` : ''}</td></tr>` : ''}
                     </table>
+
+                    <!-- Comments section -->
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #eee;">
+                        <h4 style="margin-bottom: 15px;">💬 Commentaires (${(idea.comments || []).length})</h4>
+                        <div id="comments-${idea.id}" style="margin-bottom: 15px;">
+                            ${(idea.comments || []).map((comment, idx) => `
+                                <div style="background: #f8f9fa; padding: 12px; border-radius: 8px; margin-bottom: 10px; border-left: 3px solid #667eea;">
+                                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                                        <div>
+                                            <strong style="color: #667eea;">👤 ${comment.author}</strong>
+                                            <span style="color: #999; font-size: 0.85em; margin-left: 10px;">${new Date(comment.timestamp).toLocaleString('fr-FR')}</span>
+                                        </div>
+                                        ${comment.author === currentUser ? `<button class="btn-delete" onclick="deleteComment(${idea.id}, ${idx})" style="padding: 3px 8px; font-size: 0.8em;">🗑️</button>` : ''}
+                                    </div>
+                                    <p style="margin: 0; white-space: pre-wrap;">${comment.text}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <textarea id="comment-input-${idea.id}" placeholder="Ajouter un commentaire..." style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px; resize: vertical; min-height: 60px;"></textarea>
+                            <button class="btn-add" onclick="addComment(${idea.id})" style="padding: 10px 20px; height: fit-content;">💬 Commenter</button>
+                        </div>
+                    </div>
                 `;
                 container.appendChild(section);
             });
+        }
+
+        // Comment functions
+        function addComment(ideaId) {
+            const textarea = document.getElementById(`comment-input-${ideaId}`);
+            const commentText = textarea.value.trim();
+
+            if (!commentText) {
+                alert('Veuillez entrer un commentaire');
+                return;
+            }
+
+            const idea = appData.ideas.find(x => x.id === ideaId);
+            if (!idea.comments) idea.comments = [];
+
+            idea.comments.push({
+                author: currentUser || 'Anonyme',
+                text: commentText,
+                timestamp: new Date().toISOString()
+            });
+
+            saveData();
+            renderIdeas();
+        }
+
+        function deleteComment(ideaId, commentIndex) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?')) {
+                const idea = appData.ideas.find(x => x.id === ideaId);
+                idea.comments.splice(commentIndex, 1);
+                saveData();
+                renderIdeas();
+            }
         }
 
         function renderAll() {
@@ -1992,6 +2517,192 @@
             renderBenchmarks();
             renderHypotheses();
             renderIdeas();
+            renderDashboard();
+            renderPresentation();
+        }
+
+        // Dashboard rendering
+        function renderDashboard() {
+            if (!appData) return;
+
+            // Stats cards
+            const ideasCount = (appData.ideas || []).length;
+            const totalVotes = (appData.ideas || []).reduce((sum, idea) => sum + (idea.votes || 0), 0);
+            const hypothesesCount = (appData.hypotheses || []).length;
+            const themesCount = (appData.themes || []).length;
+            const benchmarksCount = (appData.benchmarks || []).length;
+            const commentsCount = (appData.ideas || []).reduce((sum, idea) => sum + (idea.comments || []).length, 0);
+
+            if (document.getElementById('statsIdeasCount')) document.getElementById('statsIdeasCount').textContent = ideasCount;
+            if (document.getElementById('statsTotalVotes')) document.getElementById('statsTotalVotes').textContent = totalVotes;
+            if (document.getElementById('statsHypothesesCount')) document.getElementById('statsHypothesesCount').textContent = hypothesesCount;
+            if (document.getElementById('statsThemesCount')) document.getElementById('statsThemesCount').textContent = themesCount;
+            if (document.getElementById('statsBenchmarksCount')) document.getElementById('statsBenchmarksCount').textContent = benchmarksCount;
+            if (document.getElementById('statsCommentsCount')) document.getElementById('statsCommentsCount').textContent = commentsCount;
+
+            // Top 10 idées
+            const topIdeasContainer = document.getElementById('topIdeasChart');
+            if (topIdeasContainer) {
+                const sortedIdeas = [...(appData.ideas || [])].sort((a, b) => (b.votes || 0) - (a.votes || 0)).slice(0, 10);
+                topIdeasContainer.innerHTML = sortedIdeas.length === 0
+                    ? '<p style="color: #999;">Aucune idée pour le moment</p>'
+                    : sortedIdeas.map((idea, idx) => {
+                        const percentage = totalVotes > 0 ? ((idea.votes || 0) / totalVotes * 100).toFixed(1) : 0;
+                        return `
+                            <div style="margin-bottom: 15px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                    <strong>${idx + 1}. ${idea.title}</strong>
+                                    <span style="font-weight: bold; color: #667eea;">${idea.votes || 0} votes</span>
+                                </div>
+                                <div style="background: #f0f0f0; height: 25px; border-radius: 10px; overflow: hidden;">
+                                    <div style="background: linear-gradient(90deg, #667eea, #764ba2); height: 100%; width: ${percentage}%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.85em; font-weight: 600;">
+                                        ${percentage}%
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+            }
+
+            // Répartition par thème
+            const themesContainer = document.getElementById('themesChart');
+            if (themesContainer) {
+                const themeStats = {};
+                (appData.ideas || []).forEach(idea => {
+                    if (idea.themes) {
+                        idea.themes.split(',').forEach(theme => {
+                            const trimmedTheme = theme.trim();
+                            themeStats[trimmedTheme] = (themeStats[trimmedTheme] || 0) + 1;
+                        });
+                    }
+                });
+
+                const sortedThemes = Object.entries(themeStats).sort((a, b) => b[1] - a[1]);
+                const maxCount = sortedThemes[0] ? sortedThemes[0][1] : 1;
+
+                themesContainer.innerHTML = sortedThemes.length === 0
+                    ? '<p style="color: #999;">Aucun thème assigné</p>'
+                    : sortedThemes.map(([theme, count]) => {
+                        const percentage = (count / maxCount * 100);
+                        return `
+                            <div style="margin-bottom: 15px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                    <strong>${theme}</strong>
+                                    <span style="font-weight: bold; color: #4facfe;">${count} idée(s)</span>
+                                </div>
+                                <div style="background: #f0f0f0; height: 25px; border-radius: 10px; overflow: hidden;">
+                                    <div style="background: linear-gradient(90deg, #4facfe, #00f2fe); height: 100%; width: ${percentage}%;"></div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+            }
+
+            // Top contributeurs
+            const contributorsContainer = document.getElementById('contributorsChart');
+            if (contributorsContainer) {
+                const contributorStats = {};
+                (appData.ideas || []).forEach(idea => {
+                    if (idea.createdBy) {
+                        contributorStats[idea.createdBy] = (contributorStats[idea.createdBy] || 0) + 1;
+                    }
+                });
+
+                const sortedContributors = Object.entries(contributorStats).sort((a, b) => b[1] - a[1]).slice(0, 10);
+                const maxIdeas = sortedContributors[0] ? sortedContributors[0][1] : 1;
+
+                contributorsContainer.innerHTML = sortedContributors.length === 0
+                    ? '<p style="color: #999;">Aucun contributeur pour le moment</p>'
+                    : sortedContributors.map(([contributor, count]) => {
+                        const percentage = (count / maxIdeas * 100);
+                        return `
+                            <div style="margin-bottom: 15px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                    <strong>👤 ${contributor}</strong>
+                                    <span style="font-weight: bold; color: #43e97b;">${count} idée(s)</span>
+                                </div>
+                                <div style="background: #f0f0f0; height: 25px; border-radius: 10px; overflow: hidden;">
+                                    <div style="background: linear-gradient(90deg, #43e97b, #38f9d7); height: 100%; width: ${percentage}%;"></div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+            }
+        }
+
+        // Presentation mode rendering
+        function renderPresentation() {
+            if (!appData) return;
+
+            // Stats
+            const ideasCount = (appData.ideas || []).length;
+            const totalVotes = (appData.ideas || []).reduce((sum, idea) => sum + (idea.votes || 0), 0);
+            const themesCount = (appData.themes || []).length;
+            const uniqueContributors = new Set((appData.ideas || []).map(i => i.createdBy).filter(Boolean)).size;
+
+            if (document.getElementById('presentIdeasCount')) document.getElementById('presentIdeasCount').textContent = ideasCount;
+            if (document.getElementById('presentVotesCount')) document.getElementById('presentVotesCount').textContent = totalVotes;
+            if (document.getElementById('presentThemesCount')) document.getElementById('presentThemesCount').textContent = themesCount;
+            if (document.getElementById('presentContributorsCount')) document.getElementById('presentContributorsCount').textContent = uniqueContributors;
+
+            // Top 10
+            const top10Container = document.getElementById('presentationTop10');
+            if (top10Container) {
+                const sortedIdeas = [...(appData.ideas || [])].sort((a, b) => (b.votes || 0) - (a.votes || 0)).slice(0, 10);
+                top10Container.innerHTML = sortedIdeas.length === 0
+                    ? '<p style="color: #999;">Aucune idée</p>'
+                    : `
+                        <table style="width: 100%; margin-top: 15px;">
+                            <thead>
+                                <tr style="background: #667eea; color: white;">
+                                    <th style="padding: 12px; text-align: left;">#</th>
+                                    <th style="padding: 12px; text-align: left;">Idée</th>
+                                    <th style="padding: 12px; text-align: left;">Thème(s)</th>
+                                    <th style="padding: 12px; text-align: center;">Votes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${sortedIdeas.map((idea, idx) => `
+                                    <tr style="border-bottom: 1px solid #eee; ${idx % 2 === 0 ? 'background: #f9f9f9;' : ''}">
+                                        <td style="padding: 12px;"><strong>${idx + 1}</strong></td>
+                                        <td style="padding: 12px;">${idea.title}</td>
+                                        <td style="padding: 12px; font-size: 0.9em;">${idea.themes || '-'}</td>
+                                        <td style="padding: 12px; text-align: center;"><span style="background: #667eea; color: white; padding: 5px 12px; border-radius: 20px; font-weight: bold;">${idea.votes || 0}</span></td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+            }
+
+            // By theme
+            const byThemeContainer = document.getElementById('presentationByTheme');
+            if (byThemeContainer) {
+                const themeStats = {};
+                (appData.ideas || []).forEach(idea => {
+                    if (idea.themes) {
+                        idea.themes.split(',').forEach(theme => {
+                            const trimmedTheme = theme.trim();
+                            themeStats[trimmedTheme] = (themeStats[trimmedTheme] || 0) + 1;
+                        });
+                    }
+                });
+
+                const sortedThemes = Object.entries(themeStats).sort((a, b) => b[1] - a[1]);
+
+                byThemeContainer.innerHTML = sortedThemes.length === 0
+                    ? '<p style="color: #999;">Aucun thème</p>'
+                    : `
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-top: 15px;">
+                            ${sortedThemes.map(([theme, count]) => `
+                                <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
+                                    <div style="font-size: 2.5em; font-weight: bold;">${count}</div>
+                                    <div style="font-size: 0.95em; margin-top: 5px;">${theme}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+            }
         }
 
         // Modal functions
@@ -2001,6 +2712,143 @@
 
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Templates functions
+        function openTemplatesModal() {
+            const container = document.getElementById('templatesContainer');
+            container.innerHTML = ideaTemplates.map((template, idx) => `
+                <div style="border: 2px solid #ddd; padding: 15px; border-radius: 10px; cursor: pointer; transition: all 0.3s; background: white;"
+                     onmouseover="this.style.borderColor='#667eea'; this.style.boxShadow='0 5px 15px rgba(102,126,234,0.2)'"
+                     onmouseout="this.style.borderColor='#ddd'; this.style.boxShadow='none'"
+                     onclick="useTemplate(${idx})">
+                    <h4 style="margin: 0 0 10px 0; color: #667eea;">${template.name}</h4>
+                    <p style="margin: 0; color: #666; font-size: 0.9em;">${template.desc.split('\n')[0]}</p>
+                    <div style="margin-top: 10px; font-size: 0.85em; color: #999;">
+                        <strong>Thème:</strong> ${template.themes} | <strong>Page:</strong> ${template.pages}
+                    </div>
+                </div>
+            `).join('');
+            openModal('templatesModal');
+        }
+
+        function useTemplate(templateIndex) {
+            const template = ideaTemplates[templateIndex];
+
+            // Fill the form with template data
+            document.getElementById('ideaForm').reset();
+            document.getElementById('ideaId').value = '';
+            document.getElementById('ideaTitle').value = template.title;
+            document.getElementById('ideaPages').value = template.pages;
+            document.getElementById('ideaHypothese').value = '';
+
+            // Handle themes dropdown (multi-select)
+            const themesSelect = document.getElementById('ideaThemes');
+            if (template.themes) {
+                const templateThemes = template.themes.split(',').map(t => t.trim());
+                Array.from(themesSelect.options).forEach(option => {
+                    if (templateThemes.includes(option.value)) {
+                        option.selected = true;
+                    }
+                });
+            }
+
+            document.getElementById('ideaDesc').value = template.desc;
+            document.getElementById('ideaMetricPrimary').value = template.metricPrimary;
+            document.getElementById('ideaMetricSecondary').value = template.metricSecondary;
+            document.getElementById('ideaImpact').value = template.impact || 5;
+            document.getElementById('ideaEffort').value = template.effort || 5;
+
+            closeModal('templatesModal');
+            openModal('ideaModal');
+        }
+
+        // Matrix functions
+        function openMatrixModal() {
+            renderMatrix();
+            openModal('matrixModal');
+        }
+
+        function renderMatrix() {
+            const container = document.getElementById('matrixContent');
+            if (!appData.ideas || appData.ideas.length === 0) {
+                container.innerHTML = '<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #999; text-align: center;">Aucune idée à afficher.<br>Créez des idées d\'abord !</div>';
+                return;
+            }
+
+            container.innerHTML = '';
+
+            appData.ideas.forEach(idea => {
+                // Calculate position based on Impact (1-10) and Effort (1-10)
+                // Impact: 1-10 mapped to 5%-95% (vertical axis, bottom to top)
+                // Effort: 1-10 mapped to 5%-95% (horizontal axis, left to right)
+                const impactValue = idea.impact || 5;
+                const effortValue = idea.effort || 5;
+
+                // Map 1-10 scale to 5%-95% position (with some margin)
+                const impactPercent = 5 + ((impactValue - 1) / 9) * 90;
+                const effortPercent = 5 + ((effortValue - 1) / 9) * 90;
+
+                const votes = idea.votes || 0;
+                const size = Math.max(60, Math.min(votes * 10 + 60, 150));
+
+                // Determine color based on quadrant
+                let bubbleColor;
+                if (impactValue > 5 && effortValue <= 5) {
+                    // High Impact, Low Effort - GREEN (Priority)
+                    bubbleColor = 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)';
+                } else if (impactValue > 5 && effortValue > 5) {
+                    // High Impact, High Effort - BLUE (Plan)
+                    bubbleColor = 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)';
+                } else if (impactValue <= 5 && effortValue <= 5) {
+                    // Low Impact, Low Effort - YELLOW (Quick Win)
+                    bubbleColor = 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)';
+                } else {
+                    // Low Impact, High Effort - RED (Avoid)
+                    bubbleColor = 'linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%)';
+                }
+
+                const bubble = document.createElement('div');
+                bubble.style.position = 'absolute';
+                bubble.style.left = `${effortPercent}%`;
+                bubble.style.bottom = `${impactPercent}%`;
+                bubble.style.transform = 'translate(-50%, 50%)';
+                bubble.style.width = `${size}px`;
+                bubble.style.height = `${size}px`;
+                bubble.style.borderRadius = '50%';
+                bubble.style.background = bubbleColor;
+                bubble.style.color = 'white';
+                bubble.style.display = 'flex';
+                bubble.style.alignItems = 'center';
+                bubble.style.justifyContent = 'center';
+                bubble.style.textAlign = 'center';
+                bubble.style.padding = '10px';
+                bubble.style.fontSize = '0.75em';
+                bubble.style.fontWeight = 'bold';
+                bubble.style.cursor = 'pointer';
+                bubble.style.boxShadow = '0 5px 15px rgba(0,0,0,0.2)';
+                bubble.style.transition = 'all 0.3s';
+                bubble.title = `${idea.title}\nImpact: ${impactValue}/10\nEffort: ${effortValue}/10\nVotes: ${votes}\nDouble-clic pour éditer`;
+
+                bubble.innerHTML = `<div style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">${idea.title}<br><small>${votes} 👍 | I:${impactValue} E:${effortValue}</small></div>`;
+
+                bubble.addEventListener('mouseover', () => {
+                    bubble.style.transform = 'translate(-50%, 50%) scale(1.1)';
+                    bubble.style.zIndex = '100';
+                });
+
+                bubble.addEventListener('mouseout', () => {
+                    bubble.style.transform = 'translate(-50%, 50%) scale(1)';
+                    bubble.style.zIndex = '1';
+                });
+
+                bubble.addEventListener('dblclick', () => {
+                    closeModal('matrixModal');
+                    editIdea(idea.id);
+                });
+
+                container.appendChild(bubble);
+            });
         }
 
         function openParcoursModal(id = null) {
@@ -2070,6 +2918,7 @@
             if (id) {
                 const h = appData.hypotheses.find(x => x.id === id);
                 document.getElementById('hypotheseId').value = h.id;
+                document.getElementById('hypotheseProblematique').value = h.problematique || '';
                 document.getElementById('hypotheseTitle').value = h.title;
                 document.getElementById('hypotheseSi').value = h.si;
                 document.getElementById('hypotheseAlors').value = h.alors;
@@ -2083,22 +2932,98 @@
         }
 
         function openIdeaModal(id = null) {
+            // Populate themes dropdown
+            const themesSelect = document.getElementById('ideaThemes');
+            themesSelect.innerHTML = '<option value="">-- Aucun --</option>';
+            (appData.themes || []).forEach(theme => {
+                themesSelect.innerHTML += `<option value="${theme.name}">${theme.emoji || ''} ${theme.name}</option>`;
+            });
+
+            // Populate hypotheses dropdown
+            const hypotheseSelect = document.getElementById('ideaHypothese');
+            hypotheseSelect.innerHTML = '<option value="">-- Aucune --</option>';
+            (appData.hypotheses || []).forEach(hyp => {
+                hypotheseSelect.innerHTML += `<option value="${hyp.title}">Hypothèse #${hyp.id} - ${hyp.title}</option>`;
+            });
+
+            // Populate benchmarks dropdown
+            const benchmarksSelect = document.getElementById('ideaBenchmarks');
+            benchmarksSelect.innerHTML = '<option value="">-- Aucun --</option>';
+            (appData.benchmarks || []).forEach(bench => {
+                benchmarksSelect.innerHTML += `<option value="${bench.id}">🔍 ${bench.competitor} - ${bench.desc.substring(0, 50)}...</option>`;
+            });
+
             if (id) {
                 const idea = appData.ideas.find(x => x.id === id);
                 document.getElementById('ideaId').value = idea.id;
                 document.getElementById('ideaTitle').value = idea.title;
                 document.getElementById('ideaPages').value = idea.pages;
-                document.getElementById('ideaHypothese').value = idea.hypothese;
-                document.getElementById('ideaThemes').value = idea.themes;
                 document.getElementById('ideaDesc').value = idea.desc;
                 document.getElementById('ideaMetricPrimary').value = idea.metricPrimary;
                 document.getElementById('ideaMetricSecondary').value = idea.metricSecondary;
-                document.getElementById('ideaPriority').value = idea.priority;
+                document.getElementById('ideaImpact').value = idea.impact || 5;
+                document.getElementById('ideaEffort').value = idea.effort || 5;
+
+                // Select hypothesis
+                document.getElementById('ideaHypothese').value = idea.hypothese || '';
+                loadProblematique(); // Load problematique based on selected hypothesis
+
+                // Select multiple themes
+                if (idea.themes) {
+                    const selectedThemes = idea.themes.split(',').map(t => t.trim());
+                    Array.from(themesSelect.options).forEach(option => {
+                        if (selectedThemes.includes(option.value)) {
+                            option.selected = true;
+                        }
+                    });
+                }
+
+                // Select multiple benchmarks
+                if (idea.benchmarks) {
+                    const selectedBenchmarks = idea.benchmarks.split(',').map(b => b.trim());
+                    Array.from(benchmarksSelect.options).forEach(option => {
+                        if (selectedBenchmarks.includes(option.value)) {
+                            option.selected = true;
+                        }
+                    });
+                }
             } else {
                 document.getElementById('ideaForm').reset();
                 document.getElementById('ideaId').value = '';
+                document.getElementById('ideaImpact').value = 5;
+                document.getElementById('ideaEffort').value = 5;
+
+                // Reset dropdowns
+                themesSelect.innerHTML = '<option value="">-- Aucun --</option>';
+                (appData.themes || []).forEach(theme => {
+                    themesSelect.innerHTML += `<option value="${theme.name}">${theme.emoji || ''} ${theme.name}</option>`;
+                });
+
+                // Hide problematique container
+                document.getElementById('ideaProblematiqueContainer').style.display = 'none';
             }
             openModal('ideaModal');
+        }
+
+        function loadProblematique() {
+            const hypotheseTitle = document.getElementById('ideaHypothese').value;
+            const container = document.getElementById('ideaProblematiqueContainer');
+            const problematiqueDiv = document.getElementById('ideaProblematique');
+
+            if (!hypotheseTitle || hypotheseTitle === '') {
+                container.style.display = 'none';
+                return;
+            }
+
+            // Find the hypothesis by title
+            const hypothesis = appData.hypotheses.find(h => h.title === hypotheseTitle);
+
+            if (hypothesis && hypothesis.problematique) {
+                problematiqueDiv.textContent = hypothesis.problematique;
+                container.style.display = 'block';
+            } else {
+                container.style.display = 'none';
+            }
         }
 
         // Save functions
@@ -2212,1326 +3137,4 @@
             });
 
             // Populate themes checkboxes (max 3)
-            const themesContainer = document.getElementById('benchmarkThemesContainer');
-            themesContainer.innerHTML = '';
-            appData.themes.forEach(theme => {
-                const checkboxDiv = document.createElement('div');
-                checkboxDiv.style.marginBottom = '8px';
-                checkboxDiv.innerHTML = `
-                    <label style="display: flex; align-items: center; cursor: pointer;">
-                        <input type="checkbox" class="benchmark-theme-checkbox" value="${theme.name}" style="margin-right: 8px;" onchange="limitBenchmarkThemes(this)">
-                        <span>${theme.emoji} ${theme.name}</span>
-                    </label>
-                `;
-                themesContainer.appendChild(checkboxDiv);
-            });
-
-            if (id) {
-                const b = appData.benchmarks.find(x => x.id === id);
-                document.getElementById('benchmarkId').value = b.id;
-                document.getElementById('benchmarkCompetitor').value = b.competitor;
-                document.getElementById('benchmarkUrl').value = b.url || '';
-                document.getElementById('benchmarkDesc').value = b.desc;
-                document.getElementById('benchmarkHypothese').value = b.hypothese || '';
-                document.getElementById('benchmarkScore').value = b.score || 3;
-
-                // Load selected themes
-                if (b.themes && b.themes.length > 0) {
-                    const checkboxes = document.querySelectorAll('.benchmark-theme-checkbox');
-                    checkboxes.forEach(cb => {
-                        if (b.themes.includes(cb.value)) {
-                            cb.checked = true;
-                        }
-                    });
-                }
-
-                // Load custom categories
-                if (b.customCategories && b.customCategories.length > 0) {
-                    b.customCategories.forEach((cat, idx) => {
-                        if (idx < 3) {
-                            document.getElementById(`benchmarkCustomCategory${idx + 1}`).value = cat;
-                        }
-                    });
-                }
-
-                // Show existing image preview and download link
-                const preview = document.getElementById('benchmarkImagePreview');
-                const downloadContainer = document.getElementById('benchmarkDownloadImageContainer');
-                const downloadLink = document.getElementById('benchmarkDownloadImageLink');
-
-                if (b.image) {
-                    preview.src = b.image;
-                    preview.style.display = 'block';
-                    downloadLink.href = b.image;
-                    downloadContainer.style.display = 'block';
-                } else {
-                    preview.style.display = 'none';
-                    downloadContainer.style.display = 'none';
-                }
-            } else {
-                document.getElementById('benchmarkForm').reset();
-                document.getElementById('benchmarkId').value = '';
-                document.getElementById('benchmarkImagePreview').style.display = 'none';
-                document.getElementById('benchmarkDownloadImageContainer').style.display = 'none';
-
-                // Clear custom categories
-                for (let i = 1; i <= 3; i++) {
-                    document.getElementById(`benchmarkCustomCategory${i}`).value = '';
-                }
-            }
-            openModal('benchmarkModal');
-        }
-
-        function limitBenchmarkThemes(checkbox) {
-            const checkedBoxes = document.querySelectorAll('.benchmark-theme-checkbox:checked');
-            if (checkedBoxes.length > 3) {
-                checkbox.checked = false;
-                alert('Vous ne pouvez sélectionner que 3 thèmes maximum');
-            }
-        }
-
-        function saveBenchmark(e) {
-            e.preventDefault();
-            const id = document.getElementById('benchmarkId').value;
-            const imagePreview = document.getElementById('benchmarkImagePreview');
-
-            // Get selected themes (max 3)
-            const selectedThemes = [];
-            document.querySelectorAll('.benchmark-theme-checkbox:checked').forEach(cb => {
-                selectedThemes.push(cb.value);
-            });
-
-            // Get custom categories (max 3)
-            const customCategories = [];
-            for (let i = 1; i <= 3; i++) {
-                const catValue = document.getElementById(`benchmarkCustomCategory${i}`).value.trim();
-                if (catValue) {
-                    customCategories.push(catValue);
-                }
-            }
-
-            const benchmark = {
-                id: id ? parseInt(id) : Date.now(),
-                competitor: document.getElementById('benchmarkCompetitor').value,
-                url: document.getElementById('benchmarkUrl').value,
-                themes: selectedThemes,
-                customCategories: customCategories,
-                desc: document.getElementById('benchmarkDesc').value,
-                hypothese: document.getElementById('benchmarkHypothese').value,
-                score: parseInt(document.getElementById('benchmarkScore').value),
-                image: imagePreview.style.display !== 'none' ? imagePreview.src : '',
-                createdBy: currentUser,
-                createdAt: id ? (appData.benchmarks.find(x => x.id === parseInt(id))?.createdAt || new Date().toISOString()) : new Date().toISOString(),
-                modifiedBy: currentUser,
-                modifiedAt: new Date().toISOString()
-            };
-
-            if (id) {
-                const index = appData.benchmarks.findIndex(x => x.id === parseInt(id));
-                appData.benchmarks[index] = benchmark;
-            } else {
-                appData.benchmarks.push(benchmark);
-            }
-
-            saveData();
-            renderBenchmarks();
-            closeModal('benchmarkModal');
-        }
-
-        function editBenchmark(id) {
-            openBenchmarkModal(id);
-        }
-
-        function saveTheme(e) {
-            e.preventDefault();
-            console.log('saveTheme appelée');
-
-            if (!appData.themes) appData.themes = [];
-
-            const id = document.getElementById('themeId').value;
-            const existingTheme = id ? appData.themes.find(x => x.id === parseInt(id)) : null;
-
-            const theme = {
-                id: id ? parseInt(id) : Date.now(),
-                name: document.getElementById('themeName').value,
-                emoji: document.getElementById('themeEmoji').value,
-                frictions: existingTheme ? existingTheme.frictions : []
-            };
-
-            console.log('Thème à sauvegarder:', theme);
-
-            if (id) {
-                const index = appData.themes.findIndex(x => x.id === parseInt(id));
-                appData.themes[index] = theme;
-                console.log('Thème modifié');
-            } else {
-                appData.themes.push(theme);
-                console.log('Nouveau thème ajouté');
-            }
-
-            console.log('Total thèmes:', appData.themes.length);
-            saveData();
-            renderThemes();
-            closeModal('themeModal');
-        }
-
-        function saveFriction(e) {
-            e.preventDefault();
-            const themeId = parseInt(document.getElementById('frictionThemeId').value);
-            const theme = appData.themes.find(x => x.id === themeId);
-
-            theme.frictions.push({
-                title: document.getElementById('frictionTitle').value,
-                desc: document.getElementById('frictionDesc').value
-            });
-
-            saveData();
-            renderThemes();
-            closeModal('frictionModal');
-        }
-
-        function saveHypothese(e) {
-            e.preventDefault();
-            const id = document.getElementById('hypotheseId').value;
-            const hypothese = {
-                id: id ? parseInt(id) : Date.now(),
-                title: document.getElementById('hypotheseTitle').value,
-                si: document.getElementById('hypotheseSi').value,
-                alors: document.getElementById('hypotheseAlors').value,
-                impact: document.getElementById('hypotheseImpact').value,
-                themes: document.getElementById('hypotheseThemes').value
-            };
-
-            if (id) {
-                const index = appData.hypotheses.findIndex(x => x.id === parseInt(id));
-                appData.hypotheses[index] = hypothese;
-            } else {
-                appData.hypotheses.push(hypothese);
-            }
-
-            saveData();
-            renderHypotheses();
-            closeModal('hypotheseModal');
-        }
-
-        function saveIdea(e) {
-            e.preventDefault();
-            const id = document.getElementById('ideaId').value;
-            const existingIdea = id ? appData.ideas.find(x => x.id === parseInt(id)) : null;
-
-            const idea = {
-                id: id ? parseInt(id) : Date.now(),
-                title: document.getElementById('ideaTitle').value,
-                pages: document.getElementById('ideaPages').value,
-                hypothese: document.getElementById('ideaHypothese').value,
-                themes: document.getElementById('ideaThemes').value,
-                desc: document.getElementById('ideaDesc').value,
-                metricPrimary: document.getElementById('ideaMetricPrimary').value,
-                metricSecondary: document.getElementById('ideaMetricSecondary').value,
-                priority: document.getElementById('ideaPriority').value,
-                votes: existingIdea ? existingIdea.votes : 0,
-                createdBy: existingIdea ? existingIdea.createdBy : currentUser,
-                createdAt: existingIdea ? existingIdea.createdAt : new Date().toISOString(),
-                modifiedBy: currentUser,
-                modifiedAt: new Date().toISOString()
-            };
-
-            if (id) {
-                const index = appData.ideas.findIndex(x => x.id === parseInt(id));
-                appData.ideas[index] = idea;
-            } else {
-                appData.ideas.push(idea);
-            }
-
-            saveData();
-            renderIdeas();
-            closeModal('ideaModal');
-        }
-
-        // Edit functions
-        function editParcours(id) {
-            openParcoursModal(id);
-        }
-
-        function editPage(id) {
-            openPageModal(id);
-        }
-
-        function editTheme(id) {
-            openThemeModal(id);
-        }
-
-        function editHypothese(id) {
-            openHypotheseModal(id);
-        }
-
-        function editIdea(id) {
-            openIdeaModal(id);
-        }
-
-        // Delete functions
-        function deleteParcours(id) {
-            if (confirm('Êtes-vous sûr de vouloir supprimer ce parcours ?')) {
-                appData.parcours = appData.parcours.filter(x => x.id !== id);
-                saveData();
-                renderParcours();
-            }
-        }
-
-        function deletePage(id) {
-            if (confirm('Êtes-vous sûr de vouloir supprimer cette page ?')) {
-                appData.pages = appData.pages.filter(x => x.id !== id);
-                saveData();
-                renderPages();
-            }
-        }
-
-        function deleteComponent(pageId, componentIndex) {
-            if (confirm('Êtes-vous sûr de vouloir supprimer ce composant ?')) {
-                const page = appData.pages.find(x => x.id === pageId);
-                page.components.splice(componentIndex, 1);
-                saveData();
-                renderPages();
-            }
-        }
-
-        function deleteTheme(id) {
-            if (confirm('Êtes-vous sûr de vouloir supprimer ce thème ?')) {
-                appData.themes = appData.themes.filter(x => x.id !== id);
-                saveData();
-                renderThemes();
-            }
-        }
-
-        function deleteFriction(themeId, frictionIndex) {
-            if (confirm('Êtes-vous sûr de vouloir supprimer cette friction ?')) {
-                const theme = appData.themes.find(x => x.id === themeId);
-                theme.frictions.splice(frictionIndex, 1);
-                saveData();
-                renderThemes();
-            }
-        }
-
-        function deleteHypothese(id) {
-            if (confirm('Êtes-vous sûr de vouloir supprimer cette hypothèse ?')) {
-                appData.hypotheses = appData.hypotheses.filter(x => x.id !== id);
-                saveData();
-                renderHypotheses();
-            }
-        }
-
-        function deleteBenchmark(id) {
-            if (confirm('Êtes-vous sûr de vouloir supprimer ce benchmark ?')) {
-                appData.benchmarks = appData.benchmarks.filter(x => x.id !== id);
-                saveData();
-                renderBenchmarks();
-            }
-        }
-
-        function exportBenchmarksToExcel() {
-            if (!appData.benchmarks || appData.benchmarks.length === 0) {
-                alert('Aucun benchmark à exporter');
-                return;
-            }
-
-            const excelData = appData.benchmarks.map((bench, index) => {
-                // Get themes display
-                let themesText = '';
-                if (bench.themes && bench.themes.length > 0) {
-                    const themeNames = bench.themes.map(themeName => {
-                        const theme = appData.themes.find(t => t.name === themeName);
-                        return theme ? `${theme.emoji} ${theme.name}` : themeName;
-                    });
-                    themesText = themeNames.join(', ');
-                }
-
-                // Get custom categories
-                let categoriesText = '';
-                if (bench.customCategories && bench.customCategories.length > 0) {
-                    categoriesText = bench.customCategories.join(', ');
-                }
-
-                return {
-                    'N°': index + 1,
-                    'Concurrent': bench.competitor,
-                    'URL': bench.url || '',
-                    'Thèmes': themesText,
-                    'Catégories': categoriesText,
-                    'Description': bench.desc,
-                    'Hypothèse liée': bench.hypothese || '',
-                    'Score': bench.score || 3,
-                    'A une image': bench.image ? 'Oui' : 'Non',
-                    'Créé par': bench.createdBy || 'N/A',
-                    'Date création': bench.createdAt ? new Date(bench.createdAt).toLocaleDateString('fr-FR') : 'N/A',
-                    'Modifié par': bench.modifiedBy || 'N/A',
-                    'Date modification': bench.modifiedAt ? new Date(bench.modifiedAt).toLocaleDateString('fr-FR') : 'N/A'
-                };
-            });
-
-            const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.json_to_sheet(excelData);
-
-            // Définir la largeur des colonnes
-            ws['!cols'] = [
-                { wch: 5 },  // N°
-                { wch: 20 }, // Concurrent
-                { wch: 40 }, // URL
-                { wch: 30 }, // Thèmes
-                { wch: 25 }, // Catégories
-                { wch: 50 }, // Description
-                { wch: 30 }, // Hypothèse liée
-                { wch: 8 },  // Score
-                { wch: 12 }, // A une image
-                { wch: 18 }, // Créé par
-                { wch: 15 }, // Date création
-                { wch: 18 }, // Modifié par
-                { wch: 18 }  // Date modification
-            ];
-
-            XLSX.utils.book_append_sheet(wb, ws, "Benchmarks");
-
-            // Générer le nom du fichier avec la date
-            const fileName = `benchmarks-concurrents-${new Date().toISOString().split('T')[0]}.xlsx`;
-
-            XLSX.writeFile(wb, fileName);
-
-            console.log(`✅ Export Excel réussi : ${fileName}`);
-        }
-
-        function deleteIdea(id) {
-            if (confirm('Êtes-vous sûr de vouloir supprimer cette idée ?')) {
-                appData.ideas = appData.ideas.filter(x => x.id !== id);
-                saveData();
-                renderIdeas();
-            }
-        }
-
-        function voteIdea(id) {
-            const idea = appData.ideas.find(x => x.id === id);
-            if (idea) {
-                if (!idea.votes) idea.votes = 0;
-                idea.votes++;
-                saveData();
-
-                // Mise à jour visuelle immédiate
-                const voteElement = document.getElementById(`votes-${id}`);
-                if (voteElement) {
-                    voteElement.textContent = idea.votes;
-                    voteElement.style.transform = 'scale(1.3)';
-                    voteElement.style.color = '#4CAF50';
-                    setTimeout(() => {
-                        voteElement.style.transform = 'scale(1)';
-                        voteElement.style.color = '#667eea';
-                    }, 200);
-                }
-
-                // Re-render pour trier
-                setTimeout(() => renderIdeas(), 300);
-            }
-        }
-
-        function unvoteIdea(id) {
-            const idea = appData.ideas.find(x => x.id === id);
-            if (idea) {
-                if (!idea.votes) idea.votes = 0;
-                if (idea.votes > 0) {
-                    idea.votes--;
-                    saveData();
-
-                    // Mise à jour visuelle immédiate
-                    const voteElement = document.getElementById(`votes-${id}`);
-                    if (voteElement) {
-                        voteElement.textContent = idea.votes;
-                        voteElement.style.transform = 'scale(0.8)';
-                        voteElement.style.color = '#ff6b6b';
-                        setTimeout(() => {
-                            voteElement.style.transform = 'scale(1)';
-                            voteElement.style.color = '#667eea';
-                        }, 200);
-                    }
-
-                    // Re-render pour trier
-                    setTimeout(() => renderIdeas(), 300);
-                }
-            }
-        }
-
-        // === METRIC FUNCTIONS ===
-        function openMetricModal(id = null) {
-            if (id) {
-                const m = appData.metrics.find(x => x.id === id);
-                document.getElementById('metricId').value = m.id;
-                document.getElementById('metricLabel').value = m.label;
-                document.getElementById('metricValue').value = m.value;
-            } else {
-                document.getElementById('metricForm').reset();
-                document.getElementById('metricId').value = '';
-            }
-            openModal('metricModal');
-        }
-
-        function saveMetric(e) {
-            e.preventDefault();
-            console.log('saveMetric appelée');
-
-            if (!appData.metrics) appData.metrics = [];
-
-            const id = document.getElementById('metricId').value;
-            const metric = {
-                id: id ? parseInt(id) : Date.now(),
-                label: document.getElementById('metricLabel').value,
-                value: document.getElementById('metricValue').value
-            };
-
-            console.log('Métrique à sauvegarder:', metric);
-
-            if (id) {
-                const index = appData.metrics.findIndex(x => x.id === parseInt(id));
-                appData.metrics[index] = metric;
-                console.log('Métrique modifiée');
-            } else {
-                appData.metrics.push(metric);
-                console.log('Nouvelle métrique ajoutée');
-            }
-
-            console.log('Total métriques:', appData.metrics.length);
-            saveData();
-            renderMetrics();
-            closeModal('metricModal');
-        }
-
-        function editMetric(id) {
-            openMetricModal(id);
-        }
-
-        function deleteMetric(id) {
-            if (confirm('Êtes-vous sûr de vouloir supprimer cette métrique ?')) {
-                appData.metrics = appData.metrics.filter(x => x.id !== id);
-                saveData();
-                renderMetrics();
-            }
-        }
-
-        // === DEVICE FUNCTIONS ===
-        function openDeviceModal(id = null) {
-            if (id) {
-                const d = appData.devices.find(x => x.id === id);
-                document.getElementById('deviceId').value = d.id;
-                document.getElementById('deviceName').value = d.name;
-                document.getElementById('deviceSessions').value = d.sessions;
-                document.getElementById('devicePercent').value = d.percent;
-                document.getElementById('devicePagesPerSession').value = d.pagesPerSession;
-                document.getElementById('deviceExitRate').value = d.exitRate;
-            } else {
-                document.getElementById('deviceForm').reset();
-                document.getElementById('deviceId').value = '';
-            }
-            openModal('deviceModal');
-        }
-
-        function saveDevice(e) {
-            e.preventDefault();
-            const id = document.getElementById('deviceId').value;
-            const device = {
-                id: id ? parseInt(id) : Date.now(),
-                name: document.getElementById('deviceName').value,
-                sessions: document.getElementById('deviceSessions').value,
-                percent: document.getElementById('devicePercent').value,
-                pagesPerSession: document.getElementById('devicePagesPerSession').value,
-                exitRate: document.getElementById('deviceExitRate').value
-            };
-
-            if (id) {
-                const index = appData.devices.findIndex(x => x.id === parseInt(id));
-                appData.devices[index] = device;
-            } else {
-                appData.devices.push(device);
-            }
-
-            saveData();
-            renderDevices();
-            closeModal('deviceModal');
-        }
-
-        function editDevice(id) {
-            openDeviceModal(id);
-        }
-
-        function deleteDevice(id) {
-            if (confirm('Êtes-vous sûr de vouloir supprimer ce device ?')) {
-                appData.devices = appData.devices.filter(x => x.id !== id);
-                saveData();
-                renderDevices();
-            }
-        }
-
-        // === COUNTRY FUNCTIONS ===
-        function openCountryModal(id = null) {
-            if (id) {
-                const c = appData.countries.find(x => x.id === id);
-                document.getElementById('countryId').value = c.id;
-                document.getElementById('countryName').value = c.name;
-                document.getElementById('countrySessions').value = c.sessions;
-                document.getElementById('countryPercent').value = c.percent;
-                document.getElementById('countryBeEntry').value = c.beEntry;
-                document.getElementById('countryConversion').value = c.conversion;
-            } else {
-                document.getElementById('countryForm').reset();
-                document.getElementById('countryId').value = '';
-            }
-            openModal('countryModal');
-        }
-
-        function saveCountry(e) {
-            e.preventDefault();
-            const id = document.getElementById('countryId').value;
-            const country = {
-                id: id ? parseInt(id) : Date.now(),
-                name: document.getElementById('countryName').value,
-                sessions: document.getElementById('countrySessions').value,
-                percent: document.getElementById('countryPercent').value,
-                beEntry: document.getElementById('countryBeEntry').value,
-                conversion: document.getElementById('countryConversion').value
-            };
-
-            if (id) {
-                const index = appData.countries.findIndex(x => x.id === parseInt(id));
-                appData.countries[index] = country;
-            } else {
-                appData.countries.push(country);
-            }
-
-            saveData();
-            renderCountries();
-            closeModal('countryModal');
-        }
-
-        function editCountry(id) {
-            openCountryModal(id);
-        }
-
-        function deleteCountry(id) {
-            if (confirm('Êtes-vous sûr de vouloir supprimer ce pays ?')) {
-                appData.countries = appData.countries.filter(x => x.id !== id);
-                saveData();
-                renderCountries();
-            }
-        }
-
-        // === TRAFFIC SOURCE FUNCTIONS ===
-        function openTrafficSourceModal(id = null) {
-            if (id) {
-                const ts = appData.trafficSources.find(x => x.id === id);
-                document.getElementById('trafficSourceId').value = ts.id;
-                document.getElementById('trafficSourceName').value = ts.name;
-                document.getElementById('trafficSourcePercent').value = ts.percent;
-                document.getElementById('trafficSourceBeEntry').value = ts.beEntry;
-                document.getElementById('trafficSourceQuality').value = ts.quality;
-            } else {
-                document.getElementById('trafficSourceForm').reset();
-                document.getElementById('trafficSourceId').value = '';
-            }
-            openModal('trafficSourceModal');
-        }
-
-        function saveTrafficSource(e) {
-            e.preventDefault();
-            const id = document.getElementById('trafficSourceId').value;
-            const trafficSource = {
-                id: id ? parseInt(id) : Date.now(),
-                name: document.getElementById('trafficSourceName').value,
-                percent: document.getElementById('trafficSourcePercent').value,
-                beEntry: document.getElementById('trafficSourceBeEntry').value,
-                quality: document.getElementById('trafficSourceQuality').value
-            };
-
-            if (id) {
-                const index = appData.trafficSources.findIndex(x => x.id === parseInt(id));
-                appData.trafficSources[index] = trafficSource;
-            } else {
-                appData.trafficSources.push(trafficSource);
-            }
-
-            saveData();
-            renderTrafficSources();
-            closeModal('trafficSourceModal');
-        }
-
-        function editTrafficSource(id) {
-            openTrafficSourceModal(id);
-        }
-
-        function deleteTrafficSource(id) {
-            if (confirm('Êtes-vous sûr de vouloir supprimer cette source de trafic ?')) {
-                appData.trafficSources = appData.trafficSources.filter(x => x.id !== id);
-                saveData();
-                renderTrafficSources();
-            }
-        }
-
-        // === CUSTOM SEGMENTS FUNCTIONS ===
-        function openCreateSegmentModal(id = null) {
-            if (id) {
-                const segment = appData.customSegments.find(x => x.id === id);
-                if (segment) {
-                    document.getElementById('segmentId').value = segment.id;
-                    document.getElementById('segmentName').value = segment.name;
-                    document.getElementById('segmentColumns').value = segment.columns.join(', ');
-                }
-            } else {
-                document.getElementById('createSegmentForm').reset();
-                document.getElementById('segmentId').value = '';
-            }
-            openModal('createSegmentModal');
-        }
-
-        function saveSegment(e) {
-            e.preventDefault();
-            console.log('saveSegment appelée');
-
-            if (!appData.customSegments) appData.customSegments = [];
-
-            const id = document.getElementById('segmentId').value;
-            const name = document.getElementById('segmentName').value;
-            const columnsStr = document.getElementById('segmentColumns').value;
-            const columns = columnsStr.split(',').map(c => c.trim()).filter(c => c);
-
-            const segment = {
-                id: id ? parseInt(id) : Date.now(),
-                name: name,
-                columns: columns,
-                rows: id ? appData.customSegments.find(x => x.id === parseInt(id)).rows : []
-            };
-
-            console.log('Segment à sauvegarder:', segment);
-
-            if (id) {
-                const index = appData.customSegments.findIndex(x => x.id === parseInt(id));
-                appData.customSegments[index] = segment;
-                console.log('Segment modifié');
-            } else {
-                appData.customSegments.push(segment);
-                console.log('Nouveau segment ajouté');
-            }
-
-            console.log('Total segments:', appData.customSegments.length);
-            saveData();
-            renderCustomSegments();
-            closeModal('createSegmentModal');
-        }
-
-        function editSegment(id) {
-            openCreateSegmentModal(id);
-        }
-
-        function deleteSegment(id) {
-            if (confirm('Êtes-vous sûr de vouloir supprimer ce segment et toutes ses données ?')) {
-                appData.customSegments = appData.customSegments.filter(x => x.id !== id);
-                saveData();
-                renderCustomSegments();
-            }
-        }
-
-        function openAddSegmentRowModal(segmentId, rowIndex = null) {
-            const segment = appData.customSegments.find(x => x.id === segmentId);
-            if (!segment) return;
-
-            document.getElementById('rowSegmentId').value = segmentId;
-            document.getElementById('rowIndex').value = rowIndex !== null ? rowIndex : '';
-
-            const fieldsContainer = document.getElementById('segmentRowFields');
-            fieldsContainer.innerHTML = '';
-
-            segment.columns.forEach(col => {
-                const value = rowIndex !== null ? (segment.rows[rowIndex][col] || '') : '';
-                fieldsContainer.innerHTML += `
-                    <div class="form-group">
-                        <label>${col}</label>
-                        <input type="text" id="field_${col}" value="${value}" placeholder="Ex: ...">
-                    </div>
-                `;
-            });
-
-            openModal('addSegmentRowModal');
-        }
-
-        function saveSegmentRow(e) {
-            e.preventDefault();
-            const segmentId = parseInt(document.getElementById('rowSegmentId').value);
-            const rowIndex = document.getElementById('rowIndex').value;
-
-            const segment = appData.customSegments.find(x => x.id === segmentId);
-            if (!segment) return;
-
-            const rowData = {};
-            segment.columns.forEach(col => {
-                const input = document.getElementById('field_' + col);
-                if (input) {
-                    rowData[col] = input.value;
-                }
-            });
-
-            if (rowIndex !== '') {
-                // Edit existing row
-                segment.rows[parseInt(rowIndex)] = rowData;
-            } else {
-                // Add new row
-                if (!segment.rows) segment.rows = [];
-                segment.rows.push(rowData);
-            }
-
-            saveData();
-            renderCustomSegments();
-            closeModal('addSegmentRowModal');
-        }
-
-        function editSegmentRow(segmentId, rowIndex) {
-            openAddSegmentRowModal(segmentId, rowIndex);
-        }
-
-        function deleteSegmentRow(segmentId, rowIndex) {
-            if (confirm('Êtes-vous sûr de vouloir supprimer cette ligne ?')) {
-                const segment = appData.customSegments.find(x => x.id === segmentId);
-                if (segment && segment.rows) {
-                    segment.rows.splice(rowIndex, 1);
-                    saveData();
-                    renderCustomSegments();
-                }
-            }
-        }
-
-        // Utility functions
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-            localStorage.setItem('currentTab', tabName);
-        }
-
-        function saveData() {
-            localStorage.setItem('croWorkshopData', JSON.stringify(appData));
-            showSaveIndicator();
-        }
-
-        function showSaveIndicator() {
-            const indicator = document.getElementById('saveIndicator');
-            indicator.style.display = 'block';
-            setTimeout(() => {
-                indicator.style.display = 'none';
-            }, 2000);
-        }
-
-        function exportData() {
-            const dataStr = JSON.stringify(appData, null, 2);
-            const dataBlob = new Blob([dataStr], {type: 'application/json'});
-            const url = URL.createObjectURL(dataBlob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `atelier-cro-${new Date().toISOString().split('T')[0]}.json`;
-            link.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function exportIdeasToExcel() {
-            if (appData.ideas.length === 0) {
-                alert('Aucune idée à exporter');
-                return;
-            }
-
-            // Préparer les données pour Excel
-            const excelData = appData.ideas.map((idea, index) => ({
-                'N°': index + 1,
-                'Titre': idea.title,
-                'Pages concernées': idea.pages,
-                'Hypothèse liée': idea.hypothese,
-                'Thème(s)': idea.themes,
-                'Description': idea.desc,
-                'Métrique Primaire': idea.metricPrimary,
-                'Métriques Secondaires': idea.metricSecondary,
-                'Priorité (ICE)': idea.priority,
-                'Votes': idea.votes || 0,
-                'Créée par': idea.createdBy || 'N/A',
-                'Date création': idea.createdAt ? new Date(idea.createdAt).toLocaleDateString('fr-FR') : 'N/A',
-                'Modifiée par': idea.modifiedBy || 'N/A',
-                'Date modification': idea.modifiedAt ? new Date(idea.modifiedAt).toLocaleDateString('fr-FR') : 'N/A'
-            }));
-
-            // Créer un workbook et une worksheet
-            const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.json_to_sheet(excelData);
-
-            // Définir la largeur des colonnes
-            ws['!cols'] = [
-                { wch: 5 },   // N°
-                { wch: 30 },  // Titre
-                { wch: 20 },  // Pages
-                { wch: 40 },  // Hypothèse
-                { wch: 25 },  // Thèmes
-                { wch: 60 },  // Description
-                { wch: 30 },  // Métrique Primaire
-                { wch: 40 },  // Métriques Secondaires
-                { wch: 30 },  // Priorité
-                { wch: 10 },  // Votes
-                { wch: 20 },  // Créée par
-                { wch: 15 },  // Date création
-                { wch: 20 },  // Modifiée par
-                { wch: 15 }   // Date modification
-            ];
-
-            // Ajouter la worksheet au workbook
-            XLSX.utils.book_append_sheet(wb, ws, "Idées AB Test");
-
-            // Générer le fichier et le télécharger
-            const fileName = `idees-ab-test-${new Date().toISOString().split('T')[0]}.xlsx`;
-            XLSX.writeFile(wb, fileName);
-
-            console.log(`✅ Export Excel réussi : ${fileName}`);
-        }
-
-        // Close modal when clicking outside (except user login modal)
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal') && event.target.id !== 'userLoginModal') {
-                event.target.style.display = 'none';
-            }
-        }
-
-        // ===== FIREBASE INTEGRATION =====
-        // Import Firebase scripts
-        const firebaseScript = document.createElement('script');
-        firebaseScript.src = 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js';
-        document.head.appendChild(firebaseScript);
-
-        const firebaseDatabaseScript = document.createElement('script');
-        firebaseDatabaseScript.src = 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js';
-        document.head.appendChild(firebaseDatabaseScript);
-
-        let database;
-        let isFirebaseReady = false;
-        let currentGroup = 'default'; // Default group for guest mode
-
-        // Firebase configuration - REMPLACEZ PAR VOTRE CONFIG
-        const firebaseConfig = {
-            apiKey: "AIzaSyA_rfK5OnX_I7Qz9Qx3jkvuKQnYa4Ebaek",
-            authDomain: "atelier-cro-clubmed.firebaseapp.com",
-            databaseURL: "https://atelier-cro-clubmed-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "atelier-cro-clubmed",
-            storageBucket: "atelier-cro-clubmed.firebasestorage.app",
-            messagingSenderId: "933120278959",
-            appId: "1:933120278959:web:19a1bf1f24fb00284d2f5a"
-        };
-
-        // Initialize Firebase when scripts are loaded
-        firebaseDatabaseScript.onload = function() {
-            try {
-                firebase.initializeApp(firebaseConfig);
-                database = firebase.database();
-                isFirebaseReady = true;
-                console.log('✅ Firebase connecté - Mode collaboratif activé!');
-                document.getElementById('collaborativeStatus').innerHTML = '🌐 Mode Collaboratif Actif';
-                document.getElementById('collaborativeStatus').style.color = '#27ae60';
-
-                // Load header settings
-                loadHeaderSettings();
-
-                // Check if user name is saved
-                checkUserLogin();
-            } catch (error) {
-                console.warn('⚠️ Firebase non disponible, mode local activé', error);
-                isFirebaseReady = false;
-                document.getElementById('collaborativeStatus').innerHTML = '💾 Mode Local';
-                document.getElementById('collaborativeStatus').style.color = '#f39c12';
-                checkUserLogin();
-            }
-        };
-
-        // === USER MANAGEMENT ===
-        function saveHeaderSettings() {
-            const headerData = {
-                title: document.getElementById('headerTitle').textContent,
-                subtitle: document.getElementById('headerSubtitle').textContent,
-                timer: document.getElementById('timer').textContent
-            };
-
-            localStorage.setItem('headerSettings', JSON.stringify(headerData));
-
-            if (isFirebaseReady && database) {
-                database.ref('headerSettings').set(headerData)
-                    .then(() => console.log('✅ Header sauvegardé'))
-                    .catch(error => console.error('Erreur sauvegarde header:', error));
-            }
-        }
-
-        function loadHeaderSettings() {
-            // Try from Firebase first
-            if (isFirebaseReady && database) {
-                database.ref('headerSettings').once('value', (snapshot) => {
-                    const data = snapshot.val();
-                    if (data) {
-                        document.getElementById('headerTitle').textContent = data.title || '🎯 Atelier d\'Idéation CRO';
-                        document.getElementById('headerSubtitle').textContent = data.subtitle || 'Analyse Shopping Section - France & US | Roadmap AB Testing';
-                        document.getElementById('timer').textContent = data.timer || '2h30';
-                    }
-                });
-            } else {
-                // Fallback to localStorage
-                const saved = localStorage.getItem('headerSettings');
-                if (saved) {
-                    const data = JSON.parse(saved);
-                    document.getElementById('headerTitle').textContent = data.title;
-                    document.getElementById('headerSubtitle').textContent = data.subtitle;
-                    document.getElementById('timer').textContent = data.timer;
-                }
-            }
-        }
-
-
-        function checkUserLogin() {
-            const savedUser = localStorage.getItem('currentUser');
-            const savedGroup = localStorage.getItem('currentGroup');
-
-            if (savedUser) {
-                currentUser = savedUser;
-                currentGroup = savedGroup || 'default'; // Fallback to default if not saved
-                document.getElementById('currentUser').textContent = savedUser;
-                loadGroupDataFromFirebase();
-            } else {
-                showUserLoginModal();
-            }
-        }
-
-        function showUserLoginModal() {
-            document.getElementById('userLoginModal').style.display = 'block';
-        }
-
-
-        function loginUser(e) {
-            e.preventDefault();
-            const userName = document.getElementById('userName').value.trim();
-            const groupSelect = document.getElementById('groupSelect').value;
-            const newGroupName = document.getElementById('newGroupName').value.trim();
-
-            if (!userName) {
-                alert('Veuillez entrer votre nom');
-                return;
-            }
-
-            let groupName;
-            if (groupSelect === 'new') {
-                if (!newGroupName) {
-                    alert('Veuillez entrer un nom de groupe');
-                    return;
-                }
-                groupName = newGroupName;
-                // Add new group to available groups
-                if (!availableGroups.includes(groupName)) {
-                    availableGroups.push(groupName);
-                    saveGroupsToFirebase();
-                }
-            } else if (groupSelect) {
-                groupName = groupSelect;
-            } else {
-                alert('Veuillez sélectionner ou créer un groupe');
-                return;
-            }
-
-            currentUser = userName;
-            currentGroup = groupName;
-
-            // Save to localStorage
-            localStorage.setItem('currentUser', userName);
-            localStorage.setItem('currentGroup', groupName);
-
-            // Update UI
-            document.getElementById('currentUser').textContent = userName;
-            document.getElementById('currentGroup').textContent = groupName;
-            document.getElementById('userLoginModal').style.display = 'none';
-
-            console.log(`✅ Connecté : ${userName} (Groupe: ${groupName})`);
-
-            // Load group data from Firebase
-            loadGroupDataFromFirebase();
-        }
-
-
-        function continueAsGuest(e) {
-            if (e) e.preventDefault();
-
-            const guestName = document.getElementById('guestUserName').value.trim();
-            if (!guestName) {
-                alert('Veuillez entrer votre nom');
-                return;
-            }
-
-            currentUser = guestName;
-            currentGroup = 'default'; // Guest users use default group
-
-            localStorage.setItem('currentUser', currentUser);
-            localStorage.setItem('currentGroup', currentGroup);
-
-            document.getElementById('currentUser').textContent = currentUser;
-            document.getElementById('userLoginModal').style.display = 'none';
-
-            console.log('✅ Utilisateur connecté:', currentUser);
-
-            // Load data
-            if (isFirebaseReady && database) {
-                loadGroupDataFromFirebase();
-            } else {
-                initData();
-            }
-        }
-
-        function changeUserName() {
-            const newName = prompt('Entrez votre nouveau nom:', currentUser || '');
-            if (newName && newName.trim()) {
-                currentUser = newName.trim();
-                localStorage.setItem('currentUser', currentUser);
-                document.getElementById('currentUser').textContent = currentUser;
-                console.log('✅ Nom changé:', currentUser);
-            }
-        }
-
-
-        function loadGroupDataFromFirebase() {
-            if (!isFirebaseReady || !database) return;
-
-            // Use a shared path for all users (not separated by group)
-            const sharedRef = database.ref('sharedWorkshopData');
-
-            // Listen for changes in real-time
-            sharedRef.on('value', (snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    appData = data;
-                    // Ensure all arrays exist (backward compatibility)
-                    if (!appData.metrics) appData.metrics = [];
-                    if (!appData.devices) appData.devices = [];
-                    if (!appData.countries) appData.countries = [];
-                    if (!appData.trafficSources) appData.trafficSources = [];
-                    if (!appData.parcours) appData.parcours = [];
-                    if (!appData.pages) appData.pages = [];
-                    if (!appData.themes) appData.themes = [];
-                    if (!appData.hypotheses) appData.hypotheses = [];
-                    if (!appData.ideas) appData.ideas = [];
-                    if (!appData.customSegments) appData.customSegments = [];
-                    if (!appData.benchmarks) appData.benchmarks = [];
-
-                    // Normalize themes - ensure each theme has frictions array
-                    appData.themes.forEach(theme => {
-                        if (!theme.frictions) theme.frictions = [];
-                    });
-
-                    // Normalize pages - ensure each page has components array
-                    appData.pages.forEach(page => {
-                        if (!page.components) page.components = [];
-                    });
-
-                    renderAll();
-                    console.log(`🔄 Données partagées synchronisées (Utilisateur: ${currentUser}, Groupe: ${currentGroup})`);
-                } else {
-                    // First time - initialize with default data
-                    console.log('Aucune donnée existante, initialisation...');
-                    initData();
-                    saveGroupDataToFirebase();
-                }
-            });
-        }
-
-        function saveGroupDataToFirebase() {
-            if (!isFirebaseReady || !database) {
-                console.log('Sauvegarde locale (Firebase non prêt)');
-                localStorage.setItem('croWorkshopData', JSON.stringify(appData));
-                showSaveIndicator();
-                return;
-            }
-
-            // Add metadata
-            const dataWithMetadata = {
-                ...appData,
-                lastModified: new Date().toISOString(),
-                lastModifiedBy: currentUser || 'Anonyme',
-                lastModifiedGroup: currentGroup || 'default'
-            };
-
-            // Save to shared path (all users see the same data)
-            database.ref('sharedWorkshopData').set(dataWithMetadata)
-                .then(() => {
-                    console.log(`✅ Données partagées sauvegardées (Utilisateur: ${currentUser}, Groupe: ${currentGroup})`);
-                    showSaveIndicator();
-                })
-                .catch((error) => {
-                    console.error('❌ Erreur Firebase:', error);
-                    localStorage.setItem('croWorkshopData', JSON.stringify(appData));
-                    showSaveIndicator();
-                });
-        }
-
-        // Load data from Firebase
-        function loadFromFirebase() {
-            const dataRef = database.ref('workshopData');
-
-            // Listen for changes in real-time
-            dataRef.on('value', (snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    appData = data;
-                    renderAll();
-                    console.log('🔄 Données synchronisées depuis Firebase');
-                } else {
-                    // First time - initialize with default data
-                    initData();
-                    saveToFirebase();
-                }
-            });
-        }
-
-        // Save data to Firebase (using new group-based logic)
-        function saveToFirebase() {
-            saveGroupDataToFirebase();
-        }
-
-        // Override saveData to use Firebase
-        function saveData() {
-            saveToFirebase();
-        }
-
-        // Modified initData to work with both Firebase and localStorage
-        function initData() {
-            const saved = localStorage.getItem('croWorkshopData');
-            if (saved) {
-                appData = JSON.parse(saved);
-            } else {
-                // Default data
-                appData.parcours = [
-                    {
-                        id: 1,
-                        name: "Homepage → Resort Page → Offer Page → BE Entry",
-                        type: "good",
-                        users: "32%",
-                        conversion: "8.5%",
-                        time: "6:45",
-                        insights: "Parcours direct et efficace. Les utilisateurs qui passent par une offre spécifique convertissent mieux."
-                    },
-                    {
-                        id: 2,
-                        name: "Search → Resort Page → BE Entry",
-                        type: "good",
-                        users: "28%",
-                        conversion: "7.2%",
-                        time: "5:20",
-                        insights: "Utilisateurs avec une intention claire. La search est un accélérateur de conversion."
-                    },
-                    {
-                        id: 3,
-                        name: "Homepage → Resort Page → Homepage → Exit",
-                        type: "bad",
-                        users: "18%",
-                        conversion: "0.5%",
-                        time: "3:15",
-                        insights: "Boucle de navigation. Les utilisateurs ne trouvent pas ce qu'ils cherchent sur la resort page."
-                    }
-                ];
-
-                appData.pages = [
-                    {
-                        id: 1,
-                        name: "Homepage",
-                        emoji: "🏠",
-                        components: [
-                            { name: "Hero Banner + CTA Principal", scroll: "98%", click: "12%", observation: "Bonne visibilité, CTR acceptable" },
-                            { name: "Search Bar", scroll: "95%", click: "18%", observation: "Forte utilisation, élément clé" },
-                            { name: "Resorts Populaires", scroll: "72%", click: "22%", observation: "Bon engagement" }
-                        ]
-                    },
-                    {
-                        id: 2,
-                        name: "Resort Page",
-                        emoji: "🏨",
-                        components: [
-                            { name: "Hero Image + Prix Principal", scroll: "100%", click: "-", observation: "Attention immédiate" },
-                            { name: "CTA Réserver", scroll: "98%", click: "38%", observation: "Conversion élevée" },
-                            { name: "Tab Vue d'ensemble", scroll: "85%", click: "65%", observation: "Tab par défaut, forte consultation" }
-                        ]
-                    }
-                ];
-
-                appData.themes = [
-                    {
-                        id: 1,
-                        name: "Prix",
-                        emoji: "💰",
-                        frictions: [
-                            { title: "Manque de transparence sur le prix final", desc: "Utilisateurs US particulièrement sensibles, besoin de voir taxes incluses dès le début" },
-                            { title: "Comparaison de prix difficile", desc: "Sur Search Page, prix affichés de manière inconsistante (par nuit vs total, avec/sans promos)" }
-                        ]
-                    },
-                    {
-                        id: 2,
-                        name: "Search",
-                        emoji: "🔍",
-                        frictions: [
-                            { title: "Résultats de recherche non pertinents", desc: "Taux de sortie 42% sur Search Page, les utilisateurs ne trouvent pas ce qu'ils cherchent" }
-                        ]
-                    }
-                ];
-
-                appData.hypotheses = [
-                    {
-                        id: 1,
-                        title: "Propositions de valeur Resort",
-                        si: "nous mettons en avant plus haut sur la page les propositions de valeur clés du resort (activités, services inclus, types de chambres)",
-                        alors: "les utilisateurs comprendront plus rapidement l'offre du resort",
-                        impact: "augmenter l'engagement sur la page et le taux d'entrée dans le booking engine",
-                        themes: "Informations Resort, Activités"
-                    }
-                ];
-
-                appData.ideas = [
-                    {
-                        id: 1,
-                        title: "Hero Resort avec propositions de valeur",
-                        pages: "Resort Page",
-                        hypothese: "Hypothèse #1 - Propositions de valeur Resort",
-                        themes: "Informations Resort, Activités",
-                        desc: "Ajouter dans la hero section (sous le prix) une zone avec 4-5 badges/icônes mettant en avant : \"5 restaurants inclus\", \"Kids Club gratuit\", \"Spa sur place\", \"Piscines\", \"Activités nautiques\". Version A (control) vs Version B (avec badges)",
-                        metricPrimary: "Taux d'entrée dans le BE depuis Resort Page",
-                        metricSecondary: "Scroll depth, temps sur page, taux de rebond",
-                        priority: "Impact: 8, Confidence: 7, Ease: 6 = Score 7",
-                        votes: 0
-                    }
-                ];
-            }
-            renderAll();
-        }
-
-        // Initialize on load
-        window.addEventListener('load', function() {
-            // Firebase will call initData or loadFromFirebase when ready
-            // If Firebase fails to load after 3 seconds, fallback to local
-            setTimeout(() => {
-                if (!isFirebaseReady) {
-                    console.log('⚠️ Timeout Firebase - Mode local activé');
-                    document.getElementById('collaborativeStatus').innerHTML = '💾 Mode Local';
-                    document.getElementById('collaborativeStatus').style.color = '#f39c12';
-                    initData();
-                }
-            }, 3000);
-
-            const savedTab = localStorage.getItem('currentTab');
-            if (savedTab && savedTab !== 'overview') {
-                setTimeout(() => {
-                    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-                    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-                    document.getElementById(savedTab).classList.add('active');
-                    document.querySelector(`[onclick="switchTab('${savedTab}')"]`).classList.add('active');
-                }, 500);
-            }
-        });
-    </script>
-</body>
-</html>
+            const themesContainer = do
