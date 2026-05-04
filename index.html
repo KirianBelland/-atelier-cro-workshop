@@ -4618,7 +4618,7 @@
             localStorage.setItem('headerSettings', JSON.stringify(headerData));
 
             if (isFirebaseReady && database) {
-                database.ref('headerSettings').set(headerData)
+                database.ref('sharedWorkshopData/headerSettings').set(headerData)
                     .then(() => console.log('✅ Header sauvegardé'))
                     .catch(error => console.error('Erreur sauvegarde header:', error));
             }
@@ -4627,7 +4627,7 @@
         function loadHeaderSettings() {
             // Try from Firebase first
             if (isFirebaseReady && database) {
-                database.ref('headerSettings').once('value', (snapshot) => {
+                database.ref('sharedWorkshopData/headerSettings').once('value', (snapshot) => {
                     const data = snapshot.val();
                     if (data) {
                         document.getElementById('headerTitle').textContent = data.title || '🎯 Atelier d\'Idéation CRO';
