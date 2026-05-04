@@ -855,7 +855,10 @@
 
             <div id="parcoursContainer"></div>
 
-            <button class="btn-add" onclick="openParcoursModal()">+ Ajouter un Parcours</button>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button class="btn-add" onclick="openParcoursModal()">+ Ajouter un Parcours</button>
+                <button class="btn-edit" onclick="openParcoursMetricsConfigModal()">⚙️ Gérer les Métriques</button>
+            </div>
         </div>
 
         <!-- TAB 3: COMPORTEMENT -->
@@ -1034,17 +1037,8 @@
                         <option value="bad">❌ Mauvais Parcours (Non-Convertissant)</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label>% Utilisateurs</label>
-                    <input type="text" id="parcoursUsers" placeholder="Ex: 32%" required>
-                </div>
-                <div class="form-group">
-                    <label>Taux Conversion</label>
-                    <input type="text" id="parcoursConversion" placeholder="Ex: 8.5%">
-                </div>
-                <div class="form-group">
-                    <label>Temps Moyen</label>
-                    <input type="text" id="parcoursTime" placeholder="Ex: 6:45">
+                <div id="parcoursMetricsFields">
+                    <!-- Metrics fields will be generated dynamically -->
                 </div>
                 <div class="form-group">
                     <label>Insights / Observations</label>
@@ -1091,6 +1085,26 @@
                 </div>
                 <button type="submit" class="btn-add">Ajouter Composant</button>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL CONFIGURATION METRIQUES PARCOURS -->
+    <div id="parcoursMetricsConfigModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>⚙️ Gérer les Métriques des Parcours</h2>
+                <span class="modal-close" onclick="closeModal('parcoursMetricsConfigModal')">&times;</span>
+            </div>
+            <div class="alert" style="margin-bottom: 20px;">
+                <strong>Instructions :</strong> Personnalisez les métriques affichées pour chaque parcours. Vous pouvez modifier les noms, ajouter ou supprimer des métriques.
+            </div>
+            <div id="parcoursMetricsConfigList" style="margin-bottom: 20px;">
+                <!-- Metrics list will be generated dynamically -->
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: space-between;">
+                <button class="btn-add" onclick="addParcoursMetric()">+ Ajouter une Métrique</button>
+                <button class="btn-add" onclick="saveParcoursMetricsConfig()" style="background: #27ae60;">💾 Enregistrer</button>
+            </div>
         </div>
     </div>
 
@@ -1592,7 +1606,13 @@
                 countries: ['Pays', 'Sessions', '% Total', 'Taux d\'Entrée BE', 'Conversion'],
                 trafficSources: ['Source', 'Sessions', '% Total', 'Taux d\'Entrée BE'],
                 components: ['Composant', 'Scroll Reach', 'Taux de Clic', 'Engagement', 'Heatmap', 'Observation']
-            }
+            },
+            // Metrics configuration for parcours
+            parcoursMetrics: [
+                { key: 'users', label: '% Utilisateurs', placeholder: 'Ex: 32%' },
+                { key: 'conversion', label: 'Taux Conversion', placeholder: 'Ex: 8.5%' },
+                { key: 'time', label: 'Temps Moyen', placeholder: 'Ex: 6:45' }
+            ]
         };
 
         // Templates prédéfinis
@@ -2159,10 +2179,30 @@
             container.innerHTML = '';
 
             if (!appData.parcours) appData.parcours = [];
+            if (!appData.parcoursMetrics) {
+                appData.parcoursMetrics = [
+                    { key: 'users', label: '% Utilisateurs', placeholder: 'Ex: 32%' },
+                    { key: 'conversion', label: 'Taux Conversion', placeholder: 'Ex: 8.5%' },
+                    { key: 'time', label: 'Temps Moyen', placeholder: 'Ex: 6:45' }
+                ];
+            }
 
             appData.parcours.forEach(p => {
                 const card = document.createElement('div');
                 card.className = `parcours-card ${p.type}`;
+
+                // Generate metrics cards dynamically
+                let metricsHTML = '';
+                appData.parcoursMetrics.forEach(metric => {
+                    const value = p[metric.key] || '-';
+                    metricsHTML += `
+                        <div class="metric-card">
+                            <div class="metric-label">${metric.label}</div>
+                            <div class="metric-value" style="font-size: 1.5em;">${value}</div>
+                        </div>
+                    `;
+                });
+
                 card.innerHTML = `
                     <div class="parcours-actions">
                         <button class="btn-edit" onclick="editParcours(${p.id})">✏️ Modifier</button>
@@ -2170,18 +2210,7 @@
                     </div>
                     <h4>${p.type === 'good' ? '🏆' : '❌'} ${p.name}</h4>
                     <div class="metric-grid">
-                        <div class="metric-card">
-                            <div class="metric-label">% Utilisateurs</div>
-                            <div class="metric-value" style="font-size: 1.5em;">${p.users}</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-label">Taux Conversion</div>
-                            <div class="metric-value" style="font-size: 1.5em;">${p.conversion}</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-label">Temps Moyen</div>
-                            <div class="metric-value" style="font-size: 1.5em;">${p.time}</div>
-                        </div>
+                        ${metricsHTML}
                     </div>
                     <p style="margin-top: 15px;"><strong>Insights :</strong> ${p.insights}</p>
                 `;
@@ -2883,15 +2912,40 @@
         }
 
         function openParcoursModal(id = null) {
+            if (!appData.parcoursMetrics) {
+                appData.parcoursMetrics = [
+                    { key: 'users', label: '% Utilisateurs', placeholder: 'Ex: 32%' },
+                    { key: 'conversion', label: 'Taux Conversion', placeholder: 'Ex: 8.5%' },
+                    { key: 'time', label: 'Temps Moyen', placeholder: 'Ex: 6:45' }
+                ];
+            }
+
+            // Generate form fields dynamically
+            const metricsFieldsContainer = document.getElementById('parcoursMetricsFields');
+            metricsFieldsContainer.innerHTML = '';
+            appData.parcoursMetrics.forEach(metric => {
+                metricsFieldsContainer.innerHTML += `
+                    <div class="form-group">
+                        <label>${metric.label}</label>
+                        <input type="text" id="parcours_${metric.key}" placeholder="${metric.placeholder}">
+                    </div>
+                `;
+            });
+
             if (id) {
                 const p = appData.parcours.find(x => x.id === id);
                 document.getElementById('parcoursId').value = p.id;
                 document.getElementById('parcoursName').value = p.name;
                 document.getElementById('parcoursType').value = p.type;
-                document.getElementById('parcoursUsers').value = p.users;
-                document.getElementById('parcoursConversion').value = p.conversion;
-                document.getElementById('parcoursTime').value = p.time;
                 document.getElementById('parcoursInsights').value = p.insights;
+
+                // Fill metric values
+                appData.parcoursMetrics.forEach(metric => {
+                    const field = document.getElementById(`parcours_${metric.key}`);
+                    if (field) {
+                        field.value = p[metric.key] || '';
+                    }
+                });
             } else {
                 document.getElementById('parcoursForm').reset();
                 document.getElementById('parcoursId').value = '';
@@ -3088,11 +3142,16 @@
                 id: id ? parseInt(id) : Date.now(),
                 name: document.getElementById('parcoursName').value,
                 type: document.getElementById('parcoursType').value,
-                users: document.getElementById('parcoursUsers').value,
-                conversion: document.getElementById('parcoursConversion').value,
-                time: document.getElementById('parcoursTime').value,
                 insights: document.getElementById('parcoursInsights').value
             };
+
+            // Add metrics dynamically
+            appData.parcoursMetrics.forEach(metric => {
+                const field = document.getElementById(`parcours_${metric.key}`);
+                if (field) {
+                    parcours[metric.key] = field.value;
+                }
+            });
 
             if (id) {
                 const index = appData.parcours.findIndex(x => x.id === parseInt(id));
@@ -3490,6 +3549,85 @@
                 saveData();
                 renderParcours();
             }
+        }
+
+        function openParcoursMetricsConfigModal() {
+            if (!appData.parcoursMetrics) {
+                appData.parcoursMetrics = [
+                    { key: 'users', label: '% Utilisateurs', placeholder: 'Ex: 32%' },
+                    { key: 'conversion', label: 'Taux Conversion', placeholder: 'Ex: 8.5%' },
+                    { key: 'time', label: 'Temps Moyen', placeholder: 'Ex: 6:45' }
+                ];
+            }
+            renderParcoursMetricsConfig();
+            openModal('parcoursMetricsConfigModal');
+        }
+
+        function renderParcoursMetricsConfig() {
+            const container = document.getElementById('parcoursMetricsConfigList');
+            container.innerHTML = '';
+
+            appData.parcoursMetrics.forEach((metric, index) => {
+                const metricDiv = document.createElement('div');
+                metricDiv.style.cssText = 'background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 10px; display: flex; gap: 10px; align-items: flex-end;';
+                metricDiv.innerHTML = `
+                    <div style="flex: 1;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 5px;">Nom de la métrique</label>
+                        <input type="text" id="metric_label_${index}" value="${metric.label}" placeholder="Ex: Taux Conversion" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 5px;">Placeholder</label>
+                        <input type="text" id="metric_placeholder_${index}" value="${metric.placeholder}" placeholder="Ex: Ex: 8.5%" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 5px;">Clé (identifiant unique)</label>
+                        <input type="text" id="metric_key_${index}" value="${metric.key}" placeholder="Ex: conversion" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;" ${index < 3 ? '' : ''}>
+                    </div>
+                    <button class="btn-delete" onclick="deleteParcoursMetric(${index})" style="padding: 8px 12px; margin-bottom: 0;">🗑️</button>
+                `;
+                container.appendChild(metricDiv);
+            });
+        }
+
+        function addParcoursMetric() {
+            const newKey = 'metric_' + Date.now();
+            appData.parcoursMetrics.push({
+                key: newKey,
+                label: 'Nouvelle Métrique',
+                placeholder: 'Ex: valeur'
+            });
+            renderParcoursMetricsConfig();
+        }
+
+        function deleteParcoursMetric(index) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette métrique ?')) {
+                appData.parcoursMetrics.splice(index, 1);
+                renderParcoursMetricsConfig();
+            }
+        }
+
+        function saveParcoursMetricsConfig() {
+            // Update metrics from form fields
+            const updatedMetrics = [];
+            appData.parcoursMetrics.forEach((metric, index) => {
+                const labelField = document.getElementById(`metric_label_${index}`);
+                const placeholderField = document.getElementById(`metric_placeholder_${index}`);
+                const keyField = document.getElementById(`metric_key_${index}`);
+
+                if (labelField && placeholderField && keyField) {
+                    updatedMetrics.push({
+                        key: keyField.value,
+                        label: labelField.value,
+                        placeholder: placeholderField.value
+                    });
+                }
+            });
+
+            appData.parcoursMetrics = updatedMetrics;
+            saveData();
+            renderParcours();
+            closeModal('parcoursMetricsConfigModal');
+            alert('Configuration des métriques enregistrée avec succès !');
         }
 
         function deletePage(id) {
