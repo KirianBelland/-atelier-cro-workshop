@@ -4693,6 +4693,7 @@
         let database;
         let isFirebaseReady = false;
         let currentGroup = 'default'; // Default group for guest mode
+        let firebaseInitialized = false;
 
         // Firebase configuration - REMPLACEZ PAR VOTRE CONFIG
         const firebaseConfig = {
@@ -4705,9 +4706,34 @@
             appId: "1:933120278959:web:19a1bf1f24fb00284d2f5a"
         };
 
+        // Fonction d'initialisation en mode local (fallback)
+        function initLocalMode() {
+            if (firebaseInitialized) return; // Éviter la double initialisation
+            firebaseInitialized = true;
+
+            console.warn('⚠️ Initialisation en mode local');
+            isFirebaseReady = false;
+            document.getElementById('collaborativeStatus').innerHTML = '💾 Mode Local';
+            document.getElementById('collaborativeStatus').style.color = '#f39c12';
+            loadTabTitles();
+            checkUserLogin();
+        }
+
+        // Timeout de sécurité : si Firebase ne charge pas en 3 secondes, passer en mode local
+        const firebaseTimeout = setTimeout(() => {
+            if (!firebaseInitialized) {
+                console.warn('⏱️ Timeout Firebase - Passage en mode local');
+                initLocalMode();
+            }
+        }, 3000);
+
         // Initialize Firebase when scripts are loaded
         firebaseDatabaseScript.onload = function() {
+            clearTimeout(firebaseTimeout);
             try {
+                if (firebaseInitialized) return; // Éviter la double initialisation
+                firebaseInitialized = true;
+
                 firebase.initializeApp(firebaseConfig);
                 database = firebase.database();
                 isFirebaseReady = true;
@@ -4724,13 +4750,21 @@
                 // Check if user name is saved
                 checkUserLogin();
             } catch (error) {
-                console.warn('⚠️ Firebase non disponible, mode local activé', error);
-                isFirebaseReady = false;
-                document.getElementById('collaborativeStatus').innerHTML = '💾 Mode Local';
-                document.getElementById('collaborativeStatus').style.color = '#f39c12';
-                loadTabTitles();
-                checkUserLogin();
+                initLocalMode();
             }
+        };
+
+        // Gérer les erreurs de chargement des scripts Firebase
+        firebaseScript.onerror = function() {
+            console.error('❌ Erreur de chargement Firebase App script');
+            clearTimeout(firebaseTimeout);
+            initLocalMode();
+        };
+
+        firebaseDatabaseScript.onerror = function() {
+            console.error('❌ Erreur de chargement Firebase Database script');
+            clearTimeout(firebaseTimeout);
+            initLocalMode();
         };
 
         // === USER MANAGEMENT ===
@@ -4958,38 +4992,4 @@
 
             console.log('✅ Utilisateur connecté:', currentUser);
 
-            // Load admin list
-            loadAdminList();
-
-            // Load data
-            if (isFirebaseReady && database) {
-                loadGroupDataFromFirebase();
-            } else {
-                initData();
-            }
-        }
-
-        function changeUserName() {
-            const newName = prompt('Entrez votre nouveau nom:', currentUser || '');
-            if (newName && newName.trim()) {
-                const oldName = currentUser;
-                currentUser = newName.trim();
-                localStorage.setItem('currentUser', currentUser);
-                document.getElementById('currentUser').textContent = currentUser;
-
-                // Si l'ancien nom était admin, transférer le statut admin
-                if (isAdmin && adminUsers.includes(oldName)) {
-                    removeAdminFromList(oldName);
-                    addAdminToList(currentUser);
-                }
-
-                checkAdminStatus();
-                console.log('✅ Nom changé:', currentUser);
-            }
-        }
-
-        // === ADMIN MANAGEMENT ===
-        function loadAdminList() {
-            if (isFirebaseReady && database) {
-                database.ref('sharedWorkshopData/adminUsers').once('value', (snapshot) => {
-             
+            //
