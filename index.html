@@ -120,7 +120,7 @@
 
         .metric-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
             margin: 25px 0;
         }
@@ -276,51 +276,6 @@
             background: #4a5c6d;
         }
 
-        .btn-friction {
-            background: #e74c3c;
-            color: white;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.85em;
-            transition: all 0.2s ease;
-            margin: 0 3px;
-            font-weight: 500;
-        }
-
-        .btn-friction:hover {
-            background: #c0392b;
-        }
-
-        .btn-motivation {
-            background: #27ae60;
-            color: white;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.85em;
-            transition: all 0.2s ease;
-            margin: 0 3px;
-            font-weight: 500;
-        }
-
-        .btn-motivation:hover {
-            background: #229954;
-        }
-
-        .friction-item {
-            border-left: 4px solid #e74c3c;
-            background: #fee;
-        }
-
-        .motivation-item {
-            border-left: 4px solid #27ae60;
-            background: #efe;
-        }
-        }
-
         .btn-secondary {
             background: #ffffff;
             color: #5a6c7d;
@@ -408,7 +363,7 @@
         /* Responsive benchmark grid */
         @media (max-width: 768px) {
             #benchmarkContainer > div {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)) !important;
             }
         }
 
@@ -778,34 +733,47 @@
                 ⏱️ Durée atelier : <span contenteditable="true" id="timer" onblur="saveHeaderSettings()" style="cursor: text; padding: 2px; border-bottom: 1px dashed #999;">2h30</span> |
                 <span id="collaborativeStatus">🔄 Connexion...</span> |
                 👤 <span id="currentUser"></span>
-                <span id="adminBadge" style="display: none; margin-left: 5px; background: #e74c3c; color: white; padding: 2px 8px; border-radius: 3px; font-size: 0.8em; font-weight: bold;">ADMIN</span>
                 <button onclick="changeUserName()" style="margin-left: 10px; padding: 5px 10px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">✏️ Changer de nom</button>
-                <button id="adminPanelBtn" onclick="openAdminPanel()" style="display: none; margin-left: 10px; padding: 5px 10px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">⚙️ Admin</button>
                 <button onclick="exportAllToExcel()" style="margin-left: 10px; padding: 8px 18px; background: #2c3e50; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">📥 Export Complet Excel</button>
             </div>
         </header>
 
         <nav class="nav-tabs">
-            <button class="tab-btn active" onclick="switchTab('dashboard', this)">📈 Dashboard</button>
-            <button class="tab-btn" onclick="switchTab('overview', this)">📊 Vue d'ensemble</button>
+            <!-- SECTION: ANALYSE -->
+            <div style="width: 100%; padding: 8px 15px; background: linear-gradient(135deg, #2c5f8d 0%, #3a7ca5 100%); color: white; font-weight: 600; border-radius: 6px; margin-bottom: 10px; text-align: center;">
+                📊 ANALYSE
+            </div>
+            <button class="tab-btn active" onclick="switchTab('overview', this)">📊 Vue d'ensemble</button>
+            <button class="tab-btn" onclick="switchTab('performances', this)">📈 Performances Pages</button>
             <button class="tab-btn" onclick="switchTab('parcours', this)">🗺️ Parcours Utilisateurs</button>
             <button class="tab-btn" onclick="switchTab('comportement', this)">👤 Comportement In-Page</button>
+
+            <!-- SECTION: IDÉATION -->
+            <div style="width: 100%; padding: 8px 15px; background: linear-gradient(135deg, #d97757 0%, #e89b7e 100%); color: white; font-weight: 600; border-radius: 6px; margin: 10px 0; text-align: center;">
+                💡 IDÉATION
+            </div>
             <button class="tab-btn" onclick="switchTab('frictions', this)">🎨 Thèmes</button>
             <button class="tab-btn" onclick="switchTab('benchmark', this)">🔍 Benchmark</button>
-            <button class="tab-btn" onclick="switchTab('hypotheses', this)">💡 Hypothèses</button>
+            <button class="tab-btn" onclick="switchTab('hypotheses', this)">💭 Hypothèses</button>
             <button class="tab-btn" onclick="switchTab('idees', this)">🚀 Idées d'AB Test</button>
+
+            <!-- SECTION: APERÇU GLOBAL -->
+            <div style="width: 100%; padding: 8px 15px; background: linear-gradient(135deg, #4a9d9c 0%, #5db3b3 100%); color: white; font-weight: 600; border-radius: 6px; margin: 10px 0; text-align: center;">
+                📋 APERÇU GLOBAL
+            </div>
+            <button class="tab-btn" onclick="switchTab('dashboard', this)">💹 Dashboard</button>
             <button class="tab-btn" onclick="switchTab('presentation', this)">📋 Résumé Exécutif</button>
         </nav>
 
         <!-- TAB 0: DASHBOARD -->
-        <div id="dashboard" class="tab-content active">
+        <div id="dashboard" class="tab-content">
             <h2>📈 Dashboard Atelier CRO</h2>
             <div class="alert">
                 <strong>Vue d'ensemble :</strong> Statistiques et visualisations de l'atelier en temps réel.
             </div>
 
             <!-- Stats cards -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; margin-bottom: 30px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px;">
                 <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
                     <div style="font-size: 2.5em; font-weight: bold;" id="statsIdeasCount">0</div>
                     <div style="font-size: 0.9em; opacity: 0.9;">💡 Idées d'AB Test</div>
@@ -833,7 +801,7 @@
             </div>
 
             <!-- Charts -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; margin-bottom: 30px;">
                 <!-- Top 10 idées -->
                 <div style="background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
                     <h3 style="margin-top: 0;">🏆 Top 10 Idées par Votes</h3>
@@ -855,11 +823,8 @@
         </div>
 
         <!-- TAB 1: OVERVIEW -->
-        <div id="overview" class="tab-content">
-            <h2 contenteditable="true" id="titleOverview" onblur="saveTabTitle('overview')" style="cursor: text; padding: 5px;">📊 Analyse Overview - Shopping Section</h2>
-            <div class="alert" id="overviewAdminAlert" style="display: none; background: #fff3cd; border-left: 4px solid #ffc107;">
-                <strong>🔒 Lecture seule :</strong> Cet onglet est réservé aux administrateurs. Vous pouvez consulter les données mais pas les modifier.
-            </div>
+        <div id="overview" class="tab-content active">
+            <h2>📊 Analyse Overview - Shopping Section</h2>
             <div class="alert">
                 <strong>Objectif :</strong> Comprendre le volume global, la répartition par device/pays et identifier les grandes tendances.
             </div>
@@ -894,12 +859,27 @@
             <div id="customSegmentsContainer"></div>
         </div>
 
-        <!-- TAB 2: PARCOURS -->
-        <div id="parcours" class="tab-content">
-            <h2 contenteditable="true" id="titleParcours" onblur="saveTabTitle('parcours')" style="cursor: text; padding: 5px;">🗺️ Analyse des Parcours Utilisateurs</h2>
-            <div class="alert" id="parcoursAdminAlert" style="display: none; background: #fff3cd; border-left: 4px solid #ffc107;">
+        <!-- TAB: PERFORMANCES PAGES -->
+        <div id="performances" class="tab-content">
+            <h2>📈 Performances Pages par Segment</h2>
+            <div class="alert" id="performancesAdminAlert" style="display: none; background: #fff3cd; border-left: 4px solid #ffc107;">
                 <strong>🔒 Lecture seule :</strong> Cet onglet est réservé aux administrateurs. Vous pouvez consulter les données mais pas les modifier.
             </div>
+            <div class="alert">
+                <strong>Objectif :</strong> Analyser les performances de chaque page par segment (Global, Device, Pays, etc.) pour identifier les opportunités d'optimisation.
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0;">📊 Tableaux de Performance</h3>
+                <button class="btn-add" onclick="openPerformanceTableModal()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">+ Créer un Tableau</button>
+            </div>
+
+            <div id="performanceTablesContainer"></div>
+        </div>
+
+        <!-- TAB 2: PARCOURS -->
+        <div id="parcours" class="tab-content">
+            <h2>🗺️ Analyse des Parcours Utilisateurs</h2>
             <div class="alert">
                 <strong>Objectif :</strong> Comprendre comment les utilisateurs naviguent avant d'entrer dans le booking engine et identifier les parcours convertissants vs non-convertissants.
             </div>
@@ -908,18 +888,12 @@
 
             <div id="parcoursContainer"></div>
 
-            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                <button class="btn-add" onclick="openParcoursModal()">+ Ajouter un Parcours</button>
-                <button class="btn-edit" onclick="openParcoursMetricsConfigModal()">⚙️ Gérer les Métriques</button>
-            </div>
+            <button class="btn-add" onclick="openParcoursModal()">+ Ajouter un Parcours</button>
         </div>
 
         <!-- TAB 3: COMPORTEMENT -->
         <div id="comportement" class="tab-content">
-            <h2 contenteditable="true" id="titleComportement" onblur="saveTabTitle('comportement')" style="cursor: text; padding: 5px;">👤 Analyse Comportementale In-Page</h2>
-            <div class="alert" id="comportementAdminAlert" style="display: none; background: #fff3cd; border-left: 4px solid #ffc107;">
-                <strong>🔒 Lecture seule :</strong> Cet onglet est réservé aux administrateurs. Vous pouvez consulter les données mais pas les modifier.
-            </div>
+            <h2>👤 Analyse Comportementale In-Page</h2>
             <div class="alert">
                 <strong>Objectif :</strong> Analyser le comportement sur chaque page critique, identifier les frictions et opportunités CRO.
             </div>
@@ -931,7 +905,7 @@
 
         <!-- TAB 4: THÈMES -->
         <div id="frictions" class="tab-content">
-            <h2 contenteditable="true" id="titleThemes" onblur="saveTabTitle('frictions')" style="cursor: text; padding: 5px;">🎨 Thèmes CRO</h2>
+            <h2>🎨 Thèmes CRO</h2>
             <div class="alert">
                 <strong>Objectif :</strong> Organiser les frictions et besoins utilisateurs par thématiques CRO pour orienter l'idéation.
             </div>
@@ -943,7 +917,7 @@
 
         <!-- TAB 5: BENCHMARK -->
         <div id="benchmark" class="tab-content">
-            <h2 contenteditable="true" id="titleBenchmark" onblur="saveTabTitle('benchmark')" style="cursor: text; padding: 5px;">🔍 Benchmark Concurrentiel</h2>
+            <h2>🔍 Benchmark Concurrentiel</h2>
             <div class="alert">
                 <strong>Objectif :</strong> Analyser les bonnes pratiques des concurrents, capturer des screenshots, identifier des opportunités d'amélioration.
             </div>
@@ -964,7 +938,7 @@
 
         <!-- TAB 5: HYPOTHESES -->
         <div id="hypotheses" class="tab-content">
-            <h2 contenteditable="true" id="titleHypotheses" onblur="saveTabTitle('hypotheses')" style="cursor: text; padding: 5px;">💡 Hypothèses d'Amélioration</h2>
+            <h2>💡 Hypothèses d'Amélioration</h2>
             <div class="alert">
                 <strong>Framework :</strong> Si [ACTION] alors [COMPORTEMENT ATTENDU] ce qui devrait [IMPACT BUSINESS]
             </div>
@@ -976,14 +950,14 @@
 
         <!-- TAB 6: IDEES AB TEST -->
         <div id="idees" class="tab-content">
-            <h2 contenteditable="true" id="titleIdees" onblur="saveTabTitle('idees')" style="cursor: text; padding: 5px;">🚀 Idées d'AB Test</h2>
+            <h2>🚀 Idées d'AB Test</h2>
             <div class="alert">
                 <strong>Instructions :</strong> Pour chaque idée, préciser le test, la page concernée, l'hypothèse liée et la priorité estimée.
             </div>
 
             <!-- Filtres et recherche -->
             <div style="background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 15px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px;">
                     <div>
                         <label style="display: block; font-weight: 600; margin-bottom: 5px;">🔍 Recherche</label>
                         <input type="text" id="searchIdeas" placeholder="Chercher dans titre, description..." style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;" oninput="applyIdeasFilters()">
@@ -1032,27 +1006,27 @@
             <h2>📋 Résumé Exécutif</h2>
 
             <div style="text-align: center; margin-bottom: 30px;">
-                <button class="btn-add" onclick="window.print()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); font-size: 1.1em; padding: 12px 30px;">🖨️ Imprimer / Exporter PDF</button>
+                <button class="btn-add" onclick="window.print()" style="background: linear-gradient(135deg, #4a9d9c 0%, #5db3b3 100%); font-size: 1.1em; padding: 12px 30px;">🖨️ Imprimer / Exporter PDF</button>
             </div>
 
             <!-- Résumé de l'atelier -->
             <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); margin-bottom: 30px;">
-                <h3 style="color: #667eea; border-bottom: 3px solid #667eea; padding-bottom: 10px;">📊 Vue d'ensemble de l'atelier</h3>
+                <h3 style="color: #2c5f8d; border-bottom: 3px solid #2c5f8d; padding-bottom: 10px;">📊 Vue d'ensemble de l'atelier</h3>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; margin-top: 20px;">
                     <div style="text-align: center;">
-                        <div style="font-size: 3em; font-weight: bold; color: #667eea;" id="presentIdeasCount">0</div>
+                        <div style="font-size: 3em; font-weight: bold; color: #2c5f8d;" id="presentIdeasCount">0</div>
                         <div style="color: #666;">Idées générées</div>
                     </div>
                     <div style="text-align: center;">
-                        <div style="font-size: 3em; font-weight: bold; color: #f093fb;" id="presentVotesCount">0</div>
+                        <div style="font-size: 3em; font-weight: bold; color: #d97757;" id="presentVotesCount">0</div>
                         <div style="color: #666;">Votes totaux</div>
                     </div>
                     <div style="text-align: center;">
-                        <div style="font-size: 3em; font-weight: bold; color: #4facfe;" id="presentThemesCount">0</div>
+                        <div style="font-size: 3em; font-weight: bold; color: #4a9d9c;" id="presentThemesCount">0</div>
                         <div style="color: #666;">Thèmes explorés</div>
                     </div>
                     <div style="text-align: center;">
-                        <div style="font-size: 3em; font-weight: bold; color: #43e97b;" id="presentContributorsCount">0</div>
+                        <div style="font-size: 3em; font-weight: bold; color: #3a7ca5;" id="presentContributorsCount">0</div>
                         <div style="color: #666;">Participants</div>
                     </div>
                 </div>
@@ -1060,16 +1034,55 @@
 
             <!-- Top 10 idées priorisées -->
             <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); margin-bottom: 30px;">
-                <h3 style="color: #667eea; border-bottom: 3px solid #667eea; padding-bottom: 10px;">🏆 Top 10 Idées Priorisées par Vote</h3>
+                <h3 style="color: #2c5f8d; border-bottom: 3px solid #2c5f8d; padding-bottom: 10px;">🏆 Top 10 Idées Priorisées par Vote</h3>
                 <div id="presentationTop10"></div>
             </div>
 
             <!-- Répartition par thème -->
             <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); margin-bottom: 30px;">
-                <h3 style="color: #667eea; border-bottom: 3px solid #667eea; padding-bottom: 10px;">🎯 Répartition par Thème</h3>
+                <h3 style="color: #2c5f8d; border-bottom: 3px solid #2c5f8d; padding-bottom: 10px;">🎯 Répartition par Thème</h3>
                 <div id="presentationByTheme"></div>
             </div>
 
+        </div>
+    </div>
+
+    <!-- MODAL PERFORMANCE TABLE -->
+    <div id="performanceTableModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Créer/Modifier un Tableau</h2>
+                <span class="modal-close" onclick="closeModal('performanceTableModal')">&times;</span>
+            </div>
+            <form id="performanceTableForm" onsubmit="savePerformanceTable(event)">
+                <input type="hidden" id="performanceTableId">
+                <div class="form-group">
+                    <label>Nom du Segment</label>
+                    <input type="text" id="performanceTableName" placeholder="Ex: Global, Desktop, Mobile, France..." required>
+                </div>
+                <div class="form-group">
+                    <label>Colonnes du tableau (séparées par des virgules)</label>
+                    <input type="text" id="performanceTableColumns" placeholder="Ex: Page, Sessions, BE Entry, BECR, Conversion" required>
+                    <small style="color: #666;">💡 La première colonne sera toujours le nom de la page</small>
+                </div>
+                <button type="submit" class="btn-add">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL PERFORMANCE ROW -->
+    <div id="performanceRowModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Ajouter/Modifier une Ligne</h2>
+                <span class="modal-close" onclick="closeModal('performanceRowModal')">&times;</span>
+            </div>
+            <form id="performanceRowForm" onsubmit="savePerformanceRow(event)">
+                <input type="hidden" id="performanceRowTableId">
+                <input type="hidden" id="performanceRowIndex">
+                <div id="performanceRowFields"></div>
+                <button type="submit" class="btn-add">Enregistrer</button>
+            </form>
         </div>
     </div>
 
@@ -1093,8 +1106,17 @@
                         <option value="bad">❌ Mauvais Parcours (Non-Convertissant)</option>
                     </select>
                 </div>
-                <div id="parcoursMetricsFields">
-                    <!-- Metrics fields will be generated dynamically -->
+                <div class="form-group">
+                    <label>% Utilisateurs</label>
+                    <input type="text" id="parcoursUsers" placeholder="Ex: 32%" required>
+                </div>
+                <div class="form-group">
+                    <label>Taux Conversion</label>
+                    <input type="text" id="parcoursConversion" placeholder="Ex: 8.5%">
+                </div>
+                <div class="form-group">
+                    <label>Temps Moyen</label>
+                    <input type="text" id="parcoursTime" placeholder="Ex: 6:45">
                 </div>
                 <div class="form-group">
                     <label>Insights / Observations</label>
@@ -1144,26 +1166,6 @@
         </div>
     </div>
 
-    <!-- MODAL CONFIGURATION METRIQUES PARCOURS -->
-    <div id="parcoursMetricsConfigModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>⚙️ Gérer les Métriques des Parcours</h2>
-                <span class="modal-close" onclick="closeModal('parcoursMetricsConfigModal')">&times;</span>
-            </div>
-            <div class="alert" style="margin-bottom: 20px;">
-                <strong>Instructions :</strong> Personnalisez les métriques affichées pour chaque parcours. Vous pouvez modifier les noms, ajouter ou supprimer des métriques.
-            </div>
-            <div id="parcoursMetricsConfigList" style="margin-bottom: 20px;">
-                <!-- Metrics list will be generated dynamically -->
-            </div>
-            <div style="display: flex; gap: 10px; justify-content: space-between;">
-                <button class="btn-add" onclick="addParcoursMetric()">+ Ajouter une Métrique</button>
-                <button class="btn-add" onclick="saveParcoursMetricsConfig()" style="background: #27ae60;">💾 Enregistrer</button>
-            </div>
-        </div>
-    </div>
-
     <!-- MODAL THEME -->
     <div id="themeModal" class="modal">
         <div class="modal-content">
@@ -1204,28 +1206,6 @@
                     <textarea id="frictionDesc" rows="3" placeholder="Décrivez la friction en détail"></textarea>
                 </div>
                 <button type="submit" class="btn-add">Ajouter Friction</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL MOTIVATION -->
-    <div id="motivationModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Ajouter une Motivation</h2>
-                <span class="modal-close" onclick="closeModal('motivationModal')">&times;</span>
-            </div>
-            <form id="motivationForm" onsubmit="saveMotivation(event)">
-                <input type="hidden" id="motivationThemeId">
-                <div class="form-group">
-                    <label>Titre de la Motivation</label>
-                    <input type="text" id="motivationTitle" placeholder="Ex: Besoin de réassurance sur la qualité" required>
-                </div>
-                <div class="form-group">
-                    <label>Description / Contexte</label>
-                    <textarea id="motivationDesc" rows="3" placeholder="Décrivez la motivation en détail"></textarea>
-                </div>
-                <button type="submit" class="btn-add">Ajouter Motivation</button>
             </form>
         </div>
     </div>
@@ -1478,11 +1458,6 @@
                     <label>Valeur</label>
                     <input type="text" id="metricValue" placeholder="Ex: 1 250 000" required>
                 </div>
-                <div class="form-group">
-                    <label>Évolution vs année précédente (optionnel)</label>
-                    <input type="text" id="metricEvolution" placeholder="Ex: +15% ou -5%">
-                    <small style="color: #666; display: block; margin-top: 5px;">💡 Ajoutez le signe + ou - suivi du pourcentage</small>
-                </div>
                 <button type="submit" class="btn-add">Enregistrer</button>
             </form>
         </div>
@@ -1516,26 +1491,6 @@
                 <div class="form-group">
                     <label>Exit Rate</label>
                     <input type="text" id="deviceExitRate" placeholder="Ex: 38%" required>
-                </div>
-                <div class="form-group">
-                    <label>Colonne 6 (optionnel)</label>
-                    <input type="text" id="deviceCol6" placeholder="Ex: Bounce Rate">
-                </div>
-                <div class="form-group">
-                    <label>Colonne 7 (optionnel)</label>
-                    <input type="text" id="deviceCol7" placeholder="Ex: Avg Duration">
-                </div>
-                <div class="form-group">
-                    <label>Colonne 8 (optionnel)</label>
-                    <input type="text" id="deviceCol8" placeholder="Ex: Conversions">
-                </div>
-                <div class="form-group">
-                    <label>Colonne 9 (optionnel)</label>
-                    <input type="text" id="deviceCol9" placeholder="Ex: Revenue">
-                </div>
-                <div class="form-group">
-                    <label>Colonne 10 (optionnel)</label>
-                    <input type="text" id="deviceCol10" placeholder="Ex: AOV">
                 </div>
                 <button type="submit" class="btn-add">Enregistrer</button>
             </form>
@@ -1571,26 +1526,6 @@
                     <label>Conversion</label>
                     <input type="text" id="countryConversion" placeholder="Ex: 3.2%" required>
                 </div>
-                <div class="form-group">
-                    <label>Colonne 6 (optionnel)</label>
-                    <input type="text" id="countryCol6" placeholder="Ex: AOV">
-                </div>
-                <div class="form-group">
-                    <label>Colonne 7 (optionnel)</label>
-                    <input type="text" id="countryCol7" placeholder="Ex: Revenue">
-                </div>
-                <div class="form-group">
-                    <label>Colonne 8 (optionnel)</label>
-                    <input type="text" id="countryCol8" placeholder="Ex: Bounce Rate">
-                </div>
-                <div class="form-group">
-                    <label>Colonne 9 (optionnel)</label>
-                    <input type="text" id="countryCol9" placeholder="Ex: Time on Site">
-                </div>
-                <div class="form-group">
-                    <label>Colonne 10 (optionnel)</label>
-                    <input type="text" id="countryCol10" placeholder="Ex: Return Rate">
-                </div>
                 <button type="submit" class="btn-add">Enregistrer</button>
             </form>
         </div>
@@ -1620,30 +1555,6 @@
                 <div class="form-group">
                     <label>Quality Score</label>
                     <input type="text" id="trafficSourceQuality" placeholder="Ex: 8/10" required>
-                </div>
-                <div class="form-group">
-                    <label>Colonne 5 (optionnel)</label>
-                    <input type="text" id="trafficSourceCol5" placeholder="Ex: CPC">
-                </div>
-                <div class="form-group">
-                    <label>Colonne 6 (optionnel)</label>
-                    <input type="text" id="trafficSourceCol6" placeholder="Ex: Conversion Rate">
-                </div>
-                <div class="form-group">
-                    <label>Colonne 7 (optionnel)</label>
-                    <input type="text" id="trafficSourceCol7" placeholder="Ex: ROI">
-                </div>
-                <div class="form-group">
-                    <label>Colonne 8 (optionnel)</label>
-                    <input type="text" id="trafficSourceCol8" placeholder="Ex: Bounce Rate">
-                </div>
-                <div class="form-group">
-                    <label>Colonne 9 (optionnel)</label>
-                    <input type="text" id="trafficSourceCol9" placeholder="Ex: Avg Session">
-                </div>
-                <div class="form-group">
-                    <label>Colonne 10 (optionnel)</label>
-                    <input type="text" id="trafficSourceCol10" placeholder="Ex: Revenue">
                 </div>
                 <button type="submit" class="btn-add">Enregistrer</button>
             </form>
@@ -1699,11 +1610,11 @@
             <form id="editColumnsForm" onsubmit="saveColumnNames(event)">
                 <input type="hidden" id="editColumnsType">
                 <div class="alert" style="background: #e8f4f8; border-left: 4px solid #3498db; margin-bottom: 20px;">
-                    <strong>💡 Astuce :</strong> Séparez les noms par des virgules. Vous pouvez renommer jusqu'à 10 colonnes (Devices, Pays, Traffic Sources).
+                    <strong>💡 Astuce :</strong> Séparez les noms par des virgules. L'ordre et le nombre de colonnes sont conservés.
                 </div>
                 <div class="form-group">
-                    <label>Noms des Colonnes (10 max)</label>
-                    <input type="text" id="editColumnsInput" placeholder="Ex: Device, Sessions, % Total, Pages/Session, Exit Rate, AOV, Revenue..." required>
+                    <label>Noms des Colonnes</label>
+                    <input type="text" id="editColumnsInput" placeholder="Ex: Device, Sessions, % Total, Pages/Session..." required>
                 </div>
                 <button type="submit" class="btn-add">Enregistrer</button>
             </form>
@@ -1730,40 +1641,10 @@
         </div>
     </div>
 
-    <!-- ADMIN PANEL MODAL -->
-    <div id="adminPanelModal" class="modal" style="display: none;">
-        <div class="modal-content" style="max-width: 600px;">
-            <div class="modal-header">
-                <h2>⚙️ Panneau d'Administration</h2>
-                <span class="close" onclick="closeAdminPanel()">&times;</span>
-            </div>
-            <div class="alert" style="margin-bottom: 20px; background: #fff3cd; border-left: 4px solid #ffc107;">
-                <strong>⚠️ Zone Administrateur</strong><br>
-                <small style="color: #856404;">Les administrateurs peuvent gérer la liste des admins et ont accès à des fonctionnalités supplémentaires.</small>
-            </div>
-
-            <h3 style="margin-top: 20px; margin-bottom: 10px;">👥 Liste des Administrateurs</h3>
-            <div id="adminListContainer" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; max-height: 300px; overflow-y: auto;">
-                <!-- Liste générée dynamiquement -->
-            </div>
-
-            <h3 style="margin-top: 20px; margin-bottom: 10px;">➕ Ajouter un Administrateur</h3>
-            <form onsubmit="addAdmin(event)" style="display: flex; gap: 10px;">
-                <input type="text" id="newAdminName" placeholder="Nom de l'utilisateur" required style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                <button type="submit" class="btn-add" style="padding: 10px 20px;">➕ Ajouter</button>
-            </form>
-
-            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #ddd;">
-                <button onclick="closeAdminPanel()" class="btn-edit" style="width: 100%; padding: 12px;">Fermer</button>
-            </div>
-        </div>
-    </div>
-
     <script>
         // User management
         let currentUser = 'Invité';
-        let isAdmin = false;
-        let adminUsers = []; // Liste des utilisateurs administrateurs
+        let isAdmin = true; // Par défaut, tous les utilisateurs sont administrateurs
 
         // Data storage
         let appData = {
@@ -1772,6 +1653,7 @@
             countries: [],
             trafficSources: [],
             customSegments: [],
+            performanceTables: [],
             parcours: [],
             pages: [],
             themes: [],
@@ -1784,13 +1666,7 @@
                 countries: ['Pays', 'Sessions', '% Total', 'Taux d\'Entrée BE', 'Conversion'],
                 trafficSources: ['Source', 'Sessions', '% Total', 'Taux d\'Entrée BE'],
                 components: ['Composant', 'Scroll Reach', 'Taux de Clic', 'Engagement', 'Heatmap', 'Observation']
-            },
-            // Metrics configuration for parcours
-            parcoursMetrics: [
-                { key: 'users', label: '% Utilisateurs', placeholder: 'Ex: 32%' },
-                { key: 'conversion', label: 'Taux Conversion', placeholder: 'Ex: 8.5%' },
-                { key: 'time', label: 'Temps Moyen', placeholder: 'Ex: 6:45' }
-            ]
+            }
         };
 
         // Templates prédéfinis
@@ -1877,10 +1753,10 @@
             } else {
                 // Default data
                 appData.metrics = [
-                    { id: 1, label: "Sessions Totales Shopping", value: "1 250 000", evolution: "+15%" },
-                    { id: 2, label: "Pages Vues / Session", value: "4.8", evolution: "+8%" },
-                    { id: 3, label: "Temps Moyen (min)", value: "5:32", evolution: "-3%" },
-                    { id: 4, label: "Exit Rate Global (%)", value: "42%", evolution: "-5%" }
+                    { id: 1, label: "Sessions Totales Shopping", value: "1 250 000" },
+                    { id: 2, label: "Pages Vues / Session", value: "4.8" },
+                    { id: 3, label: "Temps Moyen (min)", value: "5:32" },
+                    { id: 4, label: "Exit Rate Global (%)", value: "42%" }
                 ];
 
                 appData.devices = [
@@ -1962,9 +1838,6 @@
                         frictions: [
                             { title: "Manque de transparence sur le prix final", desc: "Utilisateurs US particulièrement sensibles, besoin de voir taxes incluses dès le début" },
                             { title: "Comparaison de prix difficile", desc: "Sur Search Page, prix affichés de manière inconsistante (par nuit vs total, avec/sans promos)" }
-                        ],
-                        motivations: [
-                            { title: "Recherche du meilleur prix", desc: "Les utilisateurs veulent s'assurer d'obtenir un bon rapport qualité-prix" }
                         ]
                     },
                     {
@@ -1973,9 +1846,6 @@
                         emoji: "🔍",
                         frictions: [
                             { title: "Résultats de recherche non pertinents", desc: "Taux de sortie 42% sur Search Page, les utilisateurs ne trouvent pas ce qu'ils cherchent" }
-                        ],
-                        motivations: [
-                            { title: "Trouver rapidement le resort idéal", desc: "Besoin d'une recherche efficace et personnalisée selon leurs critères" }
                         ]
                     }
                 ];
@@ -2020,38 +1890,11 @@
             appData.metrics.forEach(metric => {
                 const card = document.createElement('div');
                 card.className = 'metric-card';
-
-                // Déterminer la couleur et l'icône pour l'évolution
-                let evolutionHTML = '';
-                if (metric.evolution) {
-                    const isPositive = metric.evolution.trim().startsWith('+');
-                    const isNegative = metric.evolution.trim().startsWith('-');
-                    const bgColor = isPositive ? '#d4edda' : isNegative ? '#f8d7da' : '#d1ecf1';
-                    const textColor = isPositive ? '#155724' : isNegative ? '#721c24' : '#0c5460';
-                    const icon = isPositive ? '📈' : isNegative ? '📉' : '➡️';
-
-                    evolutionHTML = `
-                        <div style="
-                            display: inline-block;
-                            background: ${bgColor};
-                            color: ${textColor};
-                            padding: 4px 10px;
-                            border-radius: 12px;
-                            font-size: 0.85em;
-                            font-weight: 600;
-                            margin-top: 5px;
-                        ">
-                            ${icon} ${metric.evolution}
-                        </div>
-                    `;
-                }
-
                 card.innerHTML = `
                     <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                         <div style="flex: 1;">
                             <div class="metric-label">${metric.label}</div>
                             <div class="metric-value" style="font-size: 1.8em;">${metric.value}</div>
-                            ${evolutionHTML}
                         </div>
                         <div style="display: flex; gap: 5px;">
                             <button class="btn-edit" onclick="editMetric(${metric.id})" style="padding: 5px 10px; font-size: 0.8em;">✏️</button>
@@ -2070,10 +1913,10 @@
 
             if (!appData.devices) appData.devices = [];
             if (!appData.columnNames) appData.columnNames = {};
-            if (!appData.columnNames.devices) appData.columnNames.devices = ['Device', 'Sessions', '% Total', 'Pages/Session', 'Exit Rate', 'Col 6', 'Col 7', 'Col 8', 'Col 9', 'Col 10'];
+            if (!appData.columnNames.devices) appData.columnNames.devices = ['Device', 'Sessions', '% Total', 'Pages/Session', 'Exit Rate'];
 
             const colNames = appData.columnNames.devices;
-            const dataKeys = ['name', 'sessions', 'percent', 'pagesPerSession', 'exitRate', 'col6', 'col7', 'col8', 'col9', 'col10'];
+            const dataKeys = ['name', 'sessions', 'percent', 'pagesPerSession', 'exitRate'];
 
             const headerRow = document.createElement('div');
             headerRow.style.marginBottom = '10px';
@@ -2097,7 +1940,7 @@
                 <tbody>
                     ${appData.devices.map(d => `
                         <tr>
-                            ${dataKeys.map(key => `<td>${key === 'name' ? '<strong>' + (d[key] || '') + '</strong>' : (d[key] || '')}</td>`).join('')}
+                            ${dataKeys.map(key => `<td>${key === 'name' ? '<strong>' + d[key] + '</strong>' : d[key]}</td>`).join('')}
                             <td>
                                 <button class="btn-edit" onclick="editDevice(${d.id})" style="padding: 5px 10px; font-size: 0.8em;">✏️</button>
                                 <button class="btn-delete" onclick="deleteDevice(${d.id})" style="padding: 5px 10px; font-size: 0.8em;">🗑️</button>
@@ -2116,10 +1959,10 @@
 
             if (!appData.countries) appData.countries = [];
             if (!appData.columnNames) appData.columnNames = {};
-            if (!appData.columnNames.countries) appData.columnNames.countries = ['Pays', 'Sessions', '% Total', 'Taux d\'Entrée BE', 'Conversion', 'Col 6', 'Col 7', 'Col 8', 'Col 9', 'Col 10'];
+            if (!appData.columnNames.countries) appData.columnNames.countries = ['Pays', 'Sessions', '% Total', 'Taux d\'Entrée BE', 'Conversion'];
 
             const colNames = appData.columnNames.countries;
-            const dataKeys = ['name', 'sessions', 'percent', 'beEntry', 'conversion', 'col6', 'col7', 'col8', 'col9', 'col10'];
+            const dataKeys = ['name', 'sessions', 'percent', 'beEntry', 'conversion'];
 
             const headerRow = document.createElement('div');
             headerRow.style.marginBottom = '10px';
@@ -2143,7 +1986,7 @@
                 <tbody>
                     ${appData.countries.map(c => `
                         <tr>
-                            ${dataKeys.map(key => `<td>${key === 'name' ? '<strong>' + (c[key] || '') + '</strong>' : (c[key] || '')}</td>`).join('')}
+                            ${dataKeys.map(key => `<td>${key === 'name' ? '<strong>' + c[key] + '</strong>' : c[key]}</td>`).join('')}
                             <td>
                                 <button class="btn-edit" onclick="editCountry(${c.id})" style="padding: 5px 10px; font-size: 0.8em;">✏️</button>
                                 <button class="btn-delete" onclick="deleteCountry(${c.id})" style="padding: 5px 10px; font-size: 0.8em;">🗑️</button>
@@ -2162,10 +2005,10 @@
 
             if (!appData.trafficSources) appData.trafficSources = [];
             if (!appData.columnNames) appData.columnNames = {};
-            if (!appData.columnNames.trafficSources) appData.columnNames.trafficSources = ['Source', '% Sessions', 'Taux d\'Entrée BE', 'Quality Score', 'Col 5', 'Col 6', 'Col 7', 'Col 8', 'Col 9', 'Col 10'];
+            if (!appData.columnNames.trafficSources) appData.columnNames.trafficSources = ['Source', '% Sessions', 'Taux d\'Entrée BE', 'Quality Score'];
 
             const colNames = appData.columnNames.trafficSources;
-            const dataKeys = ['name', 'percent', 'beEntry', 'quality', 'col5', 'col6', 'col7', 'col8', 'col9', 'col10'];
+            const dataKeys = ['name', 'percent', 'beEntry', 'quality'];
 
             const headerRow = document.createElement('div');
             headerRow.style.marginBottom = '10px';
@@ -2189,7 +2032,7 @@
                 <tbody>
                     ${appData.trafficSources.map(ts => `
                         <tr>
-                            ${dataKeys.map(key => `<td>${key === 'name' ? '<strong>' + (ts[key] || '') + '</strong>' : (ts[key] || '')}</td>`).join('')}
+                            ${dataKeys.map(key => `<td>${key === 'name' ? '<strong>' + ts[key] + '</strong>' : ts[key]}</td>`).join('')}
                             <td>
                                 <button class="btn-edit" onclick="editTrafficSource(${ts.id})" style="padding: 5px 10px; font-size: 0.8em;">✏️</button>
                                 <button class="btn-delete" onclick="deleteTrafficSource(${ts.id})" style="padding: 5px 10px; font-size: 0.8em;">🗑️</button>
@@ -2239,7 +2082,7 @@
                         <tbody>
                             ${rows.map((row, idx) => `
                                 <tr>
-                                    ${columns.map((col, colIdx) => `<td>${colIdx === 0 ? '<strong>' + (row[col] || '') + '</strong>' : (row[col] || '')}</td>`).join('')}
+                                    ${columns.map(col => `<td>${row[col] || ''}</td>`).join('')}
                                     <td>
                                         <button class="btn-edit" onclick="editSegmentRow(${segment.id}, ${idx})" style="padding: 5px 10px; font-size: 0.8em;">✏️</button>
                                         <button class="btn-delete" onclick="deleteSegmentRow(${segment.id}, ${idx})" style="padding: 5px 10px; font-size: 0.8em;">🗑️</button>
@@ -2384,36 +2227,233 @@
             }
         }
 
+        // === PERFORMANCE TABLES FUNCTIONS ===
+        function renderPerformanceTables() {
+            const container = document.getElementById('performanceTablesContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (!appData.performanceTables) appData.performanceTables = [];
+
+            if (appData.performanceTables.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">Aucun tableau de performance. Créez-en un pour commencer !</p>';
+                return;
+            }
+
+            appData.performanceTables.forEach(table => {
+                const tableDiv = document.createElement('div');
+                tableDiv.style.marginBottom = '40px';
+                tableDiv.style.background = 'white';
+                tableDiv.style.padding = '20px';
+                tableDiv.style.borderRadius = '10px';
+                tableDiv.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+
+                const columns = table.columns || [];
+                const rows = Array.isArray(table.rows) ? table.rows : [];
+
+                tableDiv.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3 style="margin: 0; color: #667eea;">📊 ${table.name}</h3>
+                        <div>
+                            <button class="btn-add" onclick="openPerformanceRowModal(${table.id})" style="padding: 6px 12px; font-size: 0.9em;">+ Ajouter une ligne</button>
+                            <button class="btn-edit" onclick="editPerformanceTable(${table.id})" style="padding: 6px 12px; font-size: 0.9em;">✏️ Modifier</button>
+                            <button class="btn-delete" onclick="deletePerformanceTable(${table.id})" style="padding: 6px 12px; font-size: 0.9em;">🗑️ Supprimer</button>
+                        </div>
+                    </div>
+                    <table style="width: 100%;">
+                        <thead>
+                            <tr>
+                                ${columns.map(col => `<th>${col}</th>`).join('')}
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rows.map((row, idx) => `
+                                <tr>
+                                    ${columns.map((col, colIdx) => {
+                                        const key = col.toLowerCase().replace(/\s+/g, '').replace(/%/g, '').replace(/'/g, '');
+                                        return `<td>${colIdx === 0 ? '<strong>' + (row[key] || '') + '</strong>' : (row[key] || '')}</td>`;
+                                    }).join('')}
+                                    <td>
+                                        <button class="btn-edit" onclick="editPerformanceRow(${table.id}, ${idx})" style="padding: 5px 10px; font-size: 0.8em;">✏️</button>
+                                        <button class="btn-delete" onclick="deletePerformanceRow(${table.id}, ${idx})" style="padding: 5px 10px; font-size: 0.8em;">🗑️</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                            ${rows.length === 0 ? '<tr><td colspan="' + (columns.length + 1) + '" style="text-align: center; color: #999; padding: 20px;">Aucune donnée</td></tr>' : ''}
+                        </tbody>
+                    </table>
+                `;
+
+                container.appendChild(tableDiv);
+            });
+        }
+
+        function openPerformanceTableModal(id = null) {
+            if (!isAdmin) {
+                alert('🔒 Accès refusé : Seuls les administrateurs peuvent modifier cet onglet');
+                return;
+            }
+
+            if (id) {
+                const table = appData.performanceTables.find(t => t.id === id);
+                document.getElementById('performanceTableId').value = table.id;
+                document.getElementById('performanceTableName').value = table.name;
+                document.getElementById('performanceTableColumns').value = table.columns.join(', ');
+            } else {
+                document.getElementById('performanceTableForm').reset();
+                document.getElementById('performanceTableId').value = '';
+            }
+            openModal('performanceTableModal');
+        }
+
+        function savePerformanceTable(e) {
+            e.preventDefault();
+            const id = document.getElementById('performanceTableId').value;
+            const columnsStr = document.getElementById('performanceTableColumns').value;
+            const columns = columnsStr.split(',').map(c => c.trim()).filter(c => c);
+
+            let existingRows = [];
+            if (id) {
+                const existingTable = appData.performanceTables.find(t => t.id === parseInt(id));
+                if (existingTable && existingTable.rows) {
+                    existingRows = existingTable.rows;
+                }
+            }
+
+            const table = {
+                id: id ? parseInt(id) : Date.now(),
+                name: document.getElementById('performanceTableName').value,
+                columns: columns
+            };
+
+            if (existingRows.length > 0) {
+                table.rows = existingRows;
+            }
+
+            if (id) {
+                const index = appData.performanceTables.findIndex(t => t.id === parseInt(id));
+                appData.performanceTables[index] = table;
+            } else {
+                appData.performanceTables.push(table);
+            }
+
+            saveData();
+            renderPerformanceTables();
+            closeModal('performanceTableModal');
+        }
+
+        function editPerformanceTable(id) {
+            openPerformanceTableModal(id);
+        }
+
+        function deletePerformanceTable(id) {
+            if (!isAdmin) {
+                alert('🔒 Accès refusé : Seuls les administrateurs peuvent modifier cet onglet');
+                return;
+            }
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce tableau ?')) {
+                appData.performanceTables = appData.performanceTables.filter(t => t.id !== id);
+                saveData();
+                renderPerformanceTables();
+            }
+        }
+
+        function openPerformanceRowModal(tableId, rowIndex = null) {
+            if (!isAdmin) {
+                alert('🔒 Accès refusé : Seuls les administrateurs peuvent modifier cet onglet');
+                return;
+            }
+
+            const table = appData.performanceTables.find(t => t.id === tableId);
+            document.getElementById('performanceRowTableId').value = tableId;
+            document.getElementById('performanceRowIndex').value = rowIndex !== null ? rowIndex : '';
+
+            const fieldsContainer = document.getElementById('performanceRowFields');
+            fieldsContainer.innerHTML = '';
+
+            table.columns.forEach((col, index) => {
+                const key = col.toLowerCase().replace(/\s+/g, '').replace(/%/g, '').replace(/'/g, '');
+                const fieldGroup = document.createElement('div');
+                fieldGroup.className = 'form-group';
+                fieldGroup.innerHTML = `
+                    <label>${col}</label>
+                    <input type="text" id="perfRow_${key}" placeholder="Ex: ${col}" required>
+                `;
+                fieldsContainer.appendChild(fieldGroup);
+            });
+
+            if (rowIndex !== null && table.rows && table.rows[rowIndex]) {
+                const row = table.rows[rowIndex];
+                table.columns.forEach(col => {
+                    const key = col.toLowerCase().replace(/\s+/g, '').replace(/%/g, '').replace(/'/g, '');
+                    const input = document.getElementById('perfRow_' + key);
+                    if (input) {
+                        input.value = row[key] || '';
+                    }
+                });
+            }
+
+            openModal('performanceRowModal');
+        }
+
+        function savePerformanceRow(e) {
+            e.preventDefault();
+            const tableId = parseInt(document.getElementById('performanceRowTableId').value);
+            const rowIndex = document.getElementById('performanceRowIndex').value;
+
+            const table = appData.performanceTables.find(t => t.id === tableId);
+            if (!table) return;
+
+            const row = {};
+            table.columns.forEach(col => {
+                const key = col.toLowerCase().replace(/\s+/g, '').replace(/%/g, '').replace(/'/g, '');
+                const input = document.getElementById('perfRow_' + key);
+                if (input) {
+                    row[key] = input.value;
+                }
+            });
+
+            if (!table.rows) table.rows = [];
+
+            if (rowIndex !== '') {
+                table.rows[parseInt(rowIndex)] = row;
+            } else {
+                table.rows.push(row);
+            }
+
+            saveData();
+            renderPerformanceTables();
+            closeModal('performanceRowModal');
+        }
+
+        function editPerformanceRow(tableId, rowIndex) {
+            openPerformanceRowModal(tableId, rowIndex);
+        }
+
+        function deletePerformanceRow(tableId, rowIndex) {
+            if (!isAdmin) {
+                alert('🔒 Accès refusé : Seuls les administrateurs peuvent modifier cet onglet');
+                return;
+            }
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette ligne ?')) {
+                const table = appData.performanceTables.find(t => t.id === tableId);
+                table.rows.splice(rowIndex, 1);
+                saveData();
+                renderPerformanceTables();
+            }
+        }
+
         function renderParcours() {
             const container = document.getElementById('parcoursContainer');
             if (!container) return;
             container.innerHTML = '';
 
             if (!appData.parcours) appData.parcours = [];
-            if (!appData.parcoursMetrics) {
-                appData.parcoursMetrics = [
-                    { key: 'users', label: '% Utilisateurs', placeholder: 'Ex: 32%' },
-                    { key: 'conversion', label: 'Taux Conversion', placeholder: 'Ex: 8.5%' },
-                    { key: 'time', label: 'Temps Moyen', placeholder: 'Ex: 6:45' }
-                ];
-            }
 
             appData.parcours.forEach(p => {
                 const card = document.createElement('div');
                 card.className = `parcours-card ${p.type}`;
-
-                // Generate metrics cards dynamically
-                let metricsHTML = '';
-                appData.parcoursMetrics.forEach(metric => {
-                    const value = p[metric.key] || '-';
-                    metricsHTML += `
-                        <div class="metric-card">
-                            <div class="metric-label">${metric.label}</div>
-                            <div class="metric-value" style="font-size: 1.5em;">${value}</div>
-                        </div>
-                    `;
-                });
-
                 card.innerHTML = `
                     <div class="parcours-actions">
                         <button class="btn-edit" onclick="editParcours(${p.id})">✏️ Modifier</button>
@@ -2421,7 +2461,18 @@
                     </div>
                     <h4>${p.type === 'good' ? '🏆' : '❌'} ${p.name}</h4>
                     <div class="metric-grid">
-                        ${metricsHTML}
+                        <div class="metric-card">
+                            <div class="metric-label">% Utilisateurs</div>
+                            <div class="metric-value" style="font-size: 1.5em;">${p.users}</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Taux Conversion</div>
+                            <div class="metric-value" style="font-size: 1.5em;">${p.conversion}</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Temps Moyen</div>
+                            <div class="metric-value" style="font-size: 1.5em;">${p.time}</div>
+                        </div>
                     </div>
                     <p style="margin-top: 15px;"><strong>Insights :</strong> ${p.insights}</p>
                 `;
@@ -2494,9 +2545,8 @@
             if (!appData.themes) appData.themes = [];
 
             appData.themes.forEach(theme => {
-                // Ensure frictions and motivations arrays exist
+                // Ensure frictions array exists
                 if (!theme.frictions) theme.frictions = [];
-                if (!theme.motivations) theme.motivations = [];
 
                 const card = document.createElement('div');
                 card.className = 'theme-card';
@@ -2506,30 +2556,20 @@
                         <div>
                             <button class="btn-edit" onclick="editTheme(${theme.id})">✏️ Modifier</button>
                             <button class="btn-delete" onclick="deleteTheme(${theme.id})">🗑️ Supprimer</button>
-                            <button class="btn-friction" style="padding: 8px 15px; font-size: 0.9em;" onclick="openFrictionModal(${theme.id})">🔴 Friction</button>
-                            <button class="btn-motivation" style="padding: 8px 15px; font-size: 0.9em;" onclick="openMotivationModal(${theme.id})">🟢 Motivation</button>
+                            <button class="btn-add" style="padding: 8px 15px; font-size: 0.9em;" onclick="openFrictionModal(${theme.id})">+ Friction</button>
                         </div>
                     </div>
                     <ul class="item-list">
                         ${(theme.frictions || []).map((f, idx) => `
-                            <li class="friction-item">
+                            <li>
                                 <div class="item-content">
-                                    <strong>🔴 ${f.title}</strong><br>
+                                    <strong>${f.title}</strong><br>
                                     <small>${f.desc}</small>
                                 </div>
                                 <button class="btn-delete" onclick="deleteFriction(${theme.id}, ${idx})">🗑️</button>
                             </li>
                         `).join('')}
-                        ${(theme.motivations || []).map((m, idx) => `
-                            <li class="motivation-item">
-                                <div class="item-content">
-                                    <strong>🟢 ${m.title}</strong><br>
-                                    <small>${m.desc}</small>
-                                </div>
-                                <button class="btn-delete" onclick="deleteMotivation(${theme.id}, ${idx})">🗑️</button>
-                            </li>
-                        `).join('')}
-                        ${(!theme.frictions || theme.frictions.length === 0) && (!theme.motivations || theme.motivations.length === 0) ? '<li style="color: #999;">Aucune friction ou motivation ajoutée</li>' : ''}
+                        ${(!theme.frictions || theme.frictions.length === 0) ? '<li style="color: #999;">Aucune friction ajoutée</li>' : ''}
                     </ul>
                 `;
                 container.appendChild(card);
@@ -2793,6 +2833,7 @@
             renderCountries();
             renderTrafficSources();
             renderCustomSegments();
+            renderPerformanceTables();
             renderParcours();
             renderPages();
             renderThemes();
@@ -3134,44 +3175,15 @@
         }
 
         function openParcoursModal(id = null) {
-            if (!isAdmin) {
-                alert('🔒 Accès refusé : Seuls les administrateurs peuvent modifier l\'onglet Parcours Utilisateurs');
-                return;
-            }
-            if (!appData.parcoursMetrics) {
-                appData.parcoursMetrics = [
-                    { key: 'users', label: '% Utilisateurs', placeholder: 'Ex: 32%' },
-                    { key: 'conversion', label: 'Taux Conversion', placeholder: 'Ex: 8.5%' },
-                    { key: 'time', label: 'Temps Moyen', placeholder: 'Ex: 6:45' }
-                ];
-            }
-
-            // Generate form fields dynamically
-            const metricsFieldsContainer = document.getElementById('parcoursMetricsFields');
-            metricsFieldsContainer.innerHTML = '';
-            appData.parcoursMetrics.forEach(metric => {
-                metricsFieldsContainer.innerHTML += `
-                    <div class="form-group">
-                        <label>${metric.label}</label>
-                        <input type="text" id="parcours_${metric.key}" placeholder="${metric.placeholder}">
-                    </div>
-                `;
-            });
-
             if (id) {
                 const p = appData.parcours.find(x => x.id === id);
                 document.getElementById('parcoursId').value = p.id;
                 document.getElementById('parcoursName').value = p.name;
                 document.getElementById('parcoursType').value = p.type;
+                document.getElementById('parcoursUsers').value = p.users;
+                document.getElementById('parcoursConversion').value = p.conversion;
+                document.getElementById('parcoursTime').value = p.time;
                 document.getElementById('parcoursInsights').value = p.insights;
-
-                // Fill metric values
-                appData.parcoursMetrics.forEach(metric => {
-                    const field = document.getElementById(`parcours_${metric.key}`);
-                    if (field) {
-                        field.value = p[metric.key] || '';
-                    }
-                });
             } else {
                 document.getElementById('parcoursForm').reset();
                 document.getElementById('parcoursId').value = '';
@@ -3180,10 +3192,6 @@
         }
 
         function openPageModal(id = null) {
-            if (!isAdmin) {
-                alert('🔒 Accès refusé : Seuls les administrateurs peuvent modifier l\'onglet Comportement In-Page');
-                return;
-            }
             if (id) {
                 const p = appData.pages.find(x => x.id === id);
                 document.getElementById('pageId').value = p.id;
@@ -3197,10 +3205,6 @@
         }
 
         function openComponentModal(pageId) {
-            if (!isAdmin) {
-                alert('🔒 Accès refusé : Seuls les administrateurs peuvent modifier l\'onglet Comportement In-Page');
-                return;
-            }
             document.getElementById('componentPageId').value = pageId;
             document.getElementById('componentForm').reset();
 
@@ -3254,12 +3258,6 @@
             document.getElementById('frictionThemeId').value = themeId;
             document.getElementById('frictionForm').reset();
             openModal('frictionModal');
-        }
-
-        function openMotivationModal(themeId) {
-            document.getElementById('motivationThemeId').value = themeId;
-            document.getElementById('motivationForm').reset();
-            openModal('motivationModal');
         }
 
         function openHypotheseModal(id = null) {
@@ -3382,16 +3380,11 @@
                 id: id ? parseInt(id) : Date.now(),
                 name: document.getElementById('parcoursName').value,
                 type: document.getElementById('parcoursType').value,
+                users: document.getElementById('parcoursUsers').value,
+                conversion: document.getElementById('parcoursConversion').value,
+                time: document.getElementById('parcoursTime').value,
                 insights: document.getElementById('parcoursInsights').value
             };
-
-            // Add metrics dynamically
-            appData.parcoursMetrics.forEach(metric => {
-                const field = document.getElementById(`parcours_${metric.key}`);
-                if (field) {
-                    parcours[metric.key] = field.value;
-                }
-            });
 
             if (id) {
                 const index = appData.parcours.findIndex(x => x.id === parseInt(id));
@@ -3682,23 +3675,6 @@
             closeModal('frictionModal');
         }
 
-        function saveMotivation(e) {
-            e.preventDefault();
-            const themeId = parseInt(document.getElementById('motivationThemeId').value);
-            const theme = appData.themes.find(x => x.id === themeId);
-
-            if (!theme.motivations) theme.motivations = [];
-
-            theme.motivations.push({
-                title: document.getElementById('motivationTitle').value,
-                desc: document.getElementById('motivationDesc').value
-            });
-
-            saveData();
-            renderThemes();
-            closeModal('motivationModal');
-        }
-
         function saveHypothese(e) {
             e.preventDefault();
             const id = document.getElementById('hypotheseId').value;
@@ -3801,10 +3777,6 @@
 
         // Delete functions
         function deleteParcours(id) {
-            if (!isAdmin) {
-                alert('🔒 Accès refusé : Seuls les administrateurs peuvent modifier l\'onglet Parcours Utilisateurs');
-                return;
-            }
             if (confirm('Êtes-vous sûr de vouloir supprimer ce parcours ?')) {
                 appData.parcours = appData.parcours.filter(x => x.id !== id);
                 saveData();
@@ -3812,94 +3784,7 @@
             }
         }
 
-        function openParcoursMetricsConfigModal() {
-            if (!isAdmin) {
-                alert('🔒 Accès refusé : Seuls les administrateurs peuvent modifier l\'onglet Parcours Utilisateurs');
-                return;
-            }
-            if (!appData.parcoursMetrics) {
-                appData.parcoursMetrics = [
-                    { key: 'users', label: '% Utilisateurs', placeholder: 'Ex: 32%' },
-                    { key: 'conversion', label: 'Taux Conversion', placeholder: 'Ex: 8.5%' },
-                    { key: 'time', label: 'Temps Moyen', placeholder: 'Ex: 6:45' }
-                ];
-            }
-            renderParcoursMetricsConfig();
-            openModal('parcoursMetricsConfigModal');
-        }
-
-        function renderParcoursMetricsConfig() {
-            const container = document.getElementById('parcoursMetricsConfigList');
-            container.innerHTML = '';
-
-            appData.parcoursMetrics.forEach((metric, index) => {
-                const metricDiv = document.createElement('div');
-                metricDiv.style.cssText = 'background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 10px; display: flex; gap: 10px; align-items: flex-end;';
-                metricDiv.innerHTML = `
-                    <div style="flex: 1;">
-                        <label style="display: block; font-weight: 600; margin-bottom: 5px;">Nom de la métrique</label>
-                        <input type="text" id="metric_label_${index}" value="${metric.label}" placeholder="Ex: Taux Conversion" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
-                    </div>
-                    <div style="flex: 1;">
-                        <label style="display: block; font-weight: 600; margin-bottom: 5px;">Placeholder</label>
-                        <input type="text" id="metric_placeholder_${index}" value="${metric.placeholder}" placeholder="Ex: Ex: 8.5%" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
-                    </div>
-                    <div style="flex: 1;">
-                        <label style="display: block; font-weight: 600; margin-bottom: 5px;">Clé (identifiant unique)</label>
-                        <input type="text" id="metric_key_${index}" value="${metric.key}" placeholder="Ex: conversion" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;" ${index < 3 ? '' : ''}>
-                    </div>
-                    <button class="btn-delete" onclick="deleteParcoursMetric(${index})" style="padding: 8px 12px; margin-bottom: 0;">🗑️</button>
-                `;
-                container.appendChild(metricDiv);
-            });
-        }
-
-        function addParcoursMetric() {
-            const newKey = 'metric_' + Date.now();
-            appData.parcoursMetrics.push({
-                key: newKey,
-                label: 'Nouvelle Métrique',
-                placeholder: 'Ex: valeur'
-            });
-            renderParcoursMetricsConfig();
-        }
-
-        function deleteParcoursMetric(index) {
-            if (confirm('Êtes-vous sûr de vouloir supprimer cette métrique ?')) {
-                appData.parcoursMetrics.splice(index, 1);
-                renderParcoursMetricsConfig();
-            }
-        }
-
-        function saveParcoursMetricsConfig() {
-            // Update metrics from form fields
-            const updatedMetrics = [];
-            appData.parcoursMetrics.forEach((metric, index) => {
-                const labelField = document.getElementById(`metric_label_${index}`);
-                const placeholderField = document.getElementById(`metric_placeholder_${index}`);
-                const keyField = document.getElementById(`metric_key_${index}`);
-
-                if (labelField && placeholderField && keyField) {
-                    updatedMetrics.push({
-                        key: keyField.value,
-                        label: labelField.value,
-                        placeholder: placeholderField.value
-                    });
-                }
-            });
-
-            appData.parcoursMetrics = updatedMetrics;
-            saveData();
-            renderParcours();
-            closeModal('parcoursMetricsConfigModal');
-            alert('Configuration des métriques enregistrée avec succès !');
-        }
-
         function deletePage(id) {
-            if (!isAdmin) {
-                alert('🔒 Accès refusé : Seuls les administrateurs peuvent modifier l\'onglet Comportement In-Page');
-                return;
-            }
             if (confirm('Êtes-vous sûr de vouloir supprimer cette page ?')) {
                 appData.pages = appData.pages.filter(x => x.id !== id);
                 saveData();
@@ -3908,10 +3793,6 @@
         }
 
         function deleteComponent(pageId, componentIndex) {
-            if (!isAdmin) {
-                alert('🔒 Accès refusé : Seuls les administrateurs peuvent modifier l\'onglet Comportement In-Page');
-                return;
-            }
             if (confirm('Êtes-vous sûr de vouloir supprimer ce composant ?')) {
                 const page = appData.pages.find(x => x.id === pageId);
                 page.components.splice(componentIndex, 1);
@@ -3932,17 +3813,6 @@
             if (confirm('Êtes-vous sûr de vouloir supprimer cette friction ?')) {
                 const theme = appData.themes.find(x => x.id === themeId);
                 theme.frictions.splice(frictionIndex, 1);
-                saveData();
-                renderThemes();
-            }
-        }
-
-        function deleteMotivation(themeId, motivationIndex) {
-            if (confirm('Êtes-vous sûr de vouloir supprimer cette motivation ?')) {
-                const theme = appData.themes.find(x => x.id === themeId);
-                if (theme.motivations) {
-                    theme.motivations.splice(motivationIndex, 1);
-                }
                 saveData();
                 renderThemes();
             }
@@ -4253,16 +4123,11 @@
 
         // === METRIC FUNCTIONS ===
         function openMetricModal(id = null) {
-            if (!isAdmin) {
-                alert('🔒 Accès refusé : Seuls les administrateurs peuvent modifier l\'onglet Vue d\'ensemble');
-                return;
-            }
             if (id) {
                 const m = appData.metrics.find(x => x.id === id);
                 document.getElementById('metricId').value = m.id;
                 document.getElementById('metricLabel').value = m.label;
                 document.getElementById('metricValue').value = m.value;
-                document.getElementById('metricEvolution').value = m.evolution || '';
             } else {
                 document.getElementById('metricForm').reset();
                 document.getElementById('metricId').value = '';
@@ -4277,12 +4142,10 @@
             if (!appData.metrics) appData.metrics = [];
 
             const id = document.getElementById('metricId').value;
-            const evolutionValue = document.getElementById('metricEvolution').value.trim();
             const metric = {
                 id: id ? parseInt(id) : Date.now(),
                 label: document.getElementById('metricLabel').value,
-                value: document.getElementById('metricValue').value,
-                evolution: evolutionValue || null
+                value: document.getElementById('metricValue').value
             };
 
             console.log('Métrique à sauvegarder:', metric);
@@ -4307,10 +4170,6 @@
         }
 
         function deleteMetric(id) {
-            if (!isAdmin) {
-                alert('🔒 Accès refusé : Seuls les administrateurs peuvent modifier l\'onglet Vue d\'ensemble');
-                return;
-            }
             if (confirm('Êtes-vous sûr de vouloir supprimer cette métrique ?')) {
                 appData.metrics = appData.metrics.filter(x => x.id !== id);
                 saveData();
@@ -4320,10 +4179,6 @@
 
         // === DEVICE FUNCTIONS ===
         function openDeviceModal(id = null) {
-            if (!isAdmin) {
-                alert('🔒 Accès refusé : Seuls les administrateurs peuvent modifier l\'onglet Vue d\'ensemble');
-                return;
-            }
             if (id) {
                 const d = appData.devices.find(x => x.id === id);
                 document.getElementById('deviceId').value = d.id;
@@ -4332,11 +4187,6 @@
                 document.getElementById('devicePercent').value = d.percent;
                 document.getElementById('devicePagesPerSession').value = d.pagesPerSession;
                 document.getElementById('deviceExitRate').value = d.exitRate;
-                document.getElementById('deviceCol6').value = d.col6 || '';
-                document.getElementById('deviceCol7').value = d.col7 || '';
-                document.getElementById('deviceCol8').value = d.col8 || '';
-                document.getElementById('deviceCol9').value = d.col9 || '';
-                document.getElementById('deviceCol10').value = d.col10 || '';
             } else {
                 document.getElementById('deviceForm').reset();
                 document.getElementById('deviceId').value = '';
@@ -4353,12 +4203,7 @@
                 sessions: document.getElementById('deviceSessions').value,
                 percent: document.getElementById('devicePercent').value,
                 pagesPerSession: document.getElementById('devicePagesPerSession').value,
-                exitRate: document.getElementById('deviceExitRate').value,
-                col6: document.getElementById('deviceCol6').value || '',
-                col7: document.getElementById('deviceCol7').value || '',
-                col8: document.getElementById('deviceCol8').value || '',
-                col9: document.getElementById('deviceCol9').value || '',
-                col10: document.getElementById('deviceCol10').value || ''
+                exitRate: document.getElementById('deviceExitRate').value
             };
 
             if (id) {
@@ -4378,10 +4223,6 @@
         }
 
         function deleteDevice(id) {
-            if (!isAdmin) {
-                alert('🔒 Accès refusé : Seuls les administrateurs peuvent modifier l\'onglet Vue d\'ensemble');
-                return;
-            }
             if (confirm('Êtes-vous sûr de vouloir supprimer ce device ?')) {
                 appData.devices = appData.devices.filter(x => x.id !== id);
                 saveData();
@@ -4391,10 +4232,6 @@
 
         // === COUNTRY FUNCTIONS ===
         function openCountryModal(id = null) {
-            if (!isAdmin) {
-                alert('🔒 Accès refusé : Seuls les administrateurs peuvent modifier l\'onglet Vue d\'ensemble');
-                return;
-            }
             if (id) {
                 const c = appData.countries.find(x => x.id === id);
                 document.getElementById('countryId').value = c.id;
@@ -4403,11 +4240,6 @@
                 document.getElementById('countryPercent').value = c.percent;
                 document.getElementById('countryBeEntry').value = c.beEntry;
                 document.getElementById('countryConversion').value = c.conversion;
-                document.getElementById('countryCol6').value = c.col6 || '';
-                document.getElementById('countryCol7').value = c.col7 || '';
-                document.getElementById('countryCol8').value = c.col8 || '';
-                document.getElementById('countryCol9').value = c.col9 || '';
-                document.getElementById('countryCol10').value = c.col10 || '';
             } else {
                 document.getElementById('countryForm').reset();
                 document.getElementById('countryId').value = '';
@@ -4424,12 +4256,7 @@
                 sessions: document.getElementById('countrySessions').value,
                 percent: document.getElementById('countryPercent').value,
                 beEntry: document.getElementById('countryBeEntry').value,
-                conversion: document.getElementById('countryConversion').value,
-                col6: document.getElementById('countryCol6').value || '',
-                col7: document.getElementById('countryCol7').value || '',
-                col8: document.getElementById('countryCol8').value || '',
-                col9: document.getElementById('countryCol9').value || '',
-                col10: document.getElementById('countryCol10').value || ''
+                conversion: document.getElementById('countryConversion').value
             };
 
             if (id) {
@@ -4449,10 +4276,6 @@
         }
 
         function deleteCountry(id) {
-            if (!isAdmin) {
-                alert('🔒 Accès refusé : Seuls les administrateurs peuvent modifier l\'onglet Vue d\'ensemble');
-                return;
-            }
             if (confirm('Êtes-vous sûr de vouloir supprimer ce pays ?')) {
                 appData.countries = appData.countries.filter(x => x.id !== id);
                 saveData();
@@ -4462,10 +4285,6 @@
 
         // === TRAFFIC SOURCE FUNCTIONS ===
         function openTrafficSourceModal(id = null) {
-            if (!isAdmin) {
-                alert('🔒 Accès refusé : Seuls les administrateurs peuvent modifier l\'onglet Vue d\'ensemble');
-                return;
-            }
             if (id) {
                 const ts = appData.trafficSources.find(x => x.id === id);
                 document.getElementById('trafficSourceId').value = ts.id;
@@ -4473,12 +4292,6 @@
                 document.getElementById('trafficSourcePercent').value = ts.percent;
                 document.getElementById('trafficSourceBeEntry').value = ts.beEntry;
                 document.getElementById('trafficSourceQuality').value = ts.quality;
-                document.getElementById('trafficSourceCol5').value = ts.col5 || '';
-                document.getElementById('trafficSourceCol6').value = ts.col6 || '';
-                document.getElementById('trafficSourceCol7').value = ts.col7 || '';
-                document.getElementById('trafficSourceCol8').value = ts.col8 || '';
-                document.getElementById('trafficSourceCol9').value = ts.col9 || '';
-                document.getElementById('trafficSourceCol10').value = ts.col10 || '';
             } else {
                 document.getElementById('trafficSourceForm').reset();
                 document.getElementById('trafficSourceId').value = '';
@@ -4494,13 +4307,7 @@
                 name: document.getElementById('trafficSourceName').value,
                 percent: document.getElementById('trafficSourcePercent').value,
                 beEntry: document.getElementById('trafficSourceBeEntry').value,
-                quality: document.getElementById('trafficSourceQuality').value,
-                col5: document.getElementById('trafficSourceCol5').value || '',
-                col6: document.getElementById('trafficSourceCol6').value || '',
-                col7: document.getElementById('trafficSourceCol7').value || '',
-                col8: document.getElementById('trafficSourceCol8').value || '',
-                col9: document.getElementById('trafficSourceCol9').value || '',
-                col10: document.getElementById('trafficSourceCol10').value || ''
+                quality: document.getElementById('trafficSourceQuality').value
             };
 
             if (id) {
@@ -4520,10 +4327,6 @@
         }
 
         function deleteTrafficSource(id) {
-            if (!isAdmin) {
-                alert('🔒 Accès refusé : Seuls les administrateurs peuvent modifier l\'onglet Vue d\'ensemble');
-                return;
-            }
             if (confirm('Êtes-vous sûr de vouloir supprimer cette source de trafic ?')) {
                 appData.trafficSources = appData.trafficSources.filter(x => x.id !== id);
                 saveData();
@@ -4533,10 +4336,6 @@
 
         // === CUSTOM SEGMENTS FUNCTIONS ===
         function openCreateSegmentModal(id = null) {
-            if (!isAdmin) {
-                alert('🔒 Accès refusé : Seuls les administrateurs peuvent modifier l\'onglet Vue d\'ensemble');
-                return;
-            }
             if (id) {
                 const segment = appData.customSegments.find(x => x.id === id);
                 if (segment) {
@@ -4628,10 +4427,6 @@
         }
 
         function deleteSegment(id) {
-            if (!isAdmin) {
-                alert('🔒 Accès refusé : Seuls les administrateurs peuvent modifier l\'onglet Vue d\'ensemble');
-                return;
-            }
             if (confirm('Êtes-vous sûr de vouloir supprimer ce segment et toutes ses données ?')) {
                 appData.customSegments = appData.customSegments.filter(x => x.id !== id);
                 saveData();
@@ -4641,21 +4436,17 @@
 
         // === EDIT COLUMN NAMES FOR DEVICES, COUNTRIES, TRAFFIC SOURCES ===
         function openEditColumnsModal(type) {
-            if (!isAdmin) {
-                alert('🔒 Accès refusé : Seuls les administrateurs peuvent modifier l\'onglet Vue d\'ensemble');
-                return;
-            }
             document.getElementById('editColumnsType').value = type;
 
             if (!appData.columnNames) appData.columnNames = {};
 
             let currentColumns = [];
             if (type === 'devices') {
-                currentColumns = appData.columnNames.devices || ['Device', 'Sessions', '% Total', 'Pages/Session', 'Exit Rate', 'Col 6', 'Col 7', 'Col 8', 'Col 9', 'Col 10'];
+                currentColumns = appData.columnNames.devices || ['Device', 'Sessions', '% Total', 'Pages/Session', 'Exit Rate'];
             } else if (type === 'countries') {
-                currentColumns = appData.columnNames.countries || ['Pays', 'Sessions', '% Total', 'Taux d\'Entrée BE', 'Conversion', 'Col 6', 'Col 7', 'Col 8', 'Col 9', 'Col 10'];
+                currentColumns = appData.columnNames.countries || ['Pays', 'Sessions', '% Total', 'Taux d\'Entrée BE', 'Conversion'];
             } else if (type === 'trafficSources') {
-                currentColumns = appData.columnNames.trafficSources || ['Source', '% Sessions', 'Taux d\'Entrée BE', 'Quality Score', 'Col 5', 'Col 6', 'Col 7', 'Col 8', 'Col 9', 'Col 10'];
+                currentColumns = appData.columnNames.trafficSources || ['Source', '% Sessions', 'Taux d\'Entrée BE', 'Quality Score'];
             } else if (type === 'components') {
                 currentColumns = appData.columnNames.components || ['Composant', 'Scroll Reach', 'Taux de Clic', 'Observation'];
             }
@@ -4677,14 +4468,14 @@
             let oldColumns = [];
             let expectedLength = 0;
             if (type === 'devices') {
-                oldColumns = appData.columnNames.devices || ['Device', 'Sessions', '% Total', 'Pages/Session', 'Exit Rate', 'Col 6', 'Col 7', 'Col 8', 'Col 9', 'Col 10'];
-                expectedLength = 10;
+                oldColumns = appData.columnNames.devices || ['Device', 'Sessions', '% Total', 'Pages/Session', 'Exit Rate'];
+                expectedLength = 5;
             } else if (type === 'countries') {
-                oldColumns = appData.columnNames.countries || ['Pays', 'Sessions', '% Total', 'Taux d\'Entrée BE', 'Conversion', 'Col 6', 'Col 7', 'Col 8', 'Col 9', 'Col 10'];
-                expectedLength = 10;
+                oldColumns = appData.columnNames.countries || ['Pays', 'Sessions', '% Total', 'Taux d\'Entrée BE', 'Conversion'];
+                expectedLength = 5;
             } else if (type === 'trafficSources') {
-                oldColumns = appData.columnNames.trafficSources || ['Source', '% Sessions', 'Taux d\'Entrée BE', 'Quality Score', 'Col 5', 'Col 6', 'Col 7', 'Col 8', 'Col 9', 'Col 10'];
-                expectedLength = 10;
+                oldColumns = appData.columnNames.trafficSources || ['Source', '% Sessions', 'Taux d\'Entrée BE', 'Quality Score'];
+                expectedLength = 4;
             } else if (type === 'components') {
                 oldColumns = appData.columnNames.components || ['Composant', 'Scroll Reach', 'Taux de Clic', 'Engagement', 'Heatmap', 'Observation'];
                 expectedLength = null; // Flexible: between 4 and 8 columns
@@ -4718,10 +4509,6 @@
         }
 
         function openAddSegmentRowModal(segmentId, rowIndex = null) {
-            if (!isAdmin) {
-                alert('🔒 Accès refusé : Seuls les administrateurs peuvent modifier l\'onglet Vue d\'ensemble');
-                return;
-            }
             const segment = appData.customSegments.find(x => x.id === segmentId);
             if (!segment) return;
 
@@ -4779,10 +4566,6 @@
         }
 
         function deleteSegmentRow(segmentId, rowIndex) {
-            if (!isAdmin) {
-                alert('🔒 Accès refusé : Seuls les administrateurs peuvent modifier l\'onglet Vue d\'ensemble');
-                return;
-            }
             if (confirm('Êtes-vous sûr de vouloir supprimer cette ligne ?')) {
                 const segment = appData.customSegments.find(x => x.id === segmentId);
                 if (segment && segment.rows) {
@@ -4942,7 +4725,6 @@
         let database;
         let isFirebaseReady = false;
         let currentGroup = 'default'; // Default group for guest mode
-        let firebaseInitialized = false;
 
         // Firebase configuration - REMPLACEZ PAR VOTRE CONFIG
         const firebaseConfig = {
@@ -4955,34 +4737,9 @@
             appId: "1:933120278959:web:19a1bf1f24fb00284d2f5a"
         };
 
-        // Fonction d'initialisation en mode local (fallback)
-        function initLocalMode() {
-            if (firebaseInitialized) return; // Éviter la double initialisation
-            firebaseInitialized = true;
-
-            console.warn('⚠️ Initialisation en mode local');
-            isFirebaseReady = false;
-            document.getElementById('collaborativeStatus').innerHTML = '💾 Mode Local';
-            document.getElementById('collaborativeStatus').style.color = '#f39c12';
-            loadTabTitles();
-            checkUserLogin();
-        }
-
-        // Timeout de sécurité : si Firebase ne charge pas en 3 secondes, passer en mode local
-        const firebaseTimeout = setTimeout(() => {
-            if (!firebaseInitialized) {
-                console.warn('⏱️ Timeout Firebase - Passage en mode local');
-                initLocalMode();
-            }
-        }, 3000);
-
         // Initialize Firebase when scripts are loaded
         firebaseDatabaseScript.onload = function() {
-            clearTimeout(firebaseTimeout);
             try {
-                if (firebaseInitialized) return; // Éviter la double initialisation
-                firebaseInitialized = true;
-
                 firebase.initializeApp(firebaseConfig);
                 database = firebase.database();
                 isFirebaseReady = true;
@@ -4993,27 +4750,15 @@
                 // Load header settings
                 loadHeaderSettings();
 
-                // Load tab titles
-                loadTabTitles();
-
                 // Check if user name is saved
                 checkUserLogin();
             } catch (error) {
-                initLocalMode();
+                console.warn('⚠️ Firebase non disponible, mode local activé', error);
+                isFirebaseReady = false;
+                document.getElementById('collaborativeStatus').innerHTML = '💾 Mode Local';
+                document.getElementById('collaborativeStatus').style.color = '#f39c12';
+                checkUserLogin();
             }
-        };
-
-        // Gérer les erreurs de chargement des scripts Firebase
-        firebaseScript.onerror = function() {
-            console.error('❌ Erreur de chargement Firebase App script');
-            clearTimeout(firebaseTimeout);
-            initLocalMode();
-        };
-
-        firebaseDatabaseScript.onerror = function() {
-            console.error('❌ Erreur de chargement Firebase Database script');
-            clearTimeout(firebaseTimeout);
-            initLocalMode();
         };
 
         // === USER MANAGEMENT ===
@@ -5027,7 +4772,7 @@
             localStorage.setItem('headerSettings', JSON.stringify(headerData));
 
             if (isFirebaseReady && database) {
-                database.ref('sharedWorkshopData/headerSettings').set(headerData)
+                database.ref('headerSettings').set(headerData)
                     .then(() => console.log('✅ Header sauvegardé'))
                     .catch(error => console.error('Erreur sauvegarde header:', error));
             }
@@ -5036,7 +4781,7 @@
         function loadHeaderSettings() {
             // Try from Firebase first
             if (isFirebaseReady && database) {
-                database.ref('sharedWorkshopData/headerSettings').once('value', (snapshot) => {
+                database.ref('headerSettings').once('value', (snapshot) => {
                     const data = snapshot.val();
                     if (data) {
                         document.getElementById('headerTitle').textContent = data.title || '🎯 Atelier d\'Idéation CRO';
@@ -5056,101 +4801,6 @@
             }
         }
 
-        function saveTabTitle(tabId) {
-            const titleMapping = {
-                'overview': 'titleOverview',
-                'parcours': 'titleParcours',
-                'comportement': 'titleComportement',
-                'frictions': 'titleThemes',
-                'benchmark': 'titleBenchmark',
-                'hypotheses': 'titleHypotheses',
-                'idees': 'titleIdees'
-            };
-
-            const elementId = titleMapping[tabId];
-            if (!elementId) return;
-
-            const titleElement = document.getElementById(elementId);
-            if (!titleElement) return;
-
-            // Récupérer tous les titres
-            let tabTitles = {};
-            try {
-                const saved = localStorage.getItem('tabTitles');
-                if (saved) tabTitles = JSON.parse(saved);
-            } catch (e) {
-                console.error('Erreur lecture tabTitles:', e);
-            }
-
-            // Mettre à jour le titre de l'onglet concerné
-            tabTitles[tabId] = titleElement.textContent;
-
-            // Sauvegarder dans localStorage
-            localStorage.setItem('tabTitles', JSON.stringify(tabTitles));
-
-            // Sauvegarder dans Firebase si disponible
-            if (isFirebaseReady && database) {
-                database.ref('sharedWorkshopData/tabTitles').set(tabTitles)
-                    .then(() => console.log('✅ Titre onglet sauvegardé:', tabId))
-                    .catch(error => console.error('Erreur sauvegarde titre onglet:', error));
-            }
-        }
-
-        function loadTabTitles() {
-            const defaultTitles = {
-                'overview': '📊 Analyse Overview - Shopping Section',
-                'parcours': '🗺️ Analyse des Parcours Utilisateurs',
-                'comportement': '👤 Analyse Comportementale In-Page',
-                'frictions': '🎨 Thèmes CRO',
-                'benchmark': '🔍 Benchmark Concurrentiel',
-                'hypotheses': '💡 Hypothèses d\'Amélioration',
-                'idees': '🚀 Idées d\'AB Test'
-            };
-
-            const titleMapping = {
-                'overview': 'titleOverview',
-                'parcours': 'titleParcours',
-                'comportement': 'titleComportement',
-                'frictions': 'titleThemes',
-                'benchmark': 'titleBenchmark',
-                'hypotheses': 'titleHypotheses',
-                'idees': 'titleIdees'
-            };
-
-            // Essayer de charger depuis Firebase d'abord
-            if (isFirebaseReady && database) {
-                database.ref('sharedWorkshopData/tabTitles').once('value', (snapshot) => {
-                    const data = snapshot.val();
-                    if (data) {
-                        Object.keys(titleMapping).forEach(tabId => {
-                            const elementId = titleMapping[tabId];
-                            const element = document.getElementById(elementId);
-                            if (element && data[tabId]) {
-                                element.textContent = data[tabId];
-                            }
-                        });
-                    }
-                });
-            } else {
-                // Fallback vers localStorage
-                const saved = localStorage.getItem('tabTitles');
-                if (saved) {
-                    try {
-                        const data = JSON.parse(saved);
-                        Object.keys(titleMapping).forEach(tabId => {
-                            const elementId = titleMapping[tabId];
-                            const element = document.getElementById(elementId);
-                            if (element && data[tabId]) {
-                                element.textContent = data[tabId];
-                            }
-                        });
-                    } catch (e) {
-                        console.error('Erreur chargement tabTitles:', e);
-                    }
-                }
-            }
-        }
-
 
         function checkUserLogin() {
             const savedUser = localStorage.getItem('currentUser');
@@ -5160,7 +4810,6 @@
                 currentUser = savedUser;
                 currentGroup = savedGroup || 'default'; // Fallback to default if not saved
                 document.getElementById('currentUser').textContent = savedUser;
-                loadAdminList();
                 loadGroupDataFromFirebase();
             } else {
                 showUserLoginModal();
@@ -5241,9 +4890,6 @@
 
             console.log('✅ Utilisateur connecté:', currentUser);
 
-            // Load admin list
-            loadAdminList();
-
             // Load data
             if (isFirebaseReady && database) {
                 loadGroupDataFromFirebase();
@@ -5255,358 +4901,21 @@
         function changeUserName() {
             const newName = prompt('Entrez votre nouveau nom:', currentUser || '');
             if (newName && newName.trim()) {
-                const oldName = currentUser;
                 currentUser = newName.trim();
                 localStorage.setItem('currentUser', currentUser);
                 document.getElementById('currentUser').textContent = currentUser;
-
-                // Si l'ancien nom était admin, transférer le statut admin
-                if (isAdmin && adminUsers.includes(oldName)) {
-                    removeAdminFromList(oldName);
-                    addAdminToList(currentUser);
-                }
-
-                checkAdminStatus();
                 console.log('✅ Nom changé:', currentUser);
-            }
-        }
-
-        // === ADMIN MANAGEMENT ===
-        function loadAdminList() {
-            // 1. Charger d'abord depuis localStorage pour un affichage immédiat
-            const saved = localStorage.getItem('adminUsers');
-            if (saved) {
-                try {
-                    adminUsers = JSON.parse(saved);
-                    checkAdminStatus(); // Appliquer immédiatement les permissions
-                } catch (e) {
-                    adminUsers = [];
-                }
-            }
-
-            // 2. Ensuite synchroniser avec Firebase si disponible (en arrière-plan)
-            if (isFirebaseReady && database) {
-                // Timeout pour ne pas bloquer si Firebase est lent
-                const adminTimeout = setTimeout(() => {
-                    console.warn('⏱️ Timeout chargement admin list - utilisation localStorage');
-                    if (adminUsers.length === 0 && currentUser && currentUser !== 'Invité') {
-                        addAdminToList(currentUser);
-                    }
-                }, 2000);
-
-                database.ref('sharedWorkshopData/adminUsers').once('value', (snapshot) => {
-                    clearTimeout(adminTimeout);
-                    const data = snapshot.val();
-                    if (data && Array.isArray(data)) {
-                        adminUsers = data;
-                        // Mettre à jour localStorage avec les données Firebase
-                        localStorage.setItem('adminUsers', JSON.stringify(adminUsers));
-                    } else {
-                        adminUsers = [];
-                    }
-
-                    // Si aucun admin n'existe, le premier utilisateur devient admin
-                    if (adminUsers.length === 0 && currentUser && currentUser !== 'Invité') {
-                        console.log('🎉 Premier utilisateur - devient administrateur automatiquement');
-                        addAdminToList(currentUser);
-                    } else {
-                        checkAdminStatus();
-                    }
-                }).catch(error => {
-                    clearTimeout(adminTimeout);
-                    console.error('Erreur chargement admin list:', error);
-                    // Continuer avec localStorage
-                    if (adminUsers.length === 0 && currentUser && currentUser !== 'Invité') {
-                        addAdminToList(currentUser);
-                    }
-                });
-            } else {
-                // Mode local uniquement
-                if (adminUsers.length === 0 && currentUser && currentUser !== 'Invité') {
-                    console.log('🎉 Premier utilisateur - devient administrateur automatiquement');
-                    addAdminToList(currentUser);
-                } else {
-                    checkAdminStatus();
-                }
-            }
-        }
-
-        function checkAdminStatus() {
-            isAdmin = adminUsers.includes(currentUser);
-
-            // Mettre à jour l'interface
-            const adminBadge = document.getElementById('adminBadge');
-            const adminPanelBtn = document.getElementById('adminPanelBtn');
-
-            if (isAdmin) {
-                if (adminBadge) adminBadge.style.display = 'inline';
-                if (adminPanelBtn) adminPanelBtn.style.display = 'inline-block';
-            } else {
-                if (adminBadge) adminBadge.style.display = 'none';
-                if (adminPanelBtn) adminPanelBtn.style.display = 'none';
-            }
-
-            console.log('Admin status:', isAdmin);
-
-            // Appliquer les permissions d'édition
-            applyPermissions();
-        }
-
-        function applyPermissions() {
-            // === HEADER - Seuls les admins peuvent éditer ===
-            const headerTitle = document.getElementById('headerTitle');
-            const headerSubtitle = document.getElementById('headerSubtitle');
-            const timer = document.getElementById('timer');
-
-            if (headerTitle) {
-                headerTitle.contentEditable = isAdmin ? 'true' : 'false';
-                headerTitle.style.cursor = isAdmin ? 'text' : 'default';
-                headerTitle.style.opacity = isAdmin ? '1' : '0.8';
-                if (!isAdmin) headerTitle.title = '🔒 Réservé aux administrateurs';
-            }
-
-            if (headerSubtitle) {
-                headerSubtitle.contentEditable = isAdmin ? 'true' : 'false';
-                headerSubtitle.style.cursor = isAdmin ? 'text' : 'default';
-                headerSubtitle.style.opacity = isAdmin ? '1' : '0.8';
-                if (!isAdmin) headerSubtitle.title = '🔒 Réservé aux administrateurs';
-            }
-
-            if (timer) {
-                timer.contentEditable = isAdmin ? 'true' : 'false';
-                timer.style.cursor = isAdmin ? 'text' : 'default';
-                timer.style.opacity = isAdmin ? '1' : '0.8';
-                if (!isAdmin) timer.title = '🔒 Réservé aux administrateurs';
-            }
-
-            // === TITRES DES ONGLETS ===
-            // Onglets réservés aux admins : Overview, Parcours, Comportement
-            const adminOnlyTitles = ['titleOverview', 'titleParcours', 'titleComportement'];
-            adminOnlyTitles.forEach(titleId => {
-                const titleElement = document.getElementById(titleId);
-                if (titleElement) {
-                    titleElement.contentEditable = isAdmin ? 'true' : 'false';
-                    titleElement.style.cursor = isAdmin ? 'text' : 'default';
-                    titleElement.style.opacity = isAdmin ? '1' : '0.9';
-                    if (!isAdmin) titleElement.title = '🔒 Réservé aux administrateurs';
-                }
-            });
-
-            // Onglets accessibles à tous : Thèmes, Benchmark, Hypothèses, Idées
-            const publicTitles = ['titleThemes', 'titleBenchmark', 'titleHypotheses', 'titleIdees'];
-            publicTitles.forEach(titleId => {
-                const titleElement = document.getElementById(titleId);
-                if (titleElement) {
-                    titleElement.contentEditable = 'true';
-                    titleElement.style.cursor = 'text';
-                    titleElement.style.opacity = '1';
-                    titleElement.removeAttribute('title');
-                }
-            });
-
-            // === CONTENU DES ONGLETS ===
-            applyTabContentPermissions();
-        }
-
-        function applyTabContentPermissions() {
-            // Onglets Vue d'ensemble, Parcours, Comportement - Seuls les admins peuvent modifier
-            const adminOnlyTabs = ['overview', 'parcours', 'comportement'];
-
-            adminOnlyTabs.forEach(tabId => {
-                const tabContent = document.getElementById(tabId);
-                if (!tabContent) return;
-
-                // Afficher/cacher l'alerte de lecture seule
-                const alert = document.getElementById(`${tabId}AdminAlert`);
-                if (alert) {
-                    alert.style.display = isAdmin ? 'none' : 'block';
-                }
-
-                // Désactiver tous les boutons d'ajout/édition/suppression pour les non-admins
-                const buttons = tabContent.querySelectorAll('.btn-add, .btn-edit, .btn-delete');
-                buttons.forEach(btn => {
-                    if (isAdmin) {
-                        btn.disabled = false;
-                        btn.style.opacity = '1';
-                        btn.style.cursor = 'pointer';
-                        btn.removeAttribute('title');
-                    } else {
-                        btn.disabled = true;
-                        btn.style.opacity = '0.5';
-                        btn.style.cursor = 'not-allowed';
-                        btn.title = '🔒 Modification réservée aux administrateurs';
-                    }
-                });
-
-                // Désactiver les inputs editables pour les non-admins
-                const editableInputs = tabContent.querySelectorAll('[contenteditable]');
-                editableInputs.forEach(input => {
-                    if (input.id !== 'headerTitle' && input.id !== 'headerSubtitle' && input.id !== 'timer') {
-                        input.contentEditable = isAdmin ? 'true' : 'false';
-                        if (!isAdmin) input.title = '🔒 Réservé aux administrateurs';
-                    }
-                });
-            });
-
-            // Onglets accessibles à tous : Thèmes, Benchmark, Hypothèses, Idées
-            const publicTabs = ['frictions', 'benchmark', 'hypotheses', 'idees'];
-            publicTabs.forEach(tabId => {
-                const tabContent = document.getElementById(tabId);
-                if (!tabContent) return;
-
-                // Activer tous les boutons pour tout le monde
-                const buttons = tabContent.querySelectorAll('.btn-add, .btn-edit, .btn-delete');
-                buttons.forEach(btn => {
-                    btn.disabled = false;
-                    btn.style.opacity = '1';
-                    btn.style.cursor = 'pointer';
-                    btn.removeAttribute('title');
-                });
-            });
-        }
-
-        function openAdminPanel() {
-            if (!isAdmin) {
-                alert('⛔ Accès refusé : vous devez être administrateur');
-                return;
-            }
-
-            renderAdminList();
-            document.getElementById('adminPanelModal').style.display = 'block';
-        }
-
-        function closeAdminPanel() {
-            document.getElementById('adminPanelModal').style.display = 'none';
-            document.getElementById('newAdminName').value = '';
-        }
-
-        function renderAdminList() {
-            const container = document.getElementById('adminListContainer');
-
-            if (adminUsers.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; color: #999; padding: 20px;">
-                        Aucun administrateur défini.<br>
-                        <small>Ajoutez le premier administrateur ci-dessous.</small>
-                    </div>
-                `;
-                return;
-            }
-
-            let html = '<div style="display: flex; flex-direction: column; gap: 10px;">';
-
-            adminUsers.forEach((admin, idx) => {
-                const isCurrent = admin === currentUser;
-                html += `
-                    <div style="display: flex; justify-content: space-between; align-items: center; background: white; padding: 12px 15px; border-radius: 6px; border-left: 3px solid ${isCurrent ? '#e74c3c' : '#3498db'};">
-                        <div>
-                            <strong style="color: #2c3e50;">${admin}</strong>
-                            ${isCurrent ? '<span style="margin-left: 8px; color: #e74c3c; font-size: 0.85em;">(Vous)</span>' : ''}
-                        </div>
-                        <button onclick="removeAdmin('${admin.replace(/'/g, "\\'")}')" class="btn-delete" style="padding: 5px 12px; font-size: 0.85em;">
-                            🗑️ Retirer
-                        </button>
-                    </div>
-                `;
-            });
-
-            html += '</div>';
-            container.innerHTML = html;
-        }
-
-        function addAdmin(e) {
-            e.preventDefault();
-
-            if (!isAdmin) {
-                alert('⛔ Accès refusé : vous devez être administrateur');
-                return;
-            }
-
-            const newAdminName = document.getElementById('newAdminName').value.trim();
-
-            if (!newAdminName) {
-                alert('Veuillez entrer un nom');
-                return;
-            }
-
-            if (adminUsers.includes(newAdminName)) {
-                alert(`${newAdminName} est déjà administrateur`);
-                return;
-            }
-
-            addAdminToList(newAdminName);
-            document.getElementById('newAdminName').value = '';
-        }
-
-        function addAdminToList(userName) {
-            adminUsers.push(userName);
-            saveAdminList();
-            renderAdminList();
-            checkAdminStatus();
-            console.log('✅ Admin ajouté:', userName);
-        }
-
-        function removeAdmin(adminName) {
-            if (!isAdmin) {
-                alert('⛔ Accès refusé : vous devez être administrateur');
-                return;
-            }
-
-            // Empêcher de se retirer soi-même s'il n'y a qu'un seul admin
-            if (adminName === currentUser && adminUsers.length === 1) {
-                alert('⚠️ Vous ne pouvez pas retirer le dernier administrateur.\nAjoutez d\'abord un autre administrateur.');
-                return;
-            }
-
-            if (confirm(`Êtes-vous sûr de vouloir retirer ${adminName} des administrateurs ?`)) {
-                removeAdminFromList(adminName);
-            }
-        }
-
-        function removeAdminFromList(adminName) {
-            adminUsers = adminUsers.filter(a => a !== adminName);
-            saveAdminList();
-            renderAdminList();
-            checkAdminStatus();
-            console.log('✅ Admin retiré:', adminName);
-        }
-
-        function saveAdminList() {
-            // Sauvegarder dans localStorage
-            localStorage.setItem('adminUsers', JSON.stringify(adminUsers));
-
-            // Sauvegarder dans Firebase
-            if (isFirebaseReady && database) {
-                database.ref('sharedWorkshopData/adminUsers').set(adminUsers)
-                    .then(() => console.log('✅ Liste admin sauvegardée'))
-                    .catch(error => console.error('Erreur sauvegarde admin:', error));
             }
         }
 
 
         function loadGroupDataFromFirebase() {
-            if (!isFirebaseReady || !database) {
-                // Mode local : charger depuis localStorage
-                initData();
-                return;
-            }
-
-            // OPTIMISATION : Charger d'abord depuis localStorage pour affichage immédiat
-            const localData = localStorage.getItem('appData');
-            if (localData) {
-                try {
-                    appData = JSON.parse(localData);
-                    renderAll(); // Afficher immédiatement les données locales
-                    console.log('📦 Données locales chargées (affichage immédiat)');
-                } catch (e) {
-                    console.error('Erreur chargement localStorage:', e);
-                }
-            }
+            if (!isFirebaseReady || !database) return;
 
             // Use a shared path for all users (not separated by group)
             const sharedRef = database.ref('sharedWorkshopData');
 
-            // Listen for changes in real-time (synchronisation en arrière-plan)
+            // Listen for changes in real-time
             sharedRef.on('value', (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
@@ -5721,14 +5030,6 @@
 
         // Override saveData to use Firebase
         function saveData() {
-            // Sauvegarder dans localStorage pour chargement rapide au prochain démarrage
-            try {
-                localStorage.setItem('appData', JSON.stringify(appData));
-            } catch (e) {
-                console.error('Erreur sauvegarde localStorage:', e);
-            }
-
-            // Sauvegarder dans Firebase (en arrière-plan)
             saveToFirebase();
         }
 
@@ -5800,9 +5101,6 @@
                         frictions: [
                             { title: "Manque de transparence sur le prix final", desc: "Utilisateurs US particulièrement sensibles, besoin de voir taxes incluses dès le début" },
                             { title: "Comparaison de prix difficile", desc: "Sur Search Page, prix affichés de manière inconsistante (par nuit vs total, avec/sans promos)" }
-                        ],
-                        motivations: [
-                            { title: "Recherche du meilleur prix", desc: "Les utilisateurs veulent s'assurer d'obtenir un bon rapport qualité-prix" }
                         ]
                     },
                     {
@@ -5811,9 +5109,6 @@
                         emoji: "🔍",
                         frictions: [
                             { title: "Résultats de recherche non pertinents", desc: "Taux de sortie 42% sur Search Page, les utilisateurs ne trouvent pas ce qu'ils cherchent" }
-                        ],
-                        motivations: [
-                            { title: "Trouver rapidement le resort idéal", desc: "Besoin d'une recherche efficace et personnalisée selon leurs critères" }
                         ]
                     }
                 ];
