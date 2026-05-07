@@ -131,11 +131,20 @@
             border-radius: 6px;
             border: 1px solid #e1e8ed;
             transition: all 0.2s ease;
+            user-select: none;
         }
 
         .metric-card:hover {
             border-color: #2c3e50;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .metric-card:active {
+            cursor: grabbing !important;
+        }
+
+        .metric-card.dragging {
+            opacity: 0.4;
         }
 
         .metric-label {
@@ -354,10 +363,24 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.08);
             position: relative;
             border: 1px solid #e1e8ed;
+            user-select: none;
+            transition: all 0.2s ease;
+        }
+
+        .parcours-card:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        }
+
+        .parcours-card:active {
+            cursor: grabbing !important;
         }
 
         .parcours-card.good {
             border-left: 3px solid #2c3e50;
+        }
+
+        .parcours-card.neutral {
+            border-left: 3px solid #f39c12;
         }
 
         /* Responsive benchmark grid */
@@ -383,6 +406,124 @@
             right: 20px;
             display: flex;
             gap: 5px;
+        }
+
+        .entry-points-section {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            border-left: 3px solid #2c3e50;
+        }
+
+        .chart-container {
+            margin-top: 20px;
+            position: relative;
+            height: 300px;
+            display: flex;
+            align-items: flex-end;
+            gap: 15px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .bar-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bar-container {
+            width: 100%;
+            height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            position: relative;
+        }
+
+        .bar {
+            width: 100%;
+            background: linear-gradient(180deg, #2c3e50 0%, #4a6278 100%);
+            border-radius: 4px 4px 0 0;
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .bar:hover {
+            background: linear-gradient(180deg, #1a252f 0%, #2c3e50 100%);
+            transform: translateY(-2px);
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.9em;
+            white-space: nowrap;
+        }
+
+        .bar-label {
+            text-align: center;
+            font-size: 0.85em;
+            color: #555;
+            font-weight: 500;
+            word-wrap: break-word;
+            max-width: 100%;
+        }
+
+        .entry-points-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .entry-points-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .entry-chart-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #e1e8ed;
+            position: relative;
+        }
+
+        .entry-chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #2c3e50;
+        }
+
+        .entry-chart-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .entry-chart-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        @media (max-width: 768px) {
+            #entryPointsChartsContainer {
+                grid-template-columns: 1fr !important;
+            }
         }
 
         .page-section {
@@ -579,6 +720,19 @@
             color: #333;
         }
 
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.95em;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #2c5f8d;
+        }
+
         .export-section {
             margin-top: 30px;
             text-align: center;
@@ -727,10 +881,10 @@
 
     <div class="container">
         <header>
-            <h1 contenteditable="true" id="headerTitle" onblur="saveHeaderSettings()" style="cursor: text; padding: 5px;">🎯 Atelier d'Idéation CRO</h1>
-            <p class="subtitle" contenteditable="true" id="headerSubtitle" onblur="saveHeaderSettings()" style="cursor: text; padding: 5px;">Analyse Shopping Section - France & US | Roadmap AB Testing</p>
+            <h1 contenteditable="true" id="headerTitle" style="cursor: text; padding: 5px;">🎯 Atelier d'Idéation CRO</h1>
+            <p class="subtitle" contenteditable="true" id="headerSubtitle" style="cursor: text; padding: 5px;">Analyse Shopping Section - France & US | Roadmap AB Testing</p>
             <div class="workshop-timer">
-                ⏱️ Durée atelier : <span contenteditable="true" id="timer" onblur="saveHeaderSettings()" style="cursor: text; padding: 2px; border-bottom: 1px dashed #999;">2h30</span> |
+                ⏱️ Durée atelier : <span contenteditable="true" id="timer" style="cursor: text; padding: 2px; border-bottom: 1px dashed #999;">2h30</span> |
                 <span id="collaborativeStatus">🔄 Connexion...</span> |
                 👤 <span id="currentUser"></span>
                 <button onclick="changeUserName()" style="margin-left: 10px; padding: 5px 10px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">✏️ Changer de nom</button>
@@ -875,6 +1029,17 @@
             </div>
 
             <div id="performanceTablesContainer"></div>
+
+            <!-- Bloc Insights -->
+            <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-top: 30px; border-left: 3px solid #667eea;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="margin: 0; color: #2c3e50;">💡 Insights & Observations</h3>
+                    <button class="btn-edit" onclick="openPerformanceInsightsModal()" style="padding: 8px 16px; font-size: 0.9em;">✏️ Modifier</button>
+                </div>
+                <div id="performanceInsightsContent" style="color: #555; line-height: 1.8; white-space: pre-wrap;">
+                    Cliquez sur "Modifier" pour ajouter vos insights et observations sur les performances des pages...
+                </div>
+            </div>
         </div>
 
         <!-- TAB 2: PARCOURS -->
@@ -884,11 +1049,49 @@
                 <strong>Objectif :</strong> Comprendre comment les utilisateurs naviguent avant d'entrer dans le booking engine et identifier les parcours convertissants vs non-convertissants.
             </div>
 
-            <h3>Parcours Principaux (Avant BE Entry)</h3>
+            <!-- Section Points d'Entrée -->
+            <div class="entry-points-section">
+                <div class="entry-points-header">
+                    <h3 style="margin: 0;">🎯 Points d'Entrée sur le Site</h3>
+                    <div class="entry-points-controls">
+                        <button class="btn-edit" onclick="openManageEntryPointsCountriesModal()" style="padding: 8px 12px; font-size: 0.9em; margin-right: 10px;">⚙️ Gérer les pays</button>
+                        <button class="btn-add" onclick="openAddEntryPointsChartModal()">+ Ajouter un graphique</button>
+                    </div>
+                </div>
+                <p style="color: #666; font-size: 0.9em; margin-bottom: 15px;">
+                    Répartition des différentes landing pages en pourcentage - Comparez les données entre pays
+                </p>
+                <div id="entryPointsChartsContainer" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <!-- Les graphiques seront ajoutés ici -->
+                </div>
+            </div>
+
+            <!-- Filtres de vue -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                <h3 style="margin: 0;">Parcours Principaux (Avant BE Entry)</h3>
+                <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <label style="font-weight: 600; color: #2c5f8d;">📁 Filtrer par groupe :</label>
+                        <select id="parcoursGroupFilter" onchange="filterParcours()" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.95em;">
+                            <option value="all">Tous les groupes</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <label style="font-weight: 600; color: #2c5f8d;">🌍 Filtrer par pays :</label>
+                        <select id="parcoursCountryFilter" onchange="filterParcours()" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.95em;">
+                            <option value="all">Tous les pays</option>
+                        </select>
+                        <button class="btn-edit" onclick="openManageParcoursCountriesModal()" style="padding: 8px 12px; font-size: 0.9em;">⚙️ Gérer les pays</button>
+                    </div>
+                </div>
+            </div>
 
             <div id="parcoursContainer"></div>
 
-            <button class="btn-add" onclick="openParcoursModal()">+ Ajouter un Parcours</button>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px;">
+                <button class="btn-add" onclick="openParcoursGroupModal()">+ Ajouter un Groupe de Parcours</button>
+                <button class="btn-add" onclick="openParcoursModal()" style="background: #4a9d9c;">+ Ajouter un Parcours</button>
+            </div>
         </div>
 
         <!-- TAB 3: COMPORTEMENT -->
@@ -1086,6 +1289,28 @@
         </div>
     </div>
 
+    <!-- MODAL PERFORMANCE INSIGHTS -->
+    <div id="performanceInsightsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>💡 Modifier les Insights & Observations</h2>
+                <span class="modal-close" onclick="closeModal('performanceInsightsModal')">&times;</span>
+            </div>
+            <form id="performanceInsightsForm" onsubmit="savePerformanceInsights(event)">
+                <div class="form-group">
+                    <label>Insights, observations et analyses sur les performances des pages</label>
+                    <textarea id="performanceInsightsText" rows="12" placeholder="Exemples:
+- Les pages resort ont un taux d'entrée BE de 45% en moyenne
+- Desktop performe mieux que mobile sur les pages d'offres (+12% de conversion)
+- La France a un taux de rebond plus élevé que les autres pays (58% vs 42%)
+- Opportunité : optimiser les pages blog qui ont un fort trafic mais faible conversion
+..."></textarea>
+                </div>
+                <button type="submit" class="btn-add">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
     <!-- MODAL PARCOURS -->
     <div id="parcoursModal" class="modal">
         <div class="modal-content">
@@ -1103,26 +1328,112 @@
                     <label>Type de Parcours</label>
                     <select id="parcoursType" required>
                         <option value="good">✅ Bon Parcours (Convertissant)</option>
+                        <option value="neutral">❓ Indécis</option>
                         <option value="bad">❌ Mauvais Parcours (Non-Convertissant)</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>% Utilisateurs</label>
-                    <input type="text" id="parcoursUsers" placeholder="Ex: 32%" required>
+                    <label>Pays 🌍</label>
+                    <select id="parcoursCountry">
+                        <option value="">-- Non spécifié --</option>
+                    </select>
                 </div>
                 <div class="form-group">
-                    <label>Taux Conversion</label>
-                    <input type="text" id="parcoursConversion" placeholder="Ex: 8.5%">
+                    <label>Groupe de Parcours 📁</label>
+                    <select id="parcoursGroupSelect">
+                        <option value="">-- Aucun groupe --</option>
+                    </select>
                 </div>
-                <div class="form-group">
-                    <label>Temps Moyen</label>
-                    <input type="text" id="parcoursTime" placeholder="Ex: 6:45">
+
+                <h4 style="margin: 20px 0 10px 0; color: #2c5f8d;">📊 Métriques (jusqu'à 5)</h4>
+                <div id="parcoursMetricsContainer">
+                    <!-- Métriques générées dynamiquement -->
                 </div>
+
                 <div class="form-group">
                     <label>Insights / Observations</label>
                     <textarea id="parcoursInsights" rows="3" placeholder="Décrivez les insights clés pour ce parcours"></textarea>
                 </div>
                 <button type="submit" class="btn-add">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL PARCOURS GROUP -->
+    <div id="parcoursGroupModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Ajouter/Modifier un Groupe de Parcours</h2>
+                <span class="modal-close" onclick="closeModal('parcoursGroupModal')">&times;</span>
+            </div>
+            <form id="parcoursGroupForm" onsubmit="saveParcoursGroup(event)">
+                <input type="hidden" id="parcoursGroupId">
+                <div class="form-group">
+                    <label>Titre du Groupe</label>
+                    <input type="text" id="parcoursGroupTitle" placeholder="Ex: Sessions qui land sur une page resort" required>
+                </div>
+                <div class="form-group">
+                    <label>Description (optionnelle)</label>
+                    <textarea id="parcoursGroupDescription" rows="2" placeholder="Ex: Analyse des comportements des utilisateurs arrivant directement sur une page resort"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Pays 🌍</label>
+                    <select id="parcoursGroupCountry">
+                        <option value="">-- Non spécifié --</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-add">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL ENTRY POINTS -->
+    <div id="entryPointsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🎯 Modifier les Points d'Entrée</h2>
+                <span class="modal-close" onclick="closeModal('entryPointsModal')">&times;</span>
+            </div>
+            <form id="entryPointsForm" onsubmit="saveEntryPoints(event)">
+                <p style="color: #666; margin-bottom: 20px; font-size: 0.95em;">
+                    Configurez les 6 points d'entrée principaux sur votre site web avec leur pourcentage.
+                </p>
+                <div id="entryPointsInputsContainer">
+                    <!-- Les 6 points d'entrée seront générés ici -->
+                </div>
+                <button type="submit" class="btn-add">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL MANAGE ENTRY POINTS COUNTRIES -->
+    <div id="manageCountriesModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🌍 Gérer les Pays des Points d'Entrée</h2>
+                <span class="modal-close" onclick="closeModal('manageCountriesModal')">&times;</span>
+            </div>
+            <div id="countriesListContainer">
+                <!-- Liste des pays générée dynamiquement -->
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ADD ENTRY POINTS CHART -->
+    <div id="addEntryPointsChartModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📊 Ajouter un Graphique</h2>
+                <span class="modal-close" onclick="closeModal('addEntryPointsChartModal')">&times;</span>
+            </div>
+            <form id="addEntryPointsChartForm" onsubmit="addEntryPointsChart(event)">
+                <div class="form-group">
+                    <label>Sélectionner le pays à afficher</label>
+                    <select id="newChartCountry" required style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; width: 100%;">
+                        <!-- Options générées dynamiquement -->
+                    </select>
+                </div>
+                <button type="submit" class="btn-add">Ajouter le graphique</button>
             </form>
         </div>
     </div>
@@ -1192,11 +1503,12 @@
     <div id="frictionModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Ajouter une Friction</h2>
+                <h2>Ajouter/Modifier une Friction</h2>
                 <span class="modal-close" onclick="closeModal('frictionModal')">&times;</span>
             </div>
             <form id="frictionForm" onsubmit="saveFriction(event)">
                 <input type="hidden" id="frictionThemeId">
+                <input type="hidden" id="frictionIndex">
                 <div class="form-group">
                     <label>Titre de la Friction</label>
                     <input type="text" id="frictionTitle" placeholder="Ex: Manque de transparence sur le prix final" required>
@@ -1205,7 +1517,40 @@
                     <label>Description / Contexte</label>
                     <textarea id="frictionDesc" rows="3" placeholder="Décrivez la friction en détail"></textarea>
                 </div>
-                <button type="submit" class="btn-add">Ajouter Friction</button>
+                <div class="form-group">
+                    <label>Pages concernées 📄</label>
+                    <input type="text" id="frictionPages" placeholder="Ex: Homepage, Page Offre, Page Resort">
+                    <small style="color: #666;">💡 Séparez les pages par des virgules</small>
+                </div>
+                <button type="submit" class="btn-add">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL OPTIMIZATION -->
+    <div id="optimizationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Ajouter/Modifier une Optimisation</h2>
+                <span class="modal-close" onclick="closeModal('optimizationModal')">&times;</span>
+            </div>
+            <form id="optimizationForm" onsubmit="saveOptimization(event)">
+                <input type="hidden" id="optimizationThemeId">
+                <input type="hidden" id="optimizationIndex">
+                <div class="form-group">
+                    <label>Titre de l'Optimisation</label>
+                    <input type="text" id="optimizationTitle" placeholder="Ex: Afficher les avis clients dès la page d'accueil" required>
+                </div>
+                <div class="form-group">
+                    <label>Description / Bénéfice attendu</label>
+                    <textarea id="optimizationDesc" rows="3" placeholder="Ex: Augmenter la confiance des visiteurs et améliorer le taux d'entrée dans le funnel"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Pages concernées 📄</label>
+                    <input type="text" id="optimizationPages" placeholder="Ex: Homepage, Page Offre, Page Resort">
+                    <small style="color: #666;">💡 Séparez les pages par des virgules</small>
+                </div>
+                <button type="submit" class="btn-add" style="background: #28a745;">Enregistrer</button>
             </form>
         </div>
     </div>
@@ -1472,26 +1817,7 @@
             </div>
             <form id="deviceForm" onsubmit="saveDevice(event)">
                 <input type="hidden" id="deviceId">
-                <div class="form-group">
-                    <label>Nom du Device</label>
-                    <input type="text" id="deviceName" placeholder="Ex: Desktop, Mobile, Tablet" required>
-                </div>
-                <div class="form-group">
-                    <label>Sessions</label>
-                    <input type="text" id="deviceSessions" placeholder="Ex: 625 000" required>
-                </div>
-                <div class="form-group">
-                    <label>% Total</label>
-                    <input type="text" id="devicePercent" placeholder="Ex: 50%" required>
-                </div>
-                <div class="form-group">
-                    <label>Pages/Session</label>
-                    <input type="text" id="devicePagesPerSession" placeholder="Ex: 5.2" required>
-                </div>
-                <div class="form-group">
-                    <label>Exit Rate</label>
-                    <input type="text" id="deviceExitRate" placeholder="Ex: 38%" required>
-                </div>
+                <div id="deviceFormFields"></div>
                 <button type="submit" class="btn-add">Enregistrer</button>
             </form>
         </div>
@@ -1506,26 +1832,7 @@
             </div>
             <form id="countryForm" onsubmit="saveCountry(event)">
                 <input type="hidden" id="countryId">
-                <div class="form-group">
-                    <label>Nom du Pays (avec emoji)</label>
-                    <input type="text" id="countryName" placeholder="Ex: 🇫🇷 France" required>
-                </div>
-                <div class="form-group">
-                    <label>Sessions</label>
-                    <input type="text" id="countrySessions" placeholder="Ex: 750 000" required>
-                </div>
-                <div class="form-group">
-                    <label>% Total</label>
-                    <input type="text" id="countryPercent" placeholder="Ex: 60%" required>
-                </div>
-                <div class="form-group">
-                    <label>Taux d'Entrée BE</label>
-                    <input type="text" id="countryBeEntry" placeholder="Ex: 28%" required>
-                </div>
-                <div class="form-group">
-                    <label>Conversion</label>
-                    <input type="text" id="countryConversion" placeholder="Ex: 3.2%" required>
-                </div>
+                <div id="countryFormFields"></div>
                 <button type="submit" class="btn-add">Enregistrer</button>
             </form>
         </div>
@@ -1540,22 +1847,7 @@
             </div>
             <form id="trafficSourceForm" onsubmit="saveTrafficSource(event)">
                 <input type="hidden" id="trafficSourceId">
-                <div class="form-group">
-                    <label>Nom de la Source</label>
-                    <input type="text" id="trafficSourceName" placeholder="Ex: Organic Search" required>
-                </div>
-                <div class="form-group">
-                    <label>% Sessions</label>
-                    <input type="text" id="trafficSourcePercent" placeholder="Ex: 35%" required>
-                </div>
-                <div class="form-group">
-                    <label>Taux d'Entrée BE</label>
-                    <input type="text" id="trafficSourceBeEntry" placeholder="Ex: 28%" required>
-                </div>
-                <div class="form-group">
-                    <label>Quality Score</label>
-                    <input type="text" id="trafficSourceQuality" placeholder="Ex: 8/10" required>
-                </div>
+                <div id="trafficSourceFormFields"></div>
                 <button type="submit" class="btn-add">Enregistrer</button>
             </form>
         </div>
@@ -1610,7 +1902,7 @@
             <form id="editColumnsForm" onsubmit="saveColumnNames(event)">
                 <input type="hidden" id="editColumnsType">
                 <div class="alert" style="background: #e8f4f8; border-left: 4px solid #3498db; margin-bottom: 20px;">
-                    <strong>💡 Astuce :</strong> Séparez les noms par des virgules. L'ordre et le nombre de colonnes sont conservés.
+                    <strong>💡 Astuce :</strong> Séparez les noms par des virgules. Vous pouvez renommer jusqu'à 10 colonnes. L'ordre est conservé.
                 </div>
                 <div class="form-group">
                     <label>Noms des Colonnes</label>
@@ -1660,12 +1952,25 @@
             hypotheses: [],
             ideas: [],
             benchmarks: [],
+            entryPoints: {
+                all: [
+                    { label: 'Homepage', value: 35 },
+                    { label: 'Page Resort', value: 28 },
+                    { label: 'Page Offre', value: 18 },
+                    { label: 'Blog', value: 10 },
+                    { label: 'Landing Campaign', value: 6 },
+                    { label: 'Autres', value: 3 }
+                ]
+            },
+            entryPointsCountries: ['all'],
+            entryPointsCharts: ['all'],
+            performanceInsights: '',
             // Column names configuration
             columnNames: {
-                devices: ['Device', 'Sessions', '% Total', 'Pages/Session', 'Exit Rate'],
-                countries: ['Pays', 'Sessions', '% Total', 'Taux d\'Entrée BE', 'Conversion'],
-                trafficSources: ['Source', 'Sessions', '% Total', 'Taux d\'Entrée BE'],
-                components: ['Composant', 'Scroll Reach', 'Taux de Clic', 'Engagement', 'Heatmap', 'Observation']
+                devices: ['Device', 'Sessions', '% Total', 'Pages/Session', 'Exit Rate', 'Col 6', 'Col 7', 'Col 8', 'Col 9', 'Col 10'],
+                countries: ['Pays', 'Sessions', '% Total', 'Taux d\'Entrée BE', 'Conversion', 'Col 6', 'Col 7', 'Col 8', 'Col 9', 'Col 10'],
+                trafficSources: ['Source', '% Sessions', 'Taux d\'Entrée BE', 'Quality Score', 'Col 5', 'Col 6', 'Col 7', 'Col 8', 'Col 9', 'Col 10'],
+                components: ['Composant', 'Scroll Reach', 'Taux de Clic', 'Engagement', 'Heatmap', 'Observation', 'Col 7', 'Col 8', 'Col 9', 'Col 10']
             }
         };
 
@@ -1887,9 +2192,13 @@
 
             if (!appData.metrics) appData.metrics = [];
 
-            appData.metrics.forEach(metric => {
+            appData.metrics.forEach((metric, index) => {
                 const card = document.createElement('div');
                 card.className = 'metric-card';
+                card.draggable = true;
+                card.dataset.metricId = metric.id;
+                card.dataset.metricIndex = index;
+                card.style.cursor = 'move';
                 card.innerHTML = `
                     <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                         <div style="flex: 1;">
@@ -1902,7 +2211,68 @@
                         </div>
                     </div>
                 `;
+
+                // Événements drag & drop
+                card.addEventListener('dragstart', handleMetricDragStart);
+                card.addEventListener('dragover', handleMetricDragOver);
+                card.addEventListener('drop', handleMetricDrop);
+                card.addEventListener('dragend', handleMetricDragEnd);
+
                 container.appendChild(card);
+            });
+        }
+
+        // Variables pour le drag & drop
+        let draggedMetricElement = null;
+        let draggedMetricIndex = null;
+
+        function handleMetricDragStart(e) {
+            draggedMetricElement = this;
+            draggedMetricIndex = parseInt(this.dataset.metricIndex);
+            this.style.opacity = '0.4';
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleMetricDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            e.dataTransfer.dropEffect = 'move';
+
+            if (this !== draggedMetricElement) {
+                this.style.borderTop = '3px solid #667eea';
+            }
+            return false;
+        }
+
+        function handleMetricDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+
+            if (draggedMetricElement !== this) {
+                const dropIndex = parseInt(this.dataset.metricIndex);
+
+                // Réorganiser le tableau
+                const draggedMetric = appData.metrics[draggedMetricIndex];
+                appData.metrics.splice(draggedMetricIndex, 1);
+                appData.metrics.splice(dropIndex, 0, draggedMetric);
+
+                // Sauvegarder et re-render
+                saveData();
+                renderMetrics();
+            }
+
+            this.style.borderTop = '';
+            return false;
+        }
+
+        function handleMetricDragEnd(e) {
+            this.style.opacity = '1';
+
+            // Nettoyer tous les indicateurs visuels
+            document.querySelectorAll('.metric-card').forEach(card => {
+                card.style.borderTop = '';
             });
         }
 
@@ -1913,10 +2283,10 @@
 
             if (!appData.devices) appData.devices = [];
             if (!appData.columnNames) appData.columnNames = {};
-            if (!appData.columnNames.devices) appData.columnNames.devices = ['Device', 'Sessions', '% Total', 'Pages/Session', 'Exit Rate'];
+            if (!appData.columnNames.devices) appData.columnNames.devices = ['Device', 'Sessions', '% Total', 'Pages/Session', 'Exit Rate', 'Col 6', 'Col 7', 'Col 8', 'Col 9', 'Col 10'];
 
             const colNames = appData.columnNames.devices;
-            const dataKeys = ['name', 'sessions', 'percent', 'pagesPerSession', 'exitRate'];
+            const dataKeys = ['name', 'sessions', 'percent', 'pagesPerSession', 'exitRate', 'col6', 'col7', 'col8', 'col9', 'col10'];
 
             const headerRow = document.createElement('div');
             headerRow.style.marginBottom = '10px';
@@ -1959,10 +2329,10 @@
 
             if (!appData.countries) appData.countries = [];
             if (!appData.columnNames) appData.columnNames = {};
-            if (!appData.columnNames.countries) appData.columnNames.countries = ['Pays', 'Sessions', '% Total', 'Taux d\'Entrée BE', 'Conversion'];
+            if (!appData.columnNames.countries) appData.columnNames.countries = ['Pays', 'Sessions', '% Total', 'Taux d\'Entrée BE', 'Conversion', 'Col 6', 'Col 7', 'Col 8', 'Col 9', 'Col 10'];
 
             const colNames = appData.columnNames.countries;
-            const dataKeys = ['name', 'sessions', 'percent', 'beEntry', 'conversion'];
+            const dataKeys = ['name', 'sessions', 'percent', 'beEntry', 'conversion', 'col6', 'col7', 'col8', 'col9', 'col10'];
 
             const headerRow = document.createElement('div');
             headerRow.style.marginBottom = '10px';
@@ -2005,10 +2375,10 @@
 
             if (!appData.trafficSources) appData.trafficSources = [];
             if (!appData.columnNames) appData.columnNames = {};
-            if (!appData.columnNames.trafficSources) appData.columnNames.trafficSources = ['Source', '% Sessions', 'Taux d\'Entrée BE', 'Quality Score'];
+            if (!appData.columnNames.trafficSources) appData.columnNames.trafficSources = ['Source', '% Sessions', 'Taux d\'Entrée BE', 'Quality Score', 'Col 5', 'Col 6', 'Col 7', 'Col 8', 'Col 9', 'Col 10'];
 
             const colNames = appData.columnNames.trafficSources;
-            const dataKeys = ['name', 'percent', 'beEntry', 'quality'];
+            const dataKeys = ['name', 'percent', 'beEntry', 'quality', 'col5', 'col6', 'col7', 'col8', 'col9', 'col10'];
 
             const headerRow = document.createElement('div');
             headerRow.style.marginBottom = '10px';
@@ -2427,6 +2797,44 @@
             closeModal('performanceRowModal');
         }
 
+        // PERFORMANCE INSIGHTS FUNCTIONS
+        function renderPerformanceInsights() {
+            const container = document.getElementById('performanceInsightsContent');
+            if (!container) return;
+
+            if (!appData.performanceInsights || appData.performanceInsights.trim() === '') {
+                container.textContent = 'Cliquez sur "Modifier" pour ajouter vos insights et observations sur les performances des pages...';
+                container.style.color = '#999';
+                container.style.fontStyle = 'italic';
+            } else {
+                container.textContent = appData.performanceInsights;
+                container.style.color = '#555';
+                container.style.fontStyle = 'normal';
+            }
+        }
+
+        function openPerformanceInsightsModal() {
+            const modal = document.getElementById('performanceInsightsModal');
+            const textarea = document.getElementById('performanceInsightsText');
+
+            textarea.value = appData.performanceInsights || '';
+            modal.style.display = 'block';
+
+            // Focus sur le textarea
+            setTimeout(() => textarea.focus(), 100);
+        }
+
+        function savePerformanceInsights(e) {
+            e.preventDefault();
+
+            const textarea = document.getElementById('performanceInsightsText');
+            appData.performanceInsights = textarea.value;
+
+            saveData();
+            renderPerformanceInsights();
+            closeModal('performanceInsightsModal');
+        }
+
         function editPerformanceRow(tableId, rowIndex) {
             openPerformanceRowModal(tableId, rowIndex);
         }
@@ -2450,33 +2858,183 @@
             container.innerHTML = '';
 
             if (!appData.parcours) appData.parcours = [];
+            if (!appData.parcoursGroups) appData.parcoursGroups = [];
 
-            appData.parcours.forEach(p => {
-                const card = document.createElement('div');
-                card.className = `parcours-card ${p.type}`;
-                card.innerHTML = `
-                    <div class="parcours-actions">
-                        <button class="btn-edit" onclick="editParcours(${p.id})">✏️ Modifier</button>
-                        <button class="btn-delete" onclick="deleteParcours(${p.id})">🗑️ Supprimer</button>
+            // Grouper les parcours par groupId
+            const parcoursWithGroup = appData.parcours.filter(p => p.groupId);
+            const parcoursWithoutGroup = appData.parcours.filter(p => !p.groupId);
+
+            // Afficher les groupes
+            appData.parcoursGroups.forEach(group => {
+                const groupParcours = parcoursWithGroup.filter(p => p.groupId === group.id);
+                if (groupParcours.length === 0) return; // Ne pas afficher les groupes vides
+
+                const groupContainer = document.createElement('div');
+                groupContainer.dataset.groupId = group.id;
+                groupContainer.style.marginBottom = '30px';
+                groupContainer.style.padding = '20px';
+                groupContainer.style.background = 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)';
+                groupContainer.style.borderRadius = '15px';
+                groupContainer.style.boxShadow = '0 4px 15px rgba(0,0,0,0.1)';
+
+                const groupHeader = document.createElement('div');
+                groupHeader.style.display = 'flex';
+                groupHeader.style.justifyContent = 'space-between';
+                groupHeader.style.alignItems = 'center';
+                groupHeader.style.marginBottom = '15px';
+                groupHeader.innerHTML = `
+                    <div>
+                        <h3 style="margin: 0; color: #2c5f8d;">📁 ${group.title}</h3>
+                        ${group.description ? `<p style="margin: 5px 0 0 0; color: #666; font-size: 0.9em;">${group.description}</p>` : ''}
+                        ${group.country ? `<p style="margin: 5px 0 0 0; color: #666; font-size: 0.9em;">🌍 <strong>${group.country}</strong></p>` : ''}
                     </div>
-                    <h4>${p.type === 'good' ? '🏆' : '❌'} ${p.name}</h4>
+                    <div style="display: flex; gap: 5px;">
+                        <button class="btn-edit" onclick="openParcoursModal(null, ${group.id})" style="font-size: 0.85em; padding: 6px 10px;">+ Parcours</button>
+                        <button class="btn-edit" onclick="editParcoursGroup(${group.id})" style="font-size: 0.85em; padding: 6px 10px;">✏️</button>
+                        <button class="btn-delete" onclick="deleteParcoursGroup(${group.id})" style="font-size: 0.85em; padding: 6px 10px;">🗑️</button>
+                    </div>
+                `;
+                groupContainer.appendChild(groupHeader);
+
+                // Afficher les parcours du groupe
+                groupParcours.forEach((p, index) => {
+                    const card = createParcoursCard(p, index);
+                    groupContainer.appendChild(card);
+                });
+
+                container.appendChild(groupContainer);
+            });
+
+            // Afficher les parcours sans groupe
+            if (parcoursWithoutGroup.length > 0) {
+                const noGroupHeader = document.createElement('h3');
+                noGroupHeader.textContent = '📋 Parcours sans groupe';
+                noGroupHeader.style.marginTop = '20px';
+                noGroupHeader.style.marginBottom = '15px';
+                noGroupHeader.style.color = '#2c5f8d';
+                container.appendChild(noGroupHeader);
+
+                parcoursWithoutGroup.forEach((p, index) => {
+                    const card = createParcoursCard(p, index);
+                    container.appendChild(card);
+                });
+            }
+        }
+
+        function createParcoursCard(p, index) {
+            const card = document.createElement('div');
+            card.className = `parcours-card ${p.type}`;
+            card.draggable = true;
+            card.dataset.parcoursId = p.id;
+            card.dataset.parcoursIndex = index;
+            card.style.cursor = 'move';
+
+            // Générer les métriques dynamiquement
+            let metricsHtml = '';
+            if (p.metrics && Array.isArray(p.metrics) && p.metrics.length > 0) {
+                metricsHtml = '<div class="metric-grid">';
+                p.metrics.forEach(metric => {
+                    if (metric.label || metric.value) {
+                        metricsHtml += `
+                            <div class="metric-card">
+                                <div class="metric-label">${metric.label || 'Métrique'}</div>
+                                <div class="metric-value" style="font-size: 1.5em;">${metric.value || '-'}</div>
+                            </div>
+                        `;
+                    }
+                });
+                metricsHtml += '</div>';
+            } else {
+                // Rétrocompatibilité avec l'ancien format
+                metricsHtml = `
                     <div class="metric-grid">
                         <div class="metric-card">
                             <div class="metric-label">% Utilisateurs</div>
-                            <div class="metric-value" style="font-size: 1.5em;">${p.users}</div>
+                            <div class="metric-value" style="font-size: 1.5em;">${p.users || '-'}</div>
                         </div>
                         <div class="metric-card">
                             <div class="metric-label">Taux Conversion</div>
-                            <div class="metric-value" style="font-size: 1.5em;">${p.conversion}</div>
+                            <div class="metric-value" style="font-size: 1.5em;">${p.conversion || '-'}</div>
                         </div>
                         <div class="metric-card">
                             <div class="metric-label">Temps Moyen</div>
-                            <div class="metric-value" style="font-size: 1.5em;">${p.time}</div>
+                            <div class="metric-value" style="font-size: 1.5em;">${p.time || '-'}</div>
                         </div>
                     </div>
-                    <p style="margin-top: 15px;"><strong>Insights :</strong> ${p.insights}</p>
                 `;
-                container.appendChild(card);
+            }
+
+            card.innerHTML = `
+                <div class="parcours-actions">
+                    <button class="btn-edit" onclick="editParcours(${p.id})">✏️ Modifier</button>
+                    <button class="btn-delete" onclick="deleteParcours(${p.id})">🗑️ Supprimer</button>
+                </div>
+                <h4>${p.type === 'good' ? '🏆' : p.type === 'neutral' ? '❓' : '❌'} ${p.name}</h4>
+                ${!p.groupId && p.country ? `<p style="margin: 5px 0; color: #666; font-size: 0.9em;">🌍 <strong>${p.country}</strong></p>` : ''}
+                ${metricsHtml}
+                ${p.insights ? `<p style="margin-top: 15px;"><strong>Insights :</strong> ${p.insights}</p>` : ''}
+            `;
+
+            // Événements drag & drop
+            card.addEventListener('dragstart', handleParcoursDragStart);
+            card.addEventListener('dragover', handleParcoursDragOver);
+            card.addEventListener('drop', handleParcoursDrop);
+            card.addEventListener('dragend', handleParcoursDragEnd);
+
+            return card;
+        }
+
+        // Variables pour le drag & drop des parcours
+        let draggedParcoursElement = null;
+        let draggedParcoursIndex = null;
+
+        function handleParcoursDragStart(e) {
+            draggedParcoursElement = this;
+            draggedParcoursIndex = parseInt(this.dataset.parcoursIndex);
+            this.style.opacity = '0.4';
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleParcoursDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            e.dataTransfer.dropEffect = 'move';
+
+            if (this !== draggedParcoursElement) {
+                this.style.borderTop = '3px solid #2c5f8d';
+            }
+            return false;
+        }
+
+        function handleParcoursDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+
+            if (draggedParcoursElement !== this) {
+                const dropIndex = parseInt(this.dataset.parcoursIndex);
+
+                // Réorganiser le tableau
+                const draggedParcours = appData.parcours[draggedParcoursIndex];
+                appData.parcours.splice(draggedParcoursIndex, 1);
+                appData.parcours.splice(dropIndex, 0, draggedParcours);
+
+                // Sauvegarder et re-render
+                saveData();
+                renderParcours();
+            }
+
+            this.style.borderTop = '';
+            return false;
+        }
+
+        function handleParcoursDragEnd(e) {
+            this.style.opacity = '1';
+
+            // Nettoyer tous les indicateurs visuels
+            document.querySelectorAll('.parcours-card').forEach(card => {
+                card.style.borderTop = '';
             });
         }
 
@@ -2545,31 +3103,74 @@
             if (!appData.themes) appData.themes = [];
 
             appData.themes.forEach(theme => {
-                // Ensure frictions array exists
+                // Ensure arrays exist
                 if (!theme.frictions) theme.frictions = [];
+                if (!theme.optimizations) theme.optimizations = [];
 
                 const card = document.createElement('div');
                 card.className = 'theme-card';
                 card.innerHTML = `
                     <div class="theme-header">
                         <div class="theme-title">${theme.emoji} ${theme.name}</div>
-                        <div>
+                        <div style="display: flex; gap: 5px;">
                             <button class="btn-edit" onclick="editTheme(${theme.id})">✏️ Modifier</button>
                             <button class="btn-delete" onclick="deleteTheme(${theme.id})">🗑️ Supprimer</button>
-                            <button class="btn-add" style="padding: 8px 15px; font-size: 0.9em;" onclick="openFrictionModal(${theme.id})">+ Friction</button>
+                            <button class="btn-add" style="padding: 8px 15px; font-size: 0.9em; background: #e74c3c;" onclick="openFrictionModal(${theme.id})">+ Friction</button>
+                            <button class="btn-add" style="padding: 8px 15px; font-size: 0.9em; background: #28a745;" onclick="openOptimizationModal(${theme.id})">+ Optimisation</button>
                         </div>
                     </div>
                     <ul class="item-list">
                         ${(theme.frictions || []).map((f, idx) => `
-                            <li>
+                            <li style="border-left: 4px solid #e74c3c;">
                                 <div class="item-content">
-                                    <strong>${f.title}</strong><br>
-                                    <small>${f.desc}</small>
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;">
+                                        <div style="flex: 1;">
+                                            <strong style="color: #e74c3c;">❌ ${f.title}</strong><br>
+                                            ${f.desc ? `<small style="color: #666;">${f.desc}</small><br>` : ''}
+                                            ${f.pages ? `
+                                                <div style="margin-top: 8px; display: flex; flex-wrap: gap; gap: 5px;">
+                                                    ${f.pages.split(',').map(page => `
+                                                        <span style="display: inline-block; background: #e8f4f8; color: #2c5f8d; padding: 3px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 500;">
+                                                            📄 ${page.trim()}
+                                                        </span>
+                                                    `).join('')}
+                                                </div>
+                                            ` : ''}
+                                        </div>
+                                        <div style="display: flex; gap: 5px; flex-shrink: 0;">
+                                            <button class="btn-edit" onclick="editFriction(${theme.id}, ${idx})" style="padding: 5px 10px; font-size: 0.85em;">✏️</button>
+                                            <button class="btn-delete" onclick="deleteFriction(${theme.id}, ${idx})" style="padding: 5px 10px; font-size: 0.85em;">🗑️</button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <button class="btn-delete" onclick="deleteFriction(${theme.id}, ${idx})">🗑️</button>
                             </li>
                         `).join('')}
-                        ${(!theme.frictions || theme.frictions.length === 0) ? '<li style="color: #999;">Aucune friction ajoutée</li>' : ''}
+                        ${(theme.optimizations || []).map((o, idx) => `
+                            <li style="border-left: 4px solid #28a745;">
+                                <div class="item-content">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;">
+                                        <div style="flex: 1;">
+                                            <strong style="color: #28a745;">✅ ${o.title}</strong><br>
+                                            ${o.desc ? `<small style="color: #666;">${o.desc}</small><br>` : ''}
+                                            ${o.pages ? `
+                                                <div style="margin-top: 8px; display: flex; flex-wrap: gap; gap: 5px;">
+                                                    ${o.pages.split(',').map(page => `
+                                                        <span style="display: inline-block; background: #e8f4f8; color: #2c5f8d; padding: 3px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 500;">
+                                                            📄 ${page.trim()}
+                                                        </span>
+                                                    `).join('')}
+                                                </div>
+                                            ` : ''}
+                                        </div>
+                                        <div style="display: flex; gap: 5px; flex-shrink: 0;">
+                                            <button class="btn-edit" onclick="editOptimization(${theme.id}, ${idx})" style="padding: 5px 10px; font-size: 0.85em;">✏️</button>
+                                            <button class="btn-delete" onclick="deleteOptimization(${theme.id}, ${idx})" style="padding: 5px 10px; font-size: 0.85em;">🗑️</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        `).join('')}
+                        ${(!theme.frictions || theme.frictions.length === 0) && (!theme.optimizations || theme.optimizations.length === 0) ? '<li style="color: #999;">Aucune friction ou optimisation ajoutée</li>' : ''}
                     </ul>
                 `;
                 container.appendChild(card);
@@ -2834,6 +3435,10 @@
             renderTrafficSources();
             renderCustomSegments();
             renderPerformanceTables();
+            renderPerformanceInsights();
+            updateParcoursCountryFilter();
+            updateParcoursGroupFilter();
+            renderEntryPointsCharts();
             renderParcours();
             renderPages();
             renderThemes();
@@ -3174,16 +3779,76 @@
             });
         }
 
-        function openParcoursModal(id = null) {
+        function openParcoursModal(id = null, groupId = null) {
+            // Peupler le sélecteur de pays
+            if (!appData.parcoursCountries) {
+                appData.parcoursCountries = ['France', 'Belgique', 'Suisse', 'Canada', 'Autres'];
+            }
+            const countrySelect = document.getElementById('parcoursCountry');
+            countrySelect.innerHTML = '<option value="">-- Non spécifié --</option>';
+            appData.parcoursCountries.forEach(country => {
+                countrySelect.innerHTML += `<option value="${country}">${country}</option>`;
+            });
+
+            // Peupler le sélecteur de groupes
+            if (!appData.parcoursGroups) appData.parcoursGroups = [];
+            const groupSelect = document.getElementById('parcoursGroupSelect');
+            groupSelect.innerHTML = '<option value="">-- Aucun groupe --</option>';
+            appData.parcoursGroups.forEach(group => {
+                groupSelect.innerHTML += `<option value="${group.id}">${group.title}</option>`;
+            });
+            if (groupId) {
+                groupSelect.value = groupId;
+            }
+
+            // Générer les champs de métriques
+            const metricsContainer = document.getElementById('parcoursMetricsContainer');
+            metricsContainer.innerHTML = '';
+
+            // Métriques par défaut
+            const defaultMetrics = [
+                { label: '% Utilisateurs', key: 'metric1', placeholder: 'Ex: 32%' },
+                { label: 'Taux Conversion', key: 'metric2', placeholder: 'Ex: 8.5%' },
+                { label: 'Temps Moyen', key: 'metric3', placeholder: 'Ex: 6:45' },
+                { label: 'Métrique 4', key: 'metric4', placeholder: 'Ex: Valeur' },
+                { label: 'Métrique 5', key: 'metric5', placeholder: 'Ex: Valeur' }
+            ];
+
+            defaultMetrics.forEach((metric, index) => {
+                const metricGroup = document.createElement('div');
+                metricGroup.style.display = 'grid';
+                metricGroup.style.gridTemplateColumns = '2fr 3fr';
+                metricGroup.style.gap = '10px';
+                metricGroup.style.marginBottom = '10px';
+                metricGroup.innerHTML = `
+                    <input type="text" id="parcours${metric.key}Label" class="form-control" placeholder="Nom métrique" value="${metric.label}" ${index < 3 ? 'required' : ''}>
+                    <input type="text" id="parcours${metric.key}Value" class="form-control" placeholder="${metric.placeholder}" ${index < 3 ? 'required' : ''}>
+                `;
+                metricsContainer.appendChild(metricGroup);
+            });
+
+            // Charger les données si modification
             if (id) {
                 const p = appData.parcours.find(x => x.id === id);
                 document.getElementById('parcoursId').value = p.id;
                 document.getElementById('parcoursName').value = p.name;
                 document.getElementById('parcoursType').value = p.type;
-                document.getElementById('parcoursUsers').value = p.users;
-                document.getElementById('parcoursConversion').value = p.conversion;
-                document.getElementById('parcoursTime').value = p.time;
-                document.getElementById('parcoursInsights').value = p.insights;
+                document.getElementById('parcoursCountry').value = p.country || '';
+                document.getElementById('parcoursGroupSelect').value = p.groupId || '';
+                document.getElementById('parcoursInsights').value = p.insights || '';
+
+                // Charger les métriques
+                if (p.metrics && Array.isArray(p.metrics)) {
+                    p.metrics.forEach((metric, index) => {
+                        if (index < 5) {
+                            const metricKey = `metric${index + 1}`;
+                            const labelInput = document.getElementById(`parcours${metricKey}Label`);
+                            const valueInput = document.getElementById(`parcours${metricKey}Value`);
+                            if (labelInput) labelInput.value = metric.label || '';
+                            if (valueInput) valueInput.value = metric.value || '';
+                        }
+                    });
+                }
             } else {
                 document.getElementById('parcoursForm').reset();
                 document.getElementById('parcoursId').value = '';
@@ -3254,10 +3919,95 @@
             openModal('themeModal');
         }
 
-        function openFrictionModal(themeId) {
+        function openFrictionModal(themeId, frictionIndex = null) {
             document.getElementById('frictionThemeId').value = themeId;
-            document.getElementById('frictionForm').reset();
+            document.getElementById('frictionIndex').value = frictionIndex !== null ? frictionIndex : '';
+
+            if (frictionIndex !== null) {
+                // Mode édition
+                const theme = appData.themes.find(t => t.id === themeId);
+                if (theme && theme.frictions && theme.frictions[frictionIndex]) {
+                    const friction = theme.frictions[frictionIndex];
+                    document.getElementById('frictionTitle').value = friction.title || '';
+                    document.getElementById('frictionDesc').value = friction.desc || '';
+                    document.getElementById('frictionPages').value = friction.pages || '';
+                }
+            } else {
+                // Mode création
+                document.getElementById('frictionForm').reset();
+                document.getElementById('frictionThemeId').value = themeId;
+                document.getElementById('frictionIndex').value = '';
+            }
+
             openModal('frictionModal');
+        }
+
+        function editFriction(themeId, frictionIndex) {
+            openFrictionModal(themeId, frictionIndex);
+        }
+
+        // OPTIMIZATION FUNCTIONS
+        function openOptimizationModal(themeId, optimizationIndex = null) {
+            document.getElementById('optimizationThemeId').value = themeId;
+            document.getElementById('optimizationIndex').value = optimizationIndex !== null ? optimizationIndex : '';
+
+            if (optimizationIndex !== null) {
+                // Mode édition
+                const theme = appData.themes.find(t => t.id === themeId);
+                if (theme && theme.optimizations && theme.optimizations[optimizationIndex]) {
+                    const optimization = theme.optimizations[optimizationIndex];
+                    document.getElementById('optimizationTitle').value = optimization.title || '';
+                    document.getElementById('optimizationDesc').value = optimization.desc || '';
+                    document.getElementById('optimizationPages').value = optimization.pages || '';
+                }
+            } else {
+                // Mode création
+                document.getElementById('optimizationForm').reset();
+                document.getElementById('optimizationThemeId').value = themeId;
+                document.getElementById('optimizationIndex').value = '';
+            }
+
+            openModal('optimizationModal');
+        }
+
+        function editOptimization(themeId, optimizationIndex) {
+            openOptimizationModal(themeId, optimizationIndex);
+        }
+
+        function saveOptimization(e) {
+            e.preventDefault();
+            const themeId = parseInt(document.getElementById('optimizationThemeId').value);
+            const optimizationIndex = document.getElementById('optimizationIndex').value;
+            const theme = appData.themes.find(x => x.id === themeId);
+
+            if (!theme.optimizations) theme.optimizations = [];
+
+            const optimizationData = {
+                title: document.getElementById('optimizationTitle').value,
+                desc: document.getElementById('optimizationDesc').value,
+                pages: document.getElementById('optimizationPages').value
+            };
+
+            if (optimizationIndex !== '') {
+                // Mode édition
+                theme.optimizations[parseInt(optimizationIndex)] = optimizationData;
+            } else {
+                // Mode création
+                theme.optimizations.push(optimizationData);
+            }
+
+            saveData();
+            renderThemes();
+            closeModal('optimizationModal');
+        }
+
+        function deleteOptimization(themeId, optimizationIndex) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette optimisation ?')) {
+                const theme = appData.themes.find(x => x.id === themeId);
+                theme.optimizations.splice(optimizationIndex, 1);
+                saveData();
+                renderThemes();
+            }
         }
 
         function openHypotheseModal(id = null) {
@@ -3376,13 +4126,28 @@
         function saveParcours(e) {
             e.preventDefault();
             const id = document.getElementById('parcoursId').value;
+
+            // Récupérer les métriques
+            const metrics = [];
+            for (let i = 1; i <= 5; i++) {
+                const labelInput = document.getElementById(`parcoursmetric${i}Label`);
+                const valueInput = document.getElementById(`parcoursmetric${i}Value`);
+                if (labelInput && valueInput && (labelInput.value || valueInput.value)) {
+                    metrics.push({
+                        label: labelInput.value || `Métrique ${i}`,
+                        value: valueInput.value || ''
+                    });
+                }
+            }
+
+            const groupIdValue = document.getElementById('parcoursGroupSelect').value;
             const parcours = {
                 id: id ? parseInt(id) : Date.now(),
                 name: document.getElementById('parcoursName').value,
                 type: document.getElementById('parcoursType').value,
-                users: document.getElementById('parcoursUsers').value,
-                conversion: document.getElementById('parcoursConversion').value,
-                time: document.getElementById('parcoursTime').value,
+                country: document.getElementById('parcoursCountry').value,
+                groupId: groupIdValue ? parseInt(groupIdValue) : null,
+                metrics: metrics,
                 insights: document.getElementById('parcoursInsights').value
             };
 
@@ -3394,6 +4159,7 @@
             }
 
             saveData();
+            updateParcoursGroupFilter();
             renderParcours();
             closeModal('parcoursModal');
         }
@@ -3663,12 +4429,24 @@
         function saveFriction(e) {
             e.preventDefault();
             const themeId = parseInt(document.getElementById('frictionThemeId').value);
+            const frictionIndex = document.getElementById('frictionIndex').value;
             const theme = appData.themes.find(x => x.id === themeId);
 
-            theme.frictions.push({
+            if (!theme.frictions) theme.frictions = [];
+
+            const frictionData = {
                 title: document.getElementById('frictionTitle').value,
-                desc: document.getElementById('frictionDesc').value
-            });
+                desc: document.getElementById('frictionDesc').value,
+                pages: document.getElementById('frictionPages').value
+            };
+
+            if (frictionIndex !== '') {
+                // Mode édition
+                theme.frictions[parseInt(frictionIndex)] = frictionData;
+            } else {
+                // Mode création
+                theme.frictions.push(frictionData);
+            }
 
             saveData();
             renderThemes();
@@ -3775,11 +4553,586 @@
             openIdeaModal(id);
         }
 
+        // Parcours country filter functions
+        function filterParcours() {
+            const selectedCountry = document.getElementById('parcoursCountryFilter').value;
+            const selectedGroup = document.getElementById('parcoursGroupFilter').value;
+            const container = document.getElementById('parcoursContainer');
+            if (!container) return;
+
+            // Filtrer les groupes
+            const groupContainers = container.querySelectorAll('[data-group-id]');
+            groupContainers.forEach(groupContainer => {
+                const groupId = parseInt(groupContainer.dataset.groupId);
+                let showGroup = selectedGroup === 'all' || selectedGroup === groupId.toString();
+
+                // Si on filtre par pays, vérifier si le groupe correspond
+                if (showGroup && selectedCountry !== 'all') {
+                    const group = appData.parcoursGroups.find(g => g.id === groupId);
+                    if (group && group.country && group.country !== selectedCountry) {
+                        showGroup = false;
+                    }
+                }
+
+                groupContainer.style.display = showGroup ? '' : 'none';
+            });
+
+            // Filtrer les parcours individuels (sans groupe)
+            const allCards = container.querySelectorAll('.parcours-card');
+            allCards.forEach(card => {
+                // Si la carte est dans un groupe, le groupe gère déjà la visibilité
+                if (card.closest('[data-group-id]')) return;
+
+                const parcoursId = parseInt(card.dataset.parcoursId);
+                const parcours = appData.parcours.find(p => p.id === parcoursId);
+
+                if (!parcours) return;
+
+                let showCard = true;
+
+                // Filtrer par pays
+                if (selectedCountry !== 'all') {
+                    if (parcours.country !== selectedCountry) {
+                        showCard = false;
+                    }
+                }
+
+                // Filtrer par groupe (afficher seulement si "sans groupe" et filtre "all" ou "no-group")
+                if (selectedGroup !== 'all' && selectedGroup !== 'no-group') {
+                    showCard = false;
+                }
+
+                card.style.display = showCard ? '' : 'none';
+            });
+
+            // Gérer l'affichage du header "Parcours sans groupe"
+            const noGroupHeaders = container.querySelectorAll('h3');
+            noGroupHeaders.forEach(header => {
+                if (header.textContent.includes('Parcours sans groupe')) {
+                    header.style.display = (selectedGroup === 'all' || selectedGroup === 'no-group') ? '' : 'none';
+                }
+            });
+        }
+
+        function filterParcoursByCountry() {
+            filterParcours();
+        }
+
+        function updateParcoursGroupFilter() {
+            const filter = document.getElementById('parcoursGroupFilter');
+            if (!filter) return;
+
+            const currentValue = filter.value;
+            filter.innerHTML = '<option value="all">Tous les groupes</option>';
+
+            // Ajouter l'option "Sans groupe" s'il y a des parcours sans groupe
+            const parcoursWithoutGroup = appData.parcours.filter(p => !p.groupId);
+            if (parcoursWithoutGroup.length > 0) {
+                filter.innerHTML += '<option value="no-group">📋 Sans groupe</option>';
+            }
+
+            // Ajouter tous les groupes
+            if (appData.parcoursGroups && appData.parcoursGroups.length > 0) {
+                appData.parcoursGroups.forEach(group => {
+                    const option = document.createElement('option');
+                    option.value = group.id;
+                    option.textContent = `📁 ${group.title}`;
+                    filter.appendChild(option);
+                });
+            }
+
+            // Restaurer la valeur sélectionnée si elle existe toujours
+            const options = Array.from(filter.options).map(opt => opt.value);
+            if (options.includes(currentValue)) {
+                filter.value = currentValue;
+            }
+        }
+
+        function openManageParcoursCountriesModal() {
+            if (!appData.parcoursCountries) {
+                appData.parcoursCountries = ['France', 'Belgique', 'Suisse', 'Canada', 'Autres'];
+            }
+
+            const countriesList = appData.parcoursCountries.join(', ');
+            const newCountries = prompt('Gérer les pays (séparés par des virgules) :', countriesList);
+
+            if (newCountries !== null) {
+                appData.parcoursCountries = newCountries.split(',').map(c => c.trim()).filter(c => c);
+                saveData();
+                updateParcoursCountryFilter();
+                alert('Liste des pays mise à jour !');
+            }
+        }
+
+        function updateParcoursCountryFilter() {
+            if (!appData.parcoursCountries) {
+                appData.parcoursCountries = ['France', 'Belgique', 'Suisse', 'Canada', 'Autres'];
+            }
+
+            const filterSelect = document.getElementById('parcoursCountryFilter');
+            if (!filterSelect) return;
+
+            const currentValue = filterSelect.value;
+            filterSelect.innerHTML = '<option value="all">Tous les pays</option>';
+
+            appData.parcoursCountries.forEach(country => {
+                filterSelect.innerHTML += `<option value="${country}">${country}</option>`;
+            });
+
+            if (currentValue && appData.parcoursCountries.includes(currentValue)) {
+                filterSelect.value = currentValue;
+            }
+        }
+
+        // Parcours Group functions
+        function openParcoursGroupModal(id = null) {
+            // Peupler le sélecteur de pays pour le groupe
+            if (!appData.parcoursCountries) {
+                appData.parcoursCountries = ['France', 'Belgique', 'Suisse', 'Canada', 'Autres'];
+            }
+            const countrySelect = document.getElementById('parcoursGroupCountry');
+            countrySelect.innerHTML = '<option value="">-- Non spécifié --</option>';
+            appData.parcoursCountries.forEach(country => {
+                countrySelect.innerHTML += `<option value="${country}">${country}</option>`;
+            });
+
+            if (id) {
+                const group = appData.parcoursGroups.find(g => g.id === id);
+                document.getElementById('parcoursGroupId').value = group.id;
+                document.getElementById('parcoursGroupTitle').value = group.title;
+                document.getElementById('parcoursGroupDescription').value = group.description || '';
+                document.getElementById('parcoursGroupCountry').value = group.country || '';
+            } else {
+                document.getElementById('parcoursGroupForm').reset();
+                document.getElementById('parcoursGroupId').value = '';
+            }
+            openModal('parcoursGroupModal');
+        }
+
+        function saveParcoursGroup(e) {
+            e.preventDefault();
+            const id = document.getElementById('parcoursGroupId').value;
+
+            const group = {
+                id: id ? parseInt(id) : Date.now(),
+                title: document.getElementById('parcoursGroupTitle').value,
+                description: document.getElementById('parcoursGroupDescription').value,
+                country: document.getElementById('parcoursGroupCountry').value
+            };
+
+            if (!appData.parcoursGroups) appData.parcoursGroups = [];
+
+            if (id) {
+                const index = appData.parcoursGroups.findIndex(g => g.id === parseInt(id));
+                appData.parcoursGroups[index] = group;
+            } else {
+                appData.parcoursGroups.push(group);
+            }
+
+            saveData();
+            updateParcoursGroupFilter();
+            renderParcours();
+            closeModal('parcoursGroupModal');
+        }
+
+        function editParcoursGroup(id) {
+            openParcoursGroupModal(id);
+        }
+
+        function deleteParcoursGroup(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce groupe ? Les parcours associés ne seront pas supprimés.')) {
+                // Retirer le groupId des parcours associés
+                appData.parcours.forEach(p => {
+                    if (p.groupId === id) {
+                        p.groupId = null;
+                    }
+                });
+                appData.parcoursGroups = appData.parcoursGroups.filter(g => g.id !== id);
+                saveData();
+                updateParcoursGroupFilter();
+                renderParcours();
+            }
+        }
+
+        // ENTRY POINTS FUNCTIONS
+        function renderEntryPointsCharts() {
+            const container = document.getElementById('entryPointsChartsContainer');
+            if (!container) return;
+
+            // Initialiser les points d'entrée si inexistants ou ancien format
+            if (!appData.entryPoints || Array.isArray(appData.entryPoints)) {
+                appData.entryPoints = {
+                    all: [
+                        { label: 'Homepage', value: 35 },
+                        { label: 'Page Resort', value: 28 },
+                        { label: 'Page Offre', value: 18 },
+                        { label: 'Blog', value: 10 },
+                        { label: 'Landing Campaign', value: 6 },
+                        { label: 'Autres', value: 3 }
+                    ]
+                };
+            }
+
+            if (!appData.entryPointsCountries || appData.entryPointsCountries.length === 0) {
+                appData.entryPointsCountries = ['all'];
+            }
+
+            if (!appData.entryPointsCharts || appData.entryPointsCharts.length === 0) {
+                appData.entryPointsCharts = ['all'];
+            }
+
+            container.innerHTML = '';
+
+            // Afficher un graphique pour chaque pays dans entryPointsCharts
+            appData.entryPointsCharts.forEach(country => {
+                const chartCard = createEntryPointsChartCard(country);
+                container.appendChild(chartCard);
+            });
+
+            if (appData.entryPointsCharts.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">Aucun graphique affiché. Cliquez sur "+ Ajouter un graphique" pour commencer.</p>';
+            }
+        }
+
+        function createEntryPointsChartCard(country) {
+            const card = document.createElement('div');
+            card.className = 'entry-chart-card';
+            card.dataset.country = country;
+
+            // Header du graphique
+            const header = document.createElement('div');
+            header.className = 'entry-chart-header';
+            header.innerHTML = `
+                <div class="entry-chart-title">🌍 ${country === 'all' ? 'Tous les pays' : country}</div>
+                <div class="entry-chart-actions">
+                    <button class="btn-edit" onclick="openEntryPointsModal('${country}')" style="padding: 5px 10px; font-size: 0.85em;">✏️ Modifier</button>
+                    <button class="btn-delete" onclick="removeEntryPointsChart('${country}')" style="padding: 5px 10px; font-size: 0.85em;">🗑️</button>
+                </div>
+            `;
+            card.appendChild(header);
+
+            // Conteneur du graphique
+            const chartContainer = document.createElement('div');
+            chartContainer.className = 'chart-container';
+            chartContainer.style.height = '280px';
+
+            // Récupérer les données du pays
+            const currentData = appData.entryPoints[country] || [];
+
+            if (currentData.length === 0) {
+                chartContainer.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">Aucune donnée disponible</p>';
+            } else {
+                const maxValue = 100;
+
+                currentData.forEach(entryPoint => {
+                    const barWrapper = document.createElement('div');
+                    barWrapper.className = 'bar-wrapper';
+
+                    const barContainer = document.createElement('div');
+                    barContainer.className = 'bar-container';
+                    barContainer.style.height = '220px';
+
+                    const bar = document.createElement('div');
+                    bar.className = 'bar';
+                    const heightPercent = (entryPoint.value / maxValue) * 100;
+                    bar.style.height = heightPercent + '%';
+
+                    const barValue = document.createElement('div');
+                    barValue.className = 'bar-value';
+                    barValue.textContent = entryPoint.value + '%';
+                    bar.appendChild(barValue);
+
+                    barContainer.appendChild(bar);
+                    barWrapper.appendChild(barContainer);
+
+                    const barLabel = document.createElement('div');
+                    barLabel.className = 'bar-label';
+                    barLabel.textContent = entryPoint.label;
+                    barWrapper.appendChild(barLabel);
+
+                    chartContainer.appendChild(barWrapper);
+                });
+            }
+
+            card.appendChild(chartContainer);
+            return card;
+        }
+
+        function openAddEntryPointsChartModal() {
+            const modal = document.getElementById('addEntryPointsChartModal');
+            const select = document.getElementById('newChartCountry');
+
+            select.innerHTML = '';
+
+            // Ajouter uniquement les pays qui ne sont pas encore affichés
+            appData.entryPointsCountries.forEach(country => {
+                if (!appData.entryPointsCharts.includes(country)) {
+                    const option = document.createElement('option');
+                    option.value = country;
+                    option.textContent = country === 'all' ? 'Tous les pays' : country;
+                    select.appendChild(option);
+                }
+            });
+
+            if (select.options.length === 0) {
+                select.innerHTML = '<option value="">Tous les pays sont déjà affichés</option>';
+            }
+
+            modal.style.display = 'block';
+        }
+
+        function addEntryPointsChart(e) {
+            e.preventDefault();
+
+            const select = document.getElementById('newChartCountry');
+            const country = select.value;
+
+            if (!country) {
+                alert('⚠️ Veuillez sélectionner un pays');
+                return;
+            }
+
+            if (!appData.entryPointsCharts) {
+                appData.entryPointsCharts = [];
+            }
+
+            if (appData.entryPointsCharts.includes(country)) {
+                alert('⚠️ Ce graphique est déjà affiché');
+                return;
+            }
+
+            appData.entryPointsCharts.push(country);
+            saveData();
+            renderEntryPointsCharts();
+            closeModal('addEntryPointsChartModal');
+        }
+
+        function removeEntryPointsChart(country) {
+            if (confirm(`Êtes-vous sûr de vouloir retirer le graphique "${country === 'all' ? 'Tous les pays' : country}" ?`)) {
+                appData.entryPointsCharts = appData.entryPointsCharts.filter(c => c !== country);
+                saveData();
+                renderEntryPointsCharts();
+            }
+        }
+
+        function openEntryPointsModal(country = null) {
+            const modal = document.getElementById('entryPointsModal');
+            const container = document.getElementById('entryPointsInputsContainer');
+
+            // Utiliser le pays passé en paramètre ou le premier graphique affiché
+            const selectedCountry = country || (appData.entryPointsCharts && appData.entryPointsCharts.length > 0 ? appData.entryPointsCharts[0] : 'all');
+
+            // Stocker le pays en cours d'édition
+            modal.dataset.editingCountry = selectedCountry;
+
+            // Récupérer les données du pays sélectionné
+            const currentData = appData.entryPoints[selectedCountry] || [];
+
+            container.innerHTML = '';
+
+            // Ajouter un indicateur du pays en cours d'édition
+            const countryInfo = document.createElement('div');
+            countryInfo.style.background = '#e8f4f8';
+            countryInfo.style.padding = '15px';
+            countryInfo.style.borderRadius = '6px';
+            countryInfo.style.marginBottom = '20px';
+            countryInfo.style.fontWeight = '600';
+            countryInfo.style.color = '#2c5f8d';
+            countryInfo.innerHTML = `
+                📍 Édition des données pour : <strong>${selectedCountry === 'all' ? 'Tous les pays' : selectedCountry}</strong>
+            `;
+            container.appendChild(countryInfo);
+
+            // Si pas de données, créer 6 entrées vides
+            if (currentData.length === 0) {
+                for (let i = 0; i < 6; i++) {
+                    const formGroup = document.createElement('div');
+                    formGroup.className = 'form-group';
+                    formGroup.style.marginBottom = '20px';
+                    formGroup.innerHTML = `
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div>
+                                <label>Nom du point d'entrée ${i + 1}</label>
+                                <input type="text" id="entryPointLabel${i}" value="" placeholder="Ex: Homepage" required>
+                            </div>
+                            <div>
+                                <label>Pourcentage (%)</label>
+                                <input type="number" id="entryPointValue${i}" value="0" min="0" max="100" step="0.1" placeholder="Ex: 35" required>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(formGroup);
+                }
+            } else {
+                currentData.forEach((ep, index) => {
+                    const formGroup = document.createElement('div');
+                    formGroup.className = 'form-group';
+                    formGroup.style.marginBottom = '20px';
+                    formGroup.innerHTML = `
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div>
+                                <label>Nom du point d'entrée ${index + 1}</label>
+                                <input type="text" id="entryPointLabel${index}" value="${ep.label}" placeholder="Ex: Homepage" required>
+                            </div>
+                            <div>
+                                <label>Pourcentage (%)</label>
+                                <input type="number" id="entryPointValue${index}" value="${ep.value}" min="0" max="100" step="0.1" placeholder="Ex: 35" required>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(formGroup);
+                });
+            }
+
+            // Ajouter un message d'aide
+            const helpText = document.createElement('p');
+            helpText.style.color = '#666';
+            helpText.style.fontSize = '0.9em';
+            helpText.style.marginTop = '15px';
+            helpText.style.fontStyle = 'italic';
+            helpText.innerHTML = '💡 Astuce : La somme des pourcentages doit idéalement être égale à 100%';
+            container.appendChild(helpText);
+
+            modal.style.display = 'block';
+        }
+
+        function saveEntryPoints(e) {
+            e.preventDefault();
+
+            // Récupérer le pays en cours d'édition
+            const modal = document.getElementById('entryPointsModal');
+            const selectedCountry = modal.dataset.editingCountry || 'all';
+
+            // Initialiser l'objet entryPoints si nécessaire
+            if (!appData.entryPoints || Array.isArray(appData.entryPoints)) {
+                appData.entryPoints = { all: [] };
+            }
+
+            // Sauvegarder les données du pays
+            appData.entryPoints[selectedCountry] = [];
+            for (let i = 0; i < 6; i++) {
+                const labelInput = document.getElementById(`entryPointLabel${i}`);
+                const valueInput = document.getElementById(`entryPointValue${i}`);
+
+                if (labelInput && valueInput) {
+                    const label = labelInput.value;
+                    const value = parseFloat(valueInput.value) || 0;
+                    appData.entryPoints[selectedCountry].push({ label, value });
+                }
+            }
+
+            saveData();
+            renderEntryPointsCharts();
+            closeModal('entryPointsModal');
+        }
+
+        function openManageEntryPointsCountriesModal() {
+            const modal = document.getElementById('manageCountriesModal');
+            const container = document.getElementById('countriesListContainer');
+
+            if (!appData.entryPointsCountries || appData.entryPointsCountries.length === 0) {
+                appData.entryPointsCountries = ['all'];
+            }
+
+            container.innerHTML = '';
+
+            // Liste des pays
+            appData.entryPointsCountries.forEach(country => {
+                if (country === 'all') return; // Ne pas permettre la suppression de "all"
+
+                const countryItem = document.createElement('div');
+                countryItem.style.display = 'flex';
+                countryItem.style.justifyContent = 'space-between';
+                countryItem.style.alignItems = 'center';
+                countryItem.style.padding = '10px';
+                countryItem.style.background = '#f8f9fa';
+                countryItem.style.borderRadius = '6px';
+                countryItem.style.marginBottom = '10px';
+
+                countryItem.innerHTML = `
+                    <span style="font-weight: 500;">🌍 ${country}</span>
+                    <button class="btn-delete" onclick="deleteEntryPointsCountry('${country}')" style="padding: 5px 10px; font-size: 0.85em;">🗑️ Supprimer</button>
+                `;
+                container.appendChild(countryItem);
+            });
+
+            // Formulaire d'ajout
+            const addForm = document.createElement('div');
+            addForm.style.marginTop = '20px';
+            addForm.style.padding = '15px';
+            addForm.style.background = '#e8f4f8';
+            addForm.style.borderRadius = '6px';
+            addForm.innerHTML = `
+                <h4 style="margin: 0 0 10px 0; color: #2c5f8d;">Ajouter un nouveau pays</h4>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="newEntryPointsCountry" placeholder="Ex: France" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    <button class="btn-add" onclick="addEntryPointsCountry()" style="padding: 8px 16px;">+ Ajouter</button>
+                </div>
+            `;
+            container.appendChild(addForm);
+
+            modal.style.display = 'block';
+        }
+
+        function addEntryPointsCountry() {
+            const input = document.getElementById('newEntryPointsCountry');
+            const country = input.value.trim();
+
+            if (!country) {
+                alert('⚠️ Veuillez entrer un nom de pays');
+                return;
+            }
+
+            if (!appData.entryPointsCountries) {
+                appData.entryPointsCountries = ['all'];
+            }
+
+            if (appData.entryPointsCountries.includes(country)) {
+                alert('⚠️ Ce pays existe déjà');
+                return;
+            }
+
+            appData.entryPointsCountries.push(country);
+
+            // Initialiser avec des données vides
+            if (!appData.entryPoints[country]) {
+                appData.entryPoints[country] = [
+                    { label: 'Homepage', value: 0 },
+                    { label: 'Page Resort', value: 0 },
+                    { label: 'Page Offre', value: 0 },
+                    { label: 'Blog', value: 0 },
+                    { label: 'Landing Campaign', value: 0 },
+                    { label: 'Autres', value: 0 }
+                ];
+            }
+
+            saveData();
+            renderEntryPointsCharts();
+            openManageEntryPointsCountriesModal();
+        }
+
+        function deleteEntryPointsCountry(country) {
+            if (confirm(`Êtes-vous sûr de vouloir supprimer le pays "${country}" et toutes ses données ?`)) {
+                appData.entryPointsCountries = appData.entryPointsCountries.filter(c => c !== country);
+                delete appData.entryPoints[country];
+
+                // Retirer aussi le graphique s'il est affiché
+                if (appData.entryPointsCharts) {
+                    appData.entryPointsCharts = appData.entryPointsCharts.filter(c => c !== country);
+                }
+
+                saveData();
+                renderEntryPointsCharts();
+                openManageEntryPointsCountriesModal();
+            }
+        }
+
         // Delete functions
         function deleteParcours(id) {
             if (confirm('Êtes-vous sûr de vouloir supprimer ce parcours ?')) {
                 appData.parcours = appData.parcours.filter(x => x.id !== id);
                 saveData();
+                updateParcoursGroupFilter();
                 renderParcours();
             }
         }
@@ -4179,14 +5532,35 @@
 
         // === DEVICE FUNCTIONS ===
         function openDeviceModal(id = null) {
+            // Générer les champs dynamiquement en fonction des colonnes
+            const colNames = appData.columnNames?.devices || ['Device', 'Sessions', '% Total', 'Pages/Session', 'Exit Rate', 'Col 6', 'Col 7', 'Col 8', 'Col 9', 'Col 10'];
+            const dataKeys = ['name', 'sessions', 'percent', 'pagesPerSession', 'exitRate', 'col6', 'col7', 'col8', 'col9', 'col10'];
+
+            const formFieldsContainer = document.getElementById('deviceFormFields');
+            formFieldsContainer.innerHTML = '';
+
+            dataKeys.forEach((key, index) => {
+                const isRequired = index < 5; // Les 5 premiers champs sont requis
+                const fieldGroup = document.createElement('div');
+                fieldGroup.className = 'form-group';
+                fieldGroup.innerHTML = `
+                    <label>${colNames[index]}</label>
+                    <input type="text" id="device${key.charAt(0).toUpperCase() + key.slice(1)}" placeholder="Ex: ${colNames[index]}" ${isRequired ? 'required' : ''}>
+                `;
+                formFieldsContainer.appendChild(fieldGroup);
+            });
+
+            // Charger les données si modification
             if (id) {
                 const d = appData.devices.find(x => x.id === id);
                 document.getElementById('deviceId').value = d.id;
-                document.getElementById('deviceName').value = d.name;
-                document.getElementById('deviceSessions').value = d.sessions;
-                document.getElementById('devicePercent').value = d.percent;
-                document.getElementById('devicePagesPerSession').value = d.pagesPerSession;
-                document.getElementById('deviceExitRate').value = d.exitRate;
+                dataKeys.forEach(key => {
+                    const inputId = 'device' + key.charAt(0).toUpperCase() + key.slice(1);
+                    const input = document.getElementById(inputId);
+                    if (input && d[key] !== undefined) {
+                        input.value = d[key];
+                    }
+                });
             } else {
                 document.getElementById('deviceForm').reset();
                 document.getElementById('deviceId').value = '';
@@ -4197,14 +5571,20 @@
         function saveDevice(e) {
             e.preventDefault();
             const id = document.getElementById('deviceId').value;
+            const dataKeys = ['name', 'sessions', 'percent', 'pagesPerSession', 'exitRate', 'col6', 'col7', 'col8', 'col9', 'col10'];
+
             const device = {
-                id: id ? parseInt(id) : Date.now(),
-                name: document.getElementById('deviceName').value,
-                sessions: document.getElementById('deviceSessions').value,
-                percent: document.getElementById('devicePercent').value,
-                pagesPerSession: document.getElementById('devicePagesPerSession').value,
-                exitRate: document.getElementById('deviceExitRate').value
+                id: id ? parseInt(id) : Date.now()
             };
+
+            // Récupérer dynamiquement toutes les valeurs
+            dataKeys.forEach(key => {
+                const inputId = 'device' + key.charAt(0).toUpperCase() + key.slice(1);
+                const input = document.getElementById(inputId);
+                if (input) {
+                    device[key] = input.value;
+                }
+            });
 
             if (id) {
                 const index = appData.devices.findIndex(x => x.id === parseInt(id));
@@ -4232,14 +5612,35 @@
 
         // === COUNTRY FUNCTIONS ===
         function openCountryModal(id = null) {
+            // Générer les champs dynamiquement en fonction des colonnes
+            const colNames = appData.columnNames?.countries || ['Pays', 'Sessions', '% Total', 'Taux d\'Entrée BE', 'Conversion', 'Col 6', 'Col 7', 'Col 8', 'Col 9', 'Col 10'];
+            const dataKeys = ['name', 'sessions', 'percent', 'beEntry', 'conversion', 'col6', 'col7', 'col8', 'col9', 'col10'];
+
+            const formFieldsContainer = document.getElementById('countryFormFields');
+            formFieldsContainer.innerHTML = '';
+
+            dataKeys.forEach((key, index) => {
+                const isRequired = index < 5; // Les 5 premiers champs sont requis
+                const fieldGroup = document.createElement('div');
+                fieldGroup.className = 'form-group';
+                fieldGroup.innerHTML = `
+                    <label>${colNames[index]}</label>
+                    <input type="text" id="country${key.charAt(0).toUpperCase() + key.slice(1)}" placeholder="Ex: ${colNames[index]}" ${isRequired ? 'required' : ''}>
+                `;
+                formFieldsContainer.appendChild(fieldGroup);
+            });
+
+            // Charger les données si modification
             if (id) {
                 const c = appData.countries.find(x => x.id === id);
                 document.getElementById('countryId').value = c.id;
-                document.getElementById('countryName').value = c.name;
-                document.getElementById('countrySessions').value = c.sessions;
-                document.getElementById('countryPercent').value = c.percent;
-                document.getElementById('countryBeEntry').value = c.beEntry;
-                document.getElementById('countryConversion').value = c.conversion;
+                dataKeys.forEach(key => {
+                    const inputId = 'country' + key.charAt(0).toUpperCase() + key.slice(1);
+                    const input = document.getElementById(inputId);
+                    if (input && c[key] !== undefined) {
+                        input.value = c[key];
+                    }
+                });
             } else {
                 document.getElementById('countryForm').reset();
                 document.getElementById('countryId').value = '';
@@ -4250,14 +5651,20 @@
         function saveCountry(e) {
             e.preventDefault();
             const id = document.getElementById('countryId').value;
+            const dataKeys = ['name', 'sessions', 'percent', 'beEntry', 'conversion', 'col6', 'col7', 'col8', 'col9', 'col10'];
+
             const country = {
-                id: id ? parseInt(id) : Date.now(),
-                name: document.getElementById('countryName').value,
-                sessions: document.getElementById('countrySessions').value,
-                percent: document.getElementById('countryPercent').value,
-                beEntry: document.getElementById('countryBeEntry').value,
-                conversion: document.getElementById('countryConversion').value
+                id: id ? parseInt(id) : Date.now()
             };
+
+            // Récupérer dynamiquement toutes les valeurs
+            dataKeys.forEach(key => {
+                const inputId = 'country' + key.charAt(0).toUpperCase() + key.slice(1);
+                const input = document.getElementById(inputId);
+                if (input) {
+                    country[key] = input.value;
+                }
+            });
 
             if (id) {
                 const index = appData.countries.findIndex(x => x.id === parseInt(id));
@@ -4285,13 +5692,35 @@
 
         // === TRAFFIC SOURCE FUNCTIONS ===
         function openTrafficSourceModal(id = null) {
+            // Générer les champs dynamiquement en fonction des colonnes
+            const colNames = appData.columnNames?.trafficSources || ['Source', '% Sessions', 'Taux d\'Entrée BE', 'Quality Score', 'Col 5', 'Col 6', 'Col 7', 'Col 8', 'Col 9', 'Col 10'];
+            const dataKeys = ['name', 'percent', 'beEntry', 'quality', 'col5', 'col6', 'col7', 'col8', 'col9', 'col10'];
+
+            const formFieldsContainer = document.getElementById('trafficSourceFormFields');
+            formFieldsContainer.innerHTML = '';
+
+            dataKeys.forEach((key, index) => {
+                const isRequired = index < 4; // Les 4 premiers champs sont requis
+                const fieldGroup = document.createElement('div');
+                fieldGroup.className = 'form-group';
+                fieldGroup.innerHTML = `
+                    <label>${colNames[index]}</label>
+                    <input type="text" id="trafficSource${key.charAt(0).toUpperCase() + key.slice(1)}" placeholder="Ex: ${colNames[index]}" ${isRequired ? 'required' : ''}>
+                `;
+                formFieldsContainer.appendChild(fieldGroup);
+            });
+
+            // Charger les données si modification
             if (id) {
                 const ts = appData.trafficSources.find(x => x.id === id);
                 document.getElementById('trafficSourceId').value = ts.id;
-                document.getElementById('trafficSourceName').value = ts.name;
-                document.getElementById('trafficSourcePercent').value = ts.percent;
-                document.getElementById('trafficSourceBeEntry').value = ts.beEntry;
-                document.getElementById('trafficSourceQuality').value = ts.quality;
+                dataKeys.forEach(key => {
+                    const inputId = 'trafficSource' + key.charAt(0).toUpperCase() + key.slice(1);
+                    const input = document.getElementById(inputId);
+                    if (input && ts[key] !== undefined) {
+                        input.value = ts[key];
+                    }
+                });
             } else {
                 document.getElementById('trafficSourceForm').reset();
                 document.getElementById('trafficSourceId').value = '';
@@ -4302,13 +5731,20 @@
         function saveTrafficSource(e) {
             e.preventDefault();
             const id = document.getElementById('trafficSourceId').value;
+            const dataKeys = ['name', 'percent', 'beEntry', 'quality', 'col5', 'col6', 'col7', 'col8', 'col9', 'col10'];
+
             const trafficSource = {
-                id: id ? parseInt(id) : Date.now(),
-                name: document.getElementById('trafficSourceName').value,
-                percent: document.getElementById('trafficSourcePercent').value,
-                beEntry: document.getElementById('trafficSourceBeEntry').value,
-                quality: document.getElementById('trafficSourceQuality').value
+                id: id ? parseInt(id) : Date.now()
             };
+
+            // Récupérer dynamiquement toutes les valeurs
+            dataKeys.forEach(key => {
+                const inputId = 'trafficSource' + key.charAt(0).toUpperCase() + key.slice(1);
+                const input = document.getElementById(inputId);
+                if (input) {
+                    trafficSource[key] = input.value;
+                }
+            });
 
             if (id) {
                 const index = appData.trafficSources.findIndex(x => x.id === parseInt(id));
@@ -4442,13 +5878,13 @@
 
             let currentColumns = [];
             if (type === 'devices') {
-                currentColumns = appData.columnNames.devices || ['Device', 'Sessions', '% Total', 'Pages/Session', 'Exit Rate'];
+                currentColumns = appData.columnNames.devices || ['Device', 'Sessions', '% Total', 'Pages/Session', 'Exit Rate', 'Col 6', 'Col 7', 'Col 8', 'Col 9', 'Col 10'];
             } else if (type === 'countries') {
-                currentColumns = appData.columnNames.countries || ['Pays', 'Sessions', '% Total', 'Taux d\'Entrée BE', 'Conversion'];
+                currentColumns = appData.columnNames.countries || ['Pays', 'Sessions', '% Total', 'Taux d\'Entrée BE', 'Conversion', 'Col 6', 'Col 7', 'Col 8', 'Col 9', 'Col 10'];
             } else if (type === 'trafficSources') {
-                currentColumns = appData.columnNames.trafficSources || ['Source', '% Sessions', 'Taux d\'Entrée BE', 'Quality Score'];
+                currentColumns = appData.columnNames.trafficSources || ['Source', '% Sessions', 'Taux d\'Entrée BE', 'Quality Score', 'Col 5', 'Col 6', 'Col 7', 'Col 8', 'Col 9', 'Col 10'];
             } else if (type === 'components') {
-                currentColumns = appData.columnNames.components || ['Composant', 'Scroll Reach', 'Taux de Clic', 'Observation'];
+                currentColumns = appData.columnNames.components || ['Composant', 'Scroll Reach', 'Taux de Clic', 'Engagement', 'Heatmap', 'Observation', 'Col 7', 'Col 8', 'Col 9', 'Col 10'];
             }
 
             document.getElementById('editColumnsInput').value = currentColumns.join(', ');
@@ -4468,26 +5904,21 @@
             let oldColumns = [];
             let expectedLength = 0;
             if (type === 'devices') {
-                oldColumns = appData.columnNames.devices || ['Device', 'Sessions', '% Total', 'Pages/Session', 'Exit Rate'];
-                expectedLength = 5;
+                oldColumns = appData.columnNames.devices || ['Device', 'Sessions', '% Total', 'Pages/Session', 'Exit Rate', 'Col 6', 'Col 7', 'Col 8', 'Col 9', 'Col 10'];
+                expectedLength = 10;
             } else if (type === 'countries') {
-                oldColumns = appData.columnNames.countries || ['Pays', 'Sessions', '% Total', 'Taux d\'Entrée BE', 'Conversion'];
-                expectedLength = 5;
+                oldColumns = appData.columnNames.countries || ['Pays', 'Sessions', '% Total', 'Taux d\'Entrée BE', 'Conversion', 'Col 6', 'Col 7', 'Col 8', 'Col 9', 'Col 10'];
+                expectedLength = 10;
             } else if (type === 'trafficSources') {
-                oldColumns = appData.columnNames.trafficSources || ['Source', '% Sessions', 'Taux d\'Entrée BE', 'Quality Score'];
-                expectedLength = 4;
+                oldColumns = appData.columnNames.trafficSources || ['Source', '% Sessions', 'Taux d\'Entrée BE', 'Quality Score', 'Col 5', 'Col 6', 'Col 7', 'Col 8', 'Col 9', 'Col 10'];
+                expectedLength = 10;
             } else if (type === 'components') {
-                oldColumns = appData.columnNames.components || ['Composant', 'Scroll Reach', 'Taux de Clic', 'Engagement', 'Heatmap', 'Observation'];
-                expectedLength = null; // Flexible: between 4 and 8 columns
+                oldColumns = appData.columnNames.components || ['Composant', 'Scroll Reach', 'Taux de Clic', 'Engagement', 'Heatmap', 'Observation', 'Col 7', 'Col 8', 'Col 9', 'Col 10'];
+                expectedLength = 10;
             }
 
-            // Validation: exact count for fixed tables, range for components
-            if (type === 'components') {
-                if (newColumns.length < 4 || newColumns.length > 8) {
-                    alert(`Erreur : Vous devez fournir entre 4 et 8 colonnes (actuellement ${newColumns.length})`);
-                    return;
-                }
-            } else if (expectedLength !== null && newColumns.length !== expectedLength) {
+            // Validation: exact count for all tables (10 columns)
+            if (expectedLength !== null && newColumns.length !== expectedLength) {
                 alert(`Erreur : Vous devez fournir exactement ${expectedLength} colonnes (actuellement ${newColumns.length})`);
                 return;
             }
@@ -4596,6 +6027,17 @@
                 });
             }
             localStorage.setItem('currentTab', tabName);
+
+            // Render entry points charts when switching to parcours tab
+            if (tabName === 'parcours') {
+                updateParcoursGroupFilter();
+                renderEntryPointsCharts();
+            }
+
+            // Render performance insights when switching to performances tab
+            if (tabName === 'performances') {
+                renderPerformanceInsights();
+            }
         }
 
         function saveData() {
@@ -4762,6 +6204,19 @@
         };
 
         // === USER MANAGEMENT ===
+        // Fonction debounce pour éviter trop de sauvegardes
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
         function saveHeaderSettings() {
             const headerData = {
                 title: document.getElementById('headerTitle').textContent,
@@ -4778,26 +6233,37 @@
             }
         }
 
+        // Version debounced pour la sauvegarde automatique
+        const debouncedSaveHeader = debounce(saveHeaderSettings, 1000);
+
         function loadHeaderSettings() {
-            // Try from Firebase first
+            // Load from localStorage immediately
+            const saved = localStorage.getItem('headerSettings');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    if (data.title) document.getElementById('headerTitle').textContent = data.title;
+                    if (data.subtitle) document.getElementById('headerSubtitle').textContent = data.subtitle;
+                    if (data.timer) document.getElementById('timer').textContent = data.timer;
+                } catch (error) {
+                    console.error('Erreur chargement header depuis localStorage:', error);
+                }
+            }
+
+            // Then override with Firebase data if available
             if (isFirebaseReady && database) {
                 database.ref('headerSettings').once('value', (snapshot) => {
                     const data = snapshot.val();
                     if (data) {
-                        document.getElementById('headerTitle').textContent = data.title || '🎯 Atelier d\'Idéation CRO';
-                        document.getElementById('headerSubtitle').textContent = data.subtitle || 'Analyse Shopping Section - France & US | Roadmap AB Testing';
-                        document.getElementById('timer').textContent = data.timer || '2h30';
+                        if (data.title) document.getElementById('headerTitle').textContent = data.title;
+                        if (data.subtitle) document.getElementById('headerSubtitle').textContent = data.subtitle;
+                        if (data.timer) document.getElementById('timer').textContent = data.timer;
+                        // Mettre à jour localStorage avec les données Firebase
+                        localStorage.setItem('headerSettings', JSON.stringify(data));
                     }
+                }).catch(error => {
+                    console.error('Erreur chargement header depuis Firebase:', error);
                 });
-            } else {
-                // Fallback to localStorage
-                const saved = localStorage.getItem('headerSettings');
-                if (saved) {
-                    const data = JSON.parse(saved);
-                    document.getElementById('headerTitle').textContent = data.title;
-                    document.getElementById('headerSubtitle').textContent = data.subtitle;
-                    document.getElementById('timer').textContent = data.timer;
-                }
             }
         }
 
@@ -5144,6 +6610,27 @@
 
         // Initialize on load
         window.addEventListener('load', function() {
+            // Charger les paramètres du header immédiatement depuis localStorage
+            loadHeaderSettings();
+
+            // Initialiser la sauvegarde automatique du header
+            const headerTitle = document.getElementById('headerTitle');
+            const headerSubtitle = document.getElementById('headerSubtitle');
+            const timer = document.getElementById('timer');
+
+            if (headerTitle) {
+                headerTitle.addEventListener('input', debouncedSaveHeader);
+                headerTitle.addEventListener('blur', saveHeaderSettings);
+            }
+            if (headerSubtitle) {
+                headerSubtitle.addEventListener('input', debouncedSaveHeader);
+                headerSubtitle.addEventListener('blur', saveHeaderSettings);
+            }
+            if (timer) {
+                timer.addEventListener('input', debouncedSaveHeader);
+                timer.addEventListener('blur', saveHeaderSettings);
+            }
+
             // Firebase will call initData or loadFromFirebase when ready
             // If Firebase fails to load after 3 seconds, fallback to local
             setTimeout(() => {
