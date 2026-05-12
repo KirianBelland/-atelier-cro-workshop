@@ -376,11 +376,13 @@
         }
 
         .parcours-card.good {
-            border-left: 3px solid #2c3e50;
+            border-left: 4px solid #27ae60;
+            background: linear-gradient(to right, #e8f5e9 0%, white 3%);
         }
 
         .parcours-card.neutral {
-            border-left: 3px solid #f39c12;
+            border-left: 4px solid #f39c12;
+            background: linear-gradient(to right, #fff3e0 0%, white 3%);
         }
 
         /* Responsive benchmark grid */
@@ -397,7 +399,8 @@
         }
 
         .parcours-card.bad {
-            border-left: 3px solid #95a5a6;
+            border-left: 4px solid #e74c3c;
+            background: linear-gradient(to right, #ffebee 0%, white 3%);
         }
 
         .parcours-actions {
@@ -935,6 +938,7 @@
                 📊 ANALYSE
             </div>
             <button class="tab-btn active" onclick="switchTab('overview', this)">📊 Vue d'ensemble</button>
+            <button class="tab-btn" onclick="switchTab('keyinsights', this)">💡 Insights Clés</button>
             <button class="tab-btn" onclick="switchTab('performances', this)">📈 Performances Pages</button>
             <button class="tab-btn" onclick="switchTab('parcours', this)">🗺️ Parcours Utilisateurs</button>
             <button class="tab-btn" onclick="switchTab('comportement', this)">👤 Comportement In-Page</button>
@@ -1048,6 +1052,48 @@
             </div>
 
             <div id="customSegmentsContainer"></div>
+        </div>
+
+        <!-- TAB: INSIGHTS CLÉS -->
+        <div id="keyinsights" class="tab-content">
+            <h2>💡 Insights Clés & Fil Conducteur</h2>
+            <div class="alert" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">
+                <strong style="color: white;">🎯 Objectif :</strong> Centraliser les informations clés à partager pendant l'atelier. Créez un fil conducteur cohérent avec des liens de navigation vers les données détaillées.
+            </div>
+
+            <div style="background: white; padding: 25px; border-radius: 10px; margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div>
+                        <h3 style="margin: 0 0 5px 0; color: #2c3e50;">📌 Liste des Insights</h3>
+                        <p style="margin: 0; color: #666; font-size: 0.95em;">Ajoutez des insights avec liens de redirection pour naviguer rapidement dans l'atelier</p>
+                    </div>
+                    <button class="btn-add" onclick="openKeyInsightModal()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 12px 24px; font-size: 1em;">
+                        + Ajouter un Insight
+                    </button>
+                </div>
+
+                <div id="keyInsightsContainer"></div>
+            </div>
+
+            <!-- Section explicative -->
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #667eea;">
+                <h4 style="margin: 0 0 10px 0; color: #667eea;">💡 Comment utiliser les Insights Clés ?</h4>
+                <ul style="margin: 10px 0; padding-left: 20px; line-height: 1.8;">
+                    <li><strong>Titre clair</strong> : Formulez un insight concis et actionnable</li>
+                    <li><strong>Description</strong> : Ajoutez du contexte et des chiffres clés</li>
+                    <li><strong>Priorité</strong> : Triez vos insights par importance (Haute/Moyenne/Basse)</li>
+                    <li><strong>Lien de redirection</strong> : Connectez l'insight à une section spécifique de l'atelier</li>
+                    <li><strong>Navigation intelligente</strong> : Le bouton vous amène directement à l'élément avec highlight automatique</li>
+                </ul>
+                <div style="background: white; padding: 15px; border-radius: 6px; margin-top: 15px;">
+                    <strong style="color: #667eea;">Exemple d'insight :</strong>
+                    <p style="margin: 10px 0 0 0; color: #555;">
+                        <em>"Page Resort - Trafic élevé mais conversion faible"</em><br>
+                        → 68% du trafic passe par cette page mais seulement 12% entrent dans le BE<br>
+                        → Lien vers : Parcours Utilisateurs > "Resort FR"
+                    </p>
+                </div>
+            </div>
         </div>
 
         <!-- TAB: PERFORMANCES PAGES -->
@@ -1410,11 +1456,11 @@
                     <input type="text" id="parcoursName" placeholder="Ex: Homepage → Resort Page → Offer Page → BE Entry" required>
                 </div>
                 <div class="form-group">
-                    <label>Type de Parcours</label>
+                    <label>Type de Parcours (définit la couleur de bordure)</label>
                     <select id="parcoursType" required>
-                        <option value="good">✅ Bon Parcours (Convertissant)</option>
-                        <option value="neutral">❓ Indécis</option>
-                        <option value="bad">❌ Mauvais Parcours (Non-Convertissant)</option>
+                        <option value="good">🟢 Bon Parcours (Convertissant) - Bordure Verte</option>
+                        <option value="neutral">🟠 Parcours Neutre/Indécis - Bordure Orange</option>
+                        <option value="bad">🔴 Mauvais Parcours (Non-Convertissant) - Bordure Rouge</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -1924,6 +1970,71 @@
         </div>
     </div>
 
+    <!-- MODAL KEY INSIGHT -->
+    <div id="keyInsightModal" class="modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h2 id="keyInsightModalTitle">💡 Ajouter un Insight Clé</h2>
+                <span class="modal-close" onclick="closeModal('keyInsightModal')">&times;</span>
+            </div>
+            <form id="keyInsightForm" onsubmit="saveKeyInsight(event)">
+                <input type="hidden" id="keyInsightId">
+
+                <div class="form-group">
+                    <label>Titre de l'Insight *</label>
+                    <input type="text" id="keyInsightTitle" placeholder="Ex: Page Resort drive beaucoup d'utilisateurs mais BE Entry faible" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="keyInsightDescription" rows="3" placeholder="Détails supplémentaires sur cet insight..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Priorité</label>
+                    <select id="keyInsightPriority">
+                        <option value="high">🔴 Haute - Critique</option>
+                        <option value="medium" selected>🟠 Moyenne - Important</option>
+                        <option value="low">🟢 Basse - À noter</option>
+                    </select>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                    <h4 style="margin: 0 0 15px 0; color: #667eea;">🔗 Lien de Redirection (optionnel)</h4>
+
+                    <div class="form-group">
+                        <label>Onglet de destination</label>
+                        <select id="keyInsightLinkTab" onchange="updateLinkTargetOptions()">
+                            <option value="">-- Aucun lien --</option>
+                            <option value="performances">📈 Performances Pages</option>
+                            <option value="parcours">🗺️ Parcours Utilisateurs</option>
+                            <option value="comportement">👤 Comportement In-Page</option>
+                            <option value="frictions">🎨 Thèmes CRO</option>
+                            <option value="benchmark">🔍 Benchmark</option>
+                            <option value="hypotheses">💭 Hypothèses</option>
+                            <option value="ideas">💡 Idées d'AB Test</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="linkTargetContainer" style="display: none;">
+                        <label>Élément cible (optionnel)</label>
+                        <input type="text" id="keyInsightLinkTarget" placeholder="Ex: Nom du tableau, parcours, page...">
+                        <small style="color: #666; display: block; margin-top: 5px;">
+                            Laissez vide pour rediriger simplement vers l'onglet, ou précisez l'élément pour un ciblage plus précis.
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Texte du bouton de redirection</label>
+                        <input type="text" id="keyInsightLinkLabel" placeholder="Ex: Voir le parcours Resort FR" value="Voir les détails">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-add" id="keyInsightSubmitBtn">Ajouter l'Insight</button>
+            </form>
+        </div>
+    </div>
+
     <!-- MODAL METRIC -->
     <div id="metricModal" class="modal">
         <div class="modal-content">
@@ -2324,6 +2435,186 @@
         }
 
         // Render functions
+        // KEY INSIGHTS FUNCTIONS
+        function renderKeyInsights() {
+            const container = document.getElementById('keyInsightsContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (!appData.keyInsights) appData.keyInsights = [];
+
+            if (appData.keyInsights.length === 0) {
+                container.innerHTML = `
+                    <div style="background: rgba(255,255,255,0.95); padding: 20px; border-radius: 8px; text-align: center; color: #666;">
+                        <p style="margin: 0;">Aucun insight clé pour le moment. Ajoutez-en un pour créer votre fil conducteur d'atelier.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            appData.keyInsights.forEach((insight, index) => {
+                const card = document.createElement('div');
+                card.style.cssText = `
+                    background: white;
+                    padding: 20px;
+                    border-radius: 8px;
+                    margin-bottom: 15px;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                    border-left: 4px solid ${insight.priority === 'high' ? '#e74c3c' : insight.priority === 'medium' ? '#f39c12' : '#27ae60'};
+                    position: relative;
+                `;
+
+                const priorityLabel = insight.priority === 'high' ? '🔴 Haute' : insight.priority === 'medium' ? '🟠 Moyenne' : '🟢 Basse';
+
+                let linkButton = '';
+                if (insight.linkTab) {
+                    const tabName = {
+                        'performances': '📈 Performances Pages',
+                        'parcours': '🗺️ Parcours Utilisateurs',
+                        'comportement': '👤 Comportement In-Page',
+                        'frictions': '🎨 Thèmes CRO',
+                        'benchmark': '🔍 Benchmark',
+                        'hypotheses': '💭 Hypothèses',
+                        'ideas': '💡 Idées d\'AB Test'
+                    }[insight.linkTab] || insight.linkTab;
+
+                    const escapedTarget = (insight.linkTarget || '').replace(/'/g, "\\'");
+                    linkButton = `
+                        <button class="btn-add" onclick="navigateToInsight('${insight.linkTab}', '${escapedTarget}')"
+                                style="padding: 8px 16px; font-size: 0.9em; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            ${insight.linkLabel || 'Voir les détails'} →
+                        </button>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                <span style="background: rgba(102, 126, 234, 0.1); padding: 4px 10px; border-radius: 4px; font-size: 0.85em; font-weight: 600; color: #667eea;">
+                                    ${priorityLabel}
+                                </span>
+                            </div>
+                            <h4 style="margin: 0 0 8px 0; color: #2c3e50; font-size: 1.1em;">${insight.title}</h4>
+                            ${insight.description ? `<p style="margin: 0 0 12px 0; color: #666; line-height: 1.6;">${insight.description}</p>` : ''}
+                            ${linkButton}
+                        </div>
+                        <div style="display: flex; gap: 5px; margin-left: 15px;">
+                            <button class="btn-edit" onclick="editKeyInsight(${index})" style="padding: 6px 10px; font-size: 0.85em;">✏️</button>
+                            <button class="btn-delete" onclick="deleteKeyInsight(${index})" style="padding: 6px 10px; font-size: 0.85em;">🗑️</button>
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function openKeyInsightModal(index = null) {
+            const form = document.getElementById('keyInsightForm');
+            form.reset();
+
+            if (index !== null && appData.keyInsights && appData.keyInsights[index]) {
+                const insight = appData.keyInsights[index];
+                document.getElementById('keyInsightId').value = index;
+                document.getElementById('keyInsightTitle').value = insight.title || '';
+                document.getElementById('keyInsightDescription').value = insight.description || '';
+                document.getElementById('keyInsightPriority').value = insight.priority || 'medium';
+                document.getElementById('keyInsightLinkTab').value = insight.linkTab || '';
+                document.getElementById('keyInsightLinkTarget').value = insight.linkTarget || '';
+                document.getElementById('keyInsightLinkLabel').value = insight.linkLabel || 'Voir les détails';
+
+                updateLinkTargetOptions();
+
+                document.getElementById('keyInsightModalTitle').textContent = '💡 Modifier un Insight Clé';
+                document.getElementById('keyInsightSubmitBtn').textContent = 'Enregistrer';
+            } else {
+                document.getElementById('keyInsightId').value = '';
+                document.getElementById('keyInsightModalTitle').textContent = '💡 Ajouter un Insight Clé';
+                document.getElementById('keyInsightSubmitBtn').textContent = 'Ajouter l\'Insight';
+            }
+
+            openModal('keyInsightModal');
+        }
+
+        function updateLinkTargetOptions() {
+            const tab = document.getElementById('keyInsightLinkTab').value;
+            const targetContainer = document.getElementById('linkTargetContainer');
+
+            if (tab) {
+                targetContainer.style.display = 'block';
+            } else {
+                targetContainer.style.display = 'none';
+            }
+        }
+
+        function saveKeyInsight(e) {
+            e.preventDefault();
+
+            const index = document.getElementById('keyInsightId').value;
+            const insight = {
+                title: document.getElementById('keyInsightTitle').value,
+                description: document.getElementById('keyInsightDescription').value,
+                priority: document.getElementById('keyInsightPriority').value,
+                linkTab: document.getElementById('keyInsightLinkTab').value,
+                linkTarget: document.getElementById('keyInsightLinkTarget').value,
+                linkLabel: document.getElementById('keyInsightLinkLabel').value,
+                createdAt: new Date().toISOString()
+            };
+
+            if (!appData.keyInsights) appData.keyInsights = [];
+
+            if (index !== '') {
+                appData.keyInsights[parseInt(index)] = insight;
+            } else {
+                appData.keyInsights.push(insight);
+            }
+
+            saveData();
+            renderKeyInsights();
+            closeModal('keyInsightModal');
+        }
+
+        function editKeyInsight(index) {
+            openKeyInsightModal(index);
+        }
+
+        function deleteKeyInsight(index) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cet insight clé ?')) {
+                appData.keyInsights.splice(index, 1);
+                saveData();
+                renderKeyInsights();
+            }
+        }
+
+        function navigateToInsight(tab, target) {
+            // Changer d'onglet
+            const tabBtn = document.querySelector(`button[onclick*="switchTab('${tab}'"]`);
+            if (tabBtn) {
+                tabBtn.click();
+            }
+
+            // Si une cible spécifique est définie, essayer de scroller vers elle
+            if (target) {
+                setTimeout(() => {
+                    // Rechercher l'élément contenant le texte cible
+                    const allElements = document.querySelectorAll('h3, h4, .parcours-card h4, .page-section h3');
+                    for (let elem of allElements) {
+                        if (elem.textContent.toLowerCase().includes(target.toLowerCase())) {
+                            elem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            // Highlight temporaire
+                            elem.style.transition = 'all 0.3s';
+                            elem.style.backgroundColor = '#fff3cd';
+                            setTimeout(() => {
+                                elem.style.backgroundColor = '';
+                            }, 2000);
+                            break;
+                        }
+                    }
+                }, 300);
+            }
+        }
+
         function renderMetrics() {
             const container = document.getElementById('metricsContainer');
             if (!container) return;
@@ -3155,7 +3446,7 @@
                     <button class="btn-edit" onclick="editParcours(${p.id})">✏️ Modifier</button>
                     <button class="btn-delete" onclick="deleteParcours(${p.id})">🗑️ Supprimer</button>
                 </div>
-                <h4>${p.type === 'good' ? '🏆' : p.type === 'neutral' ? '❓' : '❌'} ${p.name}</h4>
+                <h4>${p.type === 'good' ? '✅' : p.type === 'neutral' ? '🟠' : '❌'} ${p.name}</h4>
                 ${!p.groupId && p.country ? `<p style="margin: 5px 0; color: #666; font-size: 0.9em;">🌍 <strong>${p.country}</strong></p>` : ''}
                 ${metricsHtml}
                 ${p.insights ? `<p style="margin-top: 15px;"><strong>Insights :</strong> ${p.insights}</p>` : ''}
@@ -3688,6 +3979,7 @@
         }
 
         function renderAll() {
+            renderKeyInsights();
             renderMetrics();
             renderDevices();
             renderCountries();
