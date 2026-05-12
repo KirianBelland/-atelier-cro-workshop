@@ -526,6 +526,43 @@
             }
         }
 
+        .group-filter-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            background: white;
+            border: 2px solid #e1e8ed;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .group-filter-checkbox:hover {
+            border-color: #2c5f8d;
+            background: #f0f7ff;
+        }
+
+        .group-filter-checkbox.selected {
+            background: #2c5f8d;
+            border-color: #2c5f8d;
+            color: white;
+        }
+
+        .group-filter-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .group-filter-checkbox label {
+            cursor: pointer;
+            margin: 0;
+            font-weight: 500;
+            font-size: 0.95em;
+        }
+
         .page-section {
             background: #f8f9fa;
             padding: 20px;
@@ -1067,21 +1104,29 @@
             </div>
 
             <!-- Filtres de vue -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
-                <h3 style="margin: 0;">Parcours Principaux (Avant BE Entry)</h3>
-                <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
-                    <div style="display: flex; gap: 10px; align-items: center;">
-                        <label style="font-weight: 600; color: #2c5f8d;">📁 Filtrer par groupe :</label>
-                        <select id="parcoursGroupFilter" onchange="filterParcours()" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.95em;">
-                            <option value="all">Tous les groupes</option>
-                        </select>
-                    </div>
+            <div style="margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                    <h3 style="margin: 0;">Parcours Principaux (Avant BE Entry)</h3>
                     <div style="display: flex; gap: 10px; align-items: center;">
                         <label style="font-weight: 600; color: #2c5f8d;">🌍 Filtrer par pays :</label>
                         <select id="parcoursCountryFilter" onchange="filterParcours()" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 0.95em;">
                             <option value="all">Tous les pays</option>
                         </select>
                         <button class="btn-edit" onclick="openManageParcoursCountriesModal()" style="padding: 8px 12px; font-size: 0.9em;">⚙️ Gérer les pays</button>
+                    </div>
+                </div>
+
+                <!-- Filtre par groupes avec checkboxes -->
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #e1e8ed;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <label style="font-weight: 600; color: #2c5f8d;">📁 Filtrer par groupes :</label>
+                        <div style="display: flex; gap: 5px;">
+                            <button class="btn-edit" onclick="selectAllParcoursGroups()" style="padding: 6px 12px; font-size: 0.85em;">✓ Tout sélectionner</button>
+                            <button class="btn-edit" onclick="deselectAllParcoursGroups()" style="padding: 6px 12px; font-size: 0.85em;">✗ Tout désélectionner</button>
+                        </div>
+                    </div>
+                    <div id="parcoursGroupFiltersContainer" style="display: flex; flex-wrap: wrap; gap: 10px;">
+                        <!-- Les checkboxes de groupes seront générées ici -->
                     </div>
                 </div>
             </div>
@@ -1101,9 +1146,26 @@
                 <strong>Objectif :</strong> Analyser le comportement sur chaque page critique, identifier les frictions et opportunités CRO.
             </div>
 
+            <!-- Filtre par groupes avec checkboxes -->
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #e1e8ed; margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <label style="font-weight: 600; color: #667eea;">📁 Filtrer par groupes de pages :</label>
+                    <div style="display: flex; gap: 5px;">
+                        <button class="btn-edit" onclick="selectAllPageGroups()" style="padding: 6px 12px; font-size: 0.85em;">✓ Tout sélectionner</button>
+                        <button class="btn-edit" onclick="deselectAllPageGroups()" style="padding: 6px 12px; font-size: 0.85em;">✗ Tout désélectionner</button>
+                    </div>
+                </div>
+                <div id="pageGroupFiltersContainer" style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    <!-- Les checkboxes de groupes seront générées ici -->
+                </div>
+            </div>
+
             <div id="pagesContainer"></div>
 
-            <button class="btn-add" onclick="openPageModal()">+ Ajouter une Page</button>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px;">
+                <button class="btn-add" onclick="openPageGroupModal()">+ Ajouter un Groupe de Pages</button>
+                <button class="btn-add" onclick="openPageModal()" style="background: #667eea;">+ Ajouter une Page</button>
+            </div>
         </div>
 
         <!-- TAB 4: THÈMES -->
@@ -1311,6 +1373,29 @@
         </div>
     </div>
 
+    <!-- MODAL TABLE INSIGHTS -->
+    <div id="tableInsightsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>💡 Modifier les Insights du Tableau</h2>
+                <span class="modal-close" onclick="closeModal('tableInsightsModal')">&times;</span>
+            </div>
+            <form id="tableInsightsForm" onsubmit="saveTableInsights(event)">
+                <input type="hidden" id="tableInsightsId">
+                <div class="form-group">
+                    <label>Insights et observations spécifiques à ce tableau</label>
+                    <textarea id="tableInsightsText" rows="8" placeholder="Exemples:
+- Page Homepage : meilleur taux d'engagement desktop (85%)
+- Taux d'entrée BE en baisse de 5% vs mois précédent
+- Mobile : scroll reach moyen de 65% seulement
+- Opportunité : optimiser le fold sur mobile
+..."></textarea>
+                </div>
+                <button type="submit" class="btn-add">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
     <!-- MODAL PARCOURS -->
     <div id="parcoursModal" class="modal">
         <div class="modal-content">
@@ -1455,6 +1540,34 @@
                     <label>Emoji (optionnel)</label>
                     <input type="text" id="pageEmoji" placeholder="Ex: 🏠" maxlength="2">
                 </div>
+                <div class="form-group">
+                    <label>Groupe de Pages 📁</label>
+                    <select id="pageGroupSelect">
+                        <option value="">-- Aucun groupe --</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-add">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL PAGE GROUP -->
+    <div id="pageGroupModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Ajouter/Modifier un Groupe de Pages</h2>
+                <span class="modal-close" onclick="closeModal('pageGroupModal')">&times;</span>
+            </div>
+            <form id="pageGroupForm" onsubmit="savePageGroup(event)">
+                <input type="hidden" id="pageGroupId">
+                <div class="form-group">
+                    <label>Titre du Groupe</label>
+                    <input type="text" id="pageGroupTitle" placeholder="Ex: Pages Produits, Pages Landing" required>
+                </div>
+                <div class="form-group">
+                    <label>Description (optionnelle)</label>
+                    <textarea id="pageGroupDescription" rows="2" placeholder="Ex: Toutes les pages produits avec composants similaires"></textarea>
+                </div>
                 <button type="submit" class="btn-add">Enregistrer</button>
             </form>
         </div>
@@ -1464,15 +1577,40 @@
     <div id="componentModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Ajouter un Composant</h2>
+                <h2 id="componentModalTitle">Ajouter un Composant</h2>
                 <span class="modal-close" onclick="closeModal('componentModal')">&times;</span>
             </div>
             <form id="componentForm" onsubmit="saveComponent(event)">
                 <input type="hidden" id="componentPageId">
+                <input type="hidden" id="componentIndex">
                 <div id="componentFormFields">
                     <!-- Fields will be generated dynamically based on column configuration -->
                 </div>
-                <button type="submit" class="btn-add">Ajouter Composant</button>
+                <button type="submit" class="btn-add" id="componentSubmitBtn">Ajouter Composant</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL PAGE INSIGHTS -->
+    <div id="pageInsightsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>💡 Modifier les Insights de la Page</h2>
+                <span class="modal-close" onclick="closeModal('pageInsightsModal')">&times;</span>
+            </div>
+            <form id="pageInsightsForm" onsubmit="savePageInsights(event)">
+                <input type="hidden" id="pageInsightsId">
+                <div class="form-group">
+                    <label>Insights et observations comportementales pour cette page</label>
+                    <textarea id="pageInsightsText" rows="8" placeholder="Exemples:
+- 68% des utilisateurs scrollent jusqu'au fold principal
+- Le CTA Hero a un taux de clic de 12%
+- Heatmap montre une forte interaction sur le slider d'images
+- Friction identifiée : formulaire trop long (7 champs)
+- Opportunité : simplifier le parcours de réservation
+..."></textarea>
+                </div>
+                <button type="submit" class="btn-add">Enregistrer</button>
             </form>
         </div>
     </div>
@@ -1948,6 +2086,7 @@
             performanceTables: [],
             parcours: [],
             pages: [],
+            pageGroups: [],
             themes: [],
             hypotheses: [],
             ideas: [],
@@ -2653,6 +2792,17 @@
                             ${rows.length === 0 ? '<tr><td colspan="' + (columns.length + 1) + '" style="text-align: center; color: #999; padding: 20px;">Aucune donnée</td></tr>' : ''}
                         </tbody>
                     </table>
+
+                    <!-- Zone Insights spécifique au tableau -->
+                    <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-left: 3px solid #667eea; border-radius: 6px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <strong style="color: #667eea;">💡 Insights & Observations</strong>
+                            <button class="btn-edit" onclick="openTableInsightsModal(${table.id})" style="padding: 5px 12px; font-size: 0.85em;">✏️ Modifier</button>
+                        </div>
+                        <div id="tableInsights_${table.id}" style="color: #555; line-height: 1.6; white-space: pre-wrap; font-size: 0.95em;">
+                            ${table.insights || '<em style="color: #999;">Cliquez sur "Modifier" pour ajouter des insights pour ce tableau...</em>'}
+                        </div>
+                    </div>
                 `;
 
                 container.appendChild(tableDiv);
@@ -2833,6 +2983,42 @@
             saveData();
             renderPerformanceInsights();
             closeModal('performanceInsightsModal');
+        }
+
+        // Fonctions pour les insights spécifiques à chaque tableau
+        function openTableInsightsModal(tableId) {
+            if (!isAdmin) {
+                alert('🔒 Accès refusé : Seuls les administrateurs peuvent modifier cet onglet');
+                return;
+            }
+
+            const table = appData.performanceTables.find(t => t.id === tableId);
+            if (!table) return;
+
+            document.getElementById('tableInsightsId').value = tableId;
+            document.getElementById('tableInsightsText').value = table.insights || '';
+
+            const modal = document.getElementById('tableInsightsModal');
+            modal.style.display = 'block';
+
+            // Focus sur le textarea
+            setTimeout(() => document.getElementById('tableInsightsText').focus(), 100);
+        }
+
+        function saveTableInsights(e) {
+            e.preventDefault();
+
+            const tableId = parseInt(document.getElementById('tableInsightsId').value);
+            const insightsText = document.getElementById('tableInsightsText').value;
+
+            const table = appData.performanceTables.find(t => t.id === tableId);
+            if (table) {
+                table.insights = insightsText;
+                saveData();
+                renderPerformanceTables();
+            }
+
+            closeModal('tableInsightsModal');
         }
 
         function editPerformanceRow(tableId, rowIndex) {
@@ -3044,6 +3230,7 @@
             container.innerHTML = '';
 
             if (!appData.pages) appData.pages = [];
+            if (!appData.pageGroups) appData.pageGroups = [];
             if (!appData.columnNames) appData.columnNames = {};
             if (!appData.columnNames.components) appData.columnNames.components = ['Composant', 'Scroll Reach', 'Taux de Clic', 'Engagement', 'Heatmap', 'Observation'];
 
@@ -3062,37 +3249,109 @@
                 container.appendChild(headerRow);
             }
 
-            appData.pages.forEach(page => {
-                const section = document.createElement('div');
-                section.className = 'page-section';
-                section.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                        <h3>${page.emoji} ${page.name}</h3>
-                        <div>
-                            <button class="btn-edit" onclick="editPage(${page.id})">✏️ Modifier</button>
-                            <button class="btn-delete" onclick="deletePage(${page.id})">🗑️ Supprimer</button>
-                            <button class="btn-add" style="padding: 8px 15px; font-size: 0.9em;" onclick="openComponentModal(${page.id})">+ Composant</button>
-                        </div>
+            // Grouper les pages par groupId
+            const pagesWithGroup = appData.pages.filter(p => p.groupId);
+            const pagesWithoutGroup = appData.pages.filter(p => !p.groupId);
+
+            // Afficher les groupes
+            appData.pageGroups.forEach(group => {
+                const groupPages = pagesWithGroup.filter(p => p.groupId === group.id);
+                if (groupPages.length === 0) return; // Ne pas afficher les groupes vides
+
+                const groupContainer = document.createElement('div');
+                groupContainer.dataset.pageGroupId = group.id;
+                groupContainer.style.marginBottom = '30px';
+                groupContainer.style.padding = '20px';
+                groupContainer.style.background = 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)';
+                groupContainer.style.borderRadius = '15px';
+                groupContainer.style.boxShadow = '0 4px 15px rgba(0,0,0,0.1)';
+
+                const groupHeader = document.createElement('div');
+                groupHeader.style.display = 'flex';
+                groupHeader.style.justifyContent = 'space-between';
+                groupHeader.style.alignItems = 'center';
+                groupHeader.style.marginBottom = '15px';
+                groupHeader.innerHTML = `
+                    <div>
+                        <h3 style="margin: 0; color: #667eea;">📁 ${group.title}</h3>
+                        ${group.description ? `<p style="margin: 5px 0 0 0; color: #666; font-size: 0.9em;">${group.description}</p>` : ''}
                     </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                ${colNames.map(col => `<th>${col}</th>`).join('')}
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="components-${page.id}">
-                            ${page.components.map((c, idx) => `
-                                <tr>
-                                    ${dataKeys.slice(0, colNames.length).map((key, i) => `<td>${i === 0 ? '<strong>' + (c[key] || '') + '</strong>' : (c[key] || '')}</td>`).join('')}
-                                    <td><button class="btn-delete" onclick="deleteComponent(${page.id}, ${idx})">🗑️</button></td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
+                    <div style="display: flex; gap: 5px;">
+                        <button class="btn-edit" onclick="editPageGroup(${group.id})" style="font-size: 0.85em; padding: 6px 10px;">✏️</button>
+                        <button class="btn-delete" onclick="deletePageGroup(${group.id})" style="font-size: 0.85em; padding: 6px 10px;">🗑️</button>
+                    </div>
                 `;
-                container.appendChild(section);
+                groupContainer.appendChild(groupHeader);
+
+                // Afficher les pages du groupe
+                groupPages.forEach(page => {
+                    const section = createPageSection(page, colNames, dataKeys);
+                    groupContainer.appendChild(section);
+                });
+
+                container.appendChild(groupContainer);
             });
+
+            // Afficher les pages sans groupe
+            if (pagesWithoutGroup.length > 0) {
+                const noGroupHeader = document.createElement('h3');
+                noGroupHeader.textContent = '📋 Pages sans groupe';
+                noGroupHeader.style.marginTop = '20px';
+                noGroupHeader.style.marginBottom = '15px';
+                noGroupHeader.style.color = '#667eea';
+                container.appendChild(noGroupHeader);
+
+                pagesWithoutGroup.forEach(page => {
+                    const section = createPageSection(page, colNames, dataKeys);
+                    container.appendChild(section);
+                });
+            }
+        }
+
+        function createPageSection(page, colNames, dataKeys) {
+            const section = document.createElement('div');
+            section.className = 'page-section';
+            section.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3>${page.emoji} ${page.name}</h3>
+                    <div>
+                        <button class="btn-edit" onclick="editPage(${page.id})">✏️ Modifier</button>
+                        <button class="btn-delete" onclick="deletePage(${page.id})">🗑️ Supprimer</button>
+                        <button class="btn-add" style="padding: 8px 15px; font-size: 0.9em;" onclick="openComponentModal(${page.id})">+ Composant</button>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            ${colNames.map(col => `<th>${col}</th>`).join('')}
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="components-${page.id}">
+                        ${page.components.map((c, idx) => `
+                            <tr>
+                                ${dataKeys.slice(0, colNames.length).map((key, i) => `<td>${i === 0 ? '<strong>' + (c[key] || '') + '</strong>' : (c[key] || '')}</td>`).join('')}
+                                <td>
+                                    <button class="btn-edit" onclick="editComponent(${page.id}, ${idx})" style="padding: 5px 10px; font-size: 0.8em;">✏️</button>
+                                    <button class="btn-delete" onclick="deleteComponent(${page.id}, ${idx})" style="padding: 5px 10px; font-size: 0.8em;">🗑️</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+
+                <!-- Zone Insights spécifique à la page -->
+                <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-left: 3px solid #667eea; border-radius: 6px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <strong style="color: #667eea;">💡 Insights & Observations</strong>
+                        <button class="btn-edit" onclick="openPageInsightsModal(${page.id})" style="padding: 5px 12px; font-size: 0.85em;">✏️ Modifier</button>
+                    </div>
+                    <div id="pageInsights_${page.id}" style="color: #555; line-height: 1.6; white-space: pre-wrap; font-size: 0.95em;">
+                        ${page.insights || '<em style="color: #999;">Cliquez sur "Modifier" pour ajouter des insights pour cette page...</em>'}
+                    </div>
+                </div>
+            `;
+            return section;
         }
 
         function renderThemes() {
@@ -3438,6 +3697,7 @@
             renderPerformanceInsights();
             updateParcoursCountryFilter();
             updateParcoursGroupFilter();
+            updatePageGroupFilter();
             renderEntryPointsCharts();
             renderParcours();
             renderPages();
@@ -3857,11 +4117,24 @@
         }
 
         function openPageModal(id = null) {
+            // Remplir le dropdown des groupes
+            const groupSelect = document.getElementById('pageGroupSelect');
+            groupSelect.innerHTML = '<option value="">-- Aucun groupe --</option>';
+            if (appData.pageGroups && appData.pageGroups.length > 0) {
+                appData.pageGroups.forEach(group => {
+                    const option = document.createElement('option');
+                    option.value = group.id;
+                    option.textContent = `📁 ${group.title}`;
+                    groupSelect.appendChild(option);
+                });
+            }
+
             if (id) {
                 const p = appData.pages.find(x => x.id === id);
                 document.getElementById('pageId').value = p.id;
                 document.getElementById('pageName').value = p.name;
                 document.getElementById('pageEmoji').value = p.emoji;
+                document.getElementById('pageGroupSelect').value = p.groupId || '';
             } else {
                 document.getElementById('pageForm').reset();
                 document.getElementById('pageId').value = '';
@@ -3869,9 +4142,9 @@
             openModal('pageModal');
         }
 
-        function openComponentModal(pageId) {
+        function openComponentModal(pageId, componentIndex = null) {
             document.getElementById('componentPageId').value = pageId;
-            document.getElementById('componentForm').reset();
+            document.getElementById('componentIndex').value = componentIndex !== null ? componentIndex : '';
 
             // Generate form fields dynamically based on column configuration
             if (!appData.columnNames) appData.columnNames = {};
@@ -3894,6 +4167,26 @@
                     </div>
                 `;
             });
+
+            // Si mode édition, pré-remplir les champs
+            if (componentIndex !== null) {
+                const page = appData.pages.find(p => p.id === pageId);
+                if (page && page.components && page.components[componentIndex]) {
+                    const component = page.components[componentIndex];
+                    dataKeys.forEach(key => {
+                        const fieldId = `component_${key}`;
+                        const fieldElement = document.getElementById(fieldId);
+                        if (fieldElement && component[key] !== undefined) {
+                            fieldElement.value = component[key];
+                        }
+                    });
+                }
+                document.getElementById('componentModalTitle').textContent = 'Modifier un Composant';
+                document.getElementById('componentSubmitBtn').textContent = 'Enregistrer';
+            } else {
+                document.getElementById('componentModalTitle').textContent = 'Ajouter un Composant';
+                document.getElementById('componentSubmitBtn').textContent = 'Ajouter Composant';
+            }
 
             openModal('componentModal');
         }
@@ -4167,10 +4460,13 @@
         function savePage(e) {
             e.preventDefault();
             const id = document.getElementById('pageId').value;
+            const groupIdValue = document.getElementById('pageGroupSelect').value;
+
             const page = {
                 id: id ? parseInt(id) : Date.now(),
                 name: document.getElementById('pageName').value,
                 emoji: document.getElementById('pageEmoji').value,
+                groupId: groupIdValue ? parseInt(groupIdValue) : null,
                 components: id ? appData.pages.find(x => x.id === parseInt(id)).components : []
             };
 
@@ -4182,6 +4478,7 @@
             }
 
             saveData();
+            updatePageGroupFilter();
             renderPages();
             closeModal('pageModal');
         }
@@ -4189,6 +4486,7 @@
         function saveComponent(e) {
             e.preventDefault();
             const pageId = parseInt(document.getElementById('componentPageId').value);
+            const componentIndex = document.getElementById('componentIndex').value;
             const page = appData.pages.find(x => x.id === pageId);
 
             // Get column configuration
@@ -4207,7 +4505,12 @@
                 }
             });
 
-            page.components.push(component);
+            // Mode édition ou ajout
+            if (componentIndex !== '') {
+                page.components[parseInt(componentIndex)] = component;
+            } else {
+                page.components.push(component);
+            }
 
             saveData();
             renderPages();
@@ -4541,6 +4844,37 @@
             openPageModal(id);
         }
 
+        // Fonctions pour les insights spécifiques à chaque page
+        function openPageInsightsModal(pageId) {
+            const page = appData.pages.find(p => p.id === pageId);
+            if (!page) return;
+
+            document.getElementById('pageInsightsId').value = pageId;
+            document.getElementById('pageInsightsText').value = page.insights || '';
+
+            const modal = document.getElementById('pageInsightsModal');
+            modal.style.display = 'block';
+
+            // Focus sur le textarea
+            setTimeout(() => document.getElementById('pageInsightsText').focus(), 100);
+        }
+
+        function savePageInsights(e) {
+            e.preventDefault();
+
+            const pageId = parseInt(document.getElementById('pageInsightsId').value);
+            const insightsText = document.getElementById('pageInsightsText').value;
+
+            const page = appData.pages.find(p => p.id === pageId);
+            if (page) {
+                page.insights = insightsText;
+                saveData();
+                renderPages();
+            }
+
+            closeModal('pageInsightsModal');
+        }
+
         function editTheme(id) {
             openThemeModal(id);
         }
@@ -4556,15 +4890,20 @@
         // Parcours country filter functions
         function filterParcours() {
             const selectedCountry = document.getElementById('parcoursCountryFilter').value;
-            const selectedGroup = document.getElementById('parcoursGroupFilter').value;
             const container = document.getElementById('parcoursContainer');
             if (!container) return;
+
+            if (!window.selectedParcoursGroups) {
+                window.selectedParcoursGroups = new Set(['all']);
+            }
+
+            const showAllGroups = window.selectedParcoursGroups.has('all');
 
             // Filtrer les groupes
             const groupContainers = container.querySelectorAll('[data-group-id]');
             groupContainers.forEach(groupContainer => {
                 const groupId = parseInt(groupContainer.dataset.groupId);
-                let showGroup = selectedGroup === 'all' || selectedGroup === groupId.toString();
+                let showGroup = showAllGroups || window.selectedParcoursGroups.has(groupId.toString());
 
                 // Si on filtre par pays, vérifier si le groupe correspond
                 if (showGroup && selectedCountry !== 'all') {
@@ -4588,18 +4927,13 @@
 
                 if (!parcours) return;
 
-                let showCard = true;
+                let showCard = showAllGroups || window.selectedParcoursGroups.has('no-group');
 
                 // Filtrer par pays
-                if (selectedCountry !== 'all') {
+                if (showCard && selectedCountry !== 'all') {
                     if (parcours.country !== selectedCountry) {
                         showCard = false;
                     }
-                }
-
-                // Filtrer par groupe (afficher seulement si "sans groupe" et filtre "all" ou "no-group")
-                if (selectedGroup !== 'all' && selectedGroup !== 'no-group') {
-                    showCard = false;
                 }
 
                 card.style.display = showCard ? '' : 'none';
@@ -4609,7 +4943,8 @@
             const noGroupHeaders = container.querySelectorAll('h3');
             noGroupHeaders.forEach(header => {
                 if (header.textContent.includes('Parcours sans groupe')) {
-                    header.style.display = (selectedGroup === 'all' || selectedGroup === 'no-group') ? '' : 'none';
+                    const showNoGroupHeader = showAllGroups || window.selectedParcoursGroups.has('no-group');
+                    header.style.display = showNoGroupHeader ? '' : 'none';
                 }
             });
         }
@@ -4619,33 +4954,154 @@
         }
 
         function updateParcoursGroupFilter() {
-            const filter = document.getElementById('parcoursGroupFilter');
-            if (!filter) return;
+            const container = document.getElementById('parcoursGroupFiltersContainer');
+            if (!container) return;
 
-            const currentValue = filter.value;
-            filter.innerHTML = '<option value="all">Tous les groupes</option>';
+            container.innerHTML = '';
 
-            // Ajouter l'option "Sans groupe" s'il y a des parcours sans groupe
+            // Initialiser les groupes sélectionnés si nécessaire
+            if (!window.selectedParcoursGroups) {
+                window.selectedParcoursGroups = new Set(['all']);
+            }
+
+            // Ajouter "Tous les groupes"
+            const allCheckbox = createGroupFilterCheckbox('all', 'Tous les groupes', '📋');
+            container.appendChild(allCheckbox);
+
+            // Ajouter "Sans groupe" s'il y a des parcours sans groupe
             const parcoursWithoutGroup = appData.parcours.filter(p => !p.groupId);
             if (parcoursWithoutGroup.length > 0) {
-                filter.innerHTML += '<option value="no-group">📋 Sans groupe</option>';
+                const noGroupCheckbox = createGroupFilterCheckbox('no-group', `Sans groupe (${parcoursWithoutGroup.length})`, '📄');
+                container.appendChild(noGroupCheckbox);
             }
 
             // Ajouter tous les groupes
             if (appData.parcoursGroups && appData.parcoursGroups.length > 0) {
                 appData.parcoursGroups.forEach(group => {
-                    const option = document.createElement('option');
-                    option.value = group.id;
-                    option.textContent = `📁 ${group.title}`;
-                    filter.appendChild(option);
+                    const groupParcours = appData.parcours.filter(p => p.groupId === group.id);
+                    const checkbox = createGroupFilterCheckbox(
+                        group.id.toString(),
+                        `${group.title} (${groupParcours.length})`,
+                        '📁'
+                    );
+                    container.appendChild(checkbox);
+                });
+            }
+        }
+
+        function createGroupFilterCheckbox(value, label, icon) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'group-filter-checkbox';
+
+            if (window.selectedParcoursGroups && window.selectedParcoursGroups.has(value)) {
+                wrapper.classList.add('selected');
+            }
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = `groupFilter_${value}`;
+            checkbox.value = value;
+            checkbox.checked = window.selectedParcoursGroups && window.selectedParcoursGroups.has(value);
+
+            const labelElement = document.createElement('label');
+            labelElement.htmlFor = `groupFilter_${value}`;
+            labelElement.textContent = `${icon} ${label}`;
+
+            wrapper.appendChild(checkbox);
+            wrapper.appendChild(labelElement);
+
+            // Gérer le clic sur tout le wrapper
+            wrapper.onclick = function(e) {
+                if (e.target !== checkbox) {
+                    checkbox.checked = !checkbox.checked;
+                }
+                toggleGroupFilter(value);
+            };
+
+            return wrapper;
+        }
+
+        function toggleGroupFilter(groupValue) {
+            if (!window.selectedParcoursGroups) {
+                window.selectedParcoursGroups = new Set();
+            }
+
+            // Si "Tous les groupes" est cliqué
+            if (groupValue === 'all') {
+                if (window.selectedParcoursGroups.has('all')) {
+                    // Déselectionner "Tous"
+                    window.selectedParcoursGroups.delete('all');
+                } else {
+                    // Sélectionner "Tous" et désélectionner tous les autres
+                    window.selectedParcoursGroups.clear();
+                    window.selectedParcoursGroups.add('all');
+                }
+            } else {
+                // Si un groupe spécifique est cliqué, retirer "Tous"
+                window.selectedParcoursGroups.delete('all');
+
+                if (window.selectedParcoursGroups.has(groupValue)) {
+                    window.selectedParcoursGroups.delete(groupValue);
+                } else {
+                    window.selectedParcoursGroups.add(groupValue);
+                }
+
+                // Si aucun groupe n'est sélectionné, revenir à "Tous"
+                if (window.selectedParcoursGroups.size === 0) {
+                    window.selectedParcoursGroups.add('all');
+                }
+            }
+
+            // Mettre à jour l'affichage des checkboxes
+            updateGroupFilterDisplay();
+            filterParcours();
+        }
+
+        function updateGroupFilterDisplay() {
+            const container = document.getElementById('parcoursGroupFiltersContainer');
+            if (!container) return;
+
+            container.querySelectorAll('.group-filter-checkbox').forEach(wrapper => {
+                const checkbox = wrapper.querySelector('input[type="checkbox"]');
+                const isSelected = window.selectedParcoursGroups && window.selectedParcoursGroups.has(checkbox.value);
+
+                checkbox.checked = isSelected;
+
+                if (isSelected) {
+                    wrapper.classList.add('selected');
+                } else {
+                    wrapper.classList.remove('selected');
+                }
+            });
+        }
+
+        function selectAllParcoursGroups() {
+            window.selectedParcoursGroups = new Set(['all']);
+            updateGroupFilterDisplay();
+            filterParcours();
+        }
+
+        function deselectAllParcoursGroups() {
+            window.selectedParcoursGroups = new Set();
+
+            // Collecter tous les IDs de groupes
+            if (appData.parcoursGroups && appData.parcoursGroups.length > 0) {
+                appData.parcoursGroups.forEach(group => {
+                    window.selectedParcoursGroups.add(group.id.toString());
                 });
             }
 
-            // Restaurer la valeur sélectionnée si elle existe toujours
-            const options = Array.from(filter.options).map(opt => opt.value);
-            if (options.includes(currentValue)) {
-                filter.value = currentValue;
+            // Ajouter "Sans groupe" s'il existe
+            const parcoursWithoutGroup = appData.parcours.filter(p => !p.groupId);
+            if (parcoursWithoutGroup.length > 0) {
+                window.selectedParcoursGroups.add('no-group');
             }
+
+            // Retirer "Tous"
+            window.selectedParcoursGroups.delete('all');
+
+            updateGroupFilterDisplay();
+            filterParcours();
         }
 
         function openManageParcoursCountriesModal() {
@@ -5141,8 +5597,13 @@
             if (confirm('Êtes-vous sûr de vouloir supprimer cette page ?')) {
                 appData.pages = appData.pages.filter(x => x.id !== id);
                 saveData();
+                updatePageGroupFilter();
                 renderPages();
             }
+        }
+
+        function editComponent(pageId, componentIndex) {
+            openComponentModal(pageId, componentIndex);
         }
 
         function deleteComponent(pageId, componentIndex) {
@@ -5152,6 +5613,255 @@
                 saveData();
                 renderPages();
             }
+        }
+
+        // PAGE GROUP FUNCTIONS
+        function openPageGroupModal(id = null) {
+            if (id) {
+                const group = appData.pageGroups.find(g => g.id === id);
+                if (group) {
+                    document.getElementById('pageGroupId').value = group.id;
+                    document.getElementById('pageGroupTitle').value = group.title;
+                    document.getElementById('pageGroupDescription').value = group.description || '';
+                }
+            } else {
+                document.getElementById('pageGroupForm').reset();
+                document.getElementById('pageGroupId').value = '';
+            }
+            openModal('pageGroupModal');
+        }
+
+        function savePageGroup(e) {
+            e.preventDefault();
+            const id = document.getElementById('pageGroupId').value;
+
+            const group = {
+                id: id ? parseInt(id) : Date.now(),
+                title: document.getElementById('pageGroupTitle').value,
+                description: document.getElementById('pageGroupDescription').value
+            };
+
+            if (!appData.pageGroups) appData.pageGroups = [];
+
+            if (id) {
+                const index = appData.pageGroups.findIndex(g => g.id === parseInt(id));
+                appData.pageGroups[index] = group;
+            } else {
+                appData.pageGroups.push(group);
+            }
+
+            saveData();
+            updatePageGroupFilter();
+            renderPages();
+            closeModal('pageGroupModal');
+        }
+
+        function editPageGroup(id) {
+            openPageGroupModal(id);
+        }
+
+        function deletePageGroup(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce groupe ? Les pages associées ne seront pas supprimées.')) {
+                // Retirer le groupId des pages associées
+                appData.pages.forEach(p => {
+                    if (p.groupId === id) {
+                        p.groupId = null;
+                    }
+                });
+                appData.pageGroups = appData.pageGroups.filter(g => g.id !== id);
+                saveData();
+                updatePageGroupFilter();
+                renderPages();
+            }
+        }
+
+        function updatePageGroupFilter() {
+            const container = document.getElementById('pageGroupFiltersContainer');
+            if (!container) return;
+
+            container.innerHTML = '';
+
+            // Initialiser les groupes sélectionnés si nécessaire
+            if (!window.selectedPageGroups) {
+                window.selectedPageGroups = new Set(['all']);
+            }
+
+            // Ajouter "Tous les groupes"
+            const allCheckbox = createPageGroupFilterCheckbox('all', 'Tous les groupes', '📋');
+            container.appendChild(allCheckbox);
+
+            // Ajouter "Sans groupe" s'il y a des pages sans groupe
+            const pagesWithoutGroup = appData.pages.filter(p => !p.groupId);
+            if (pagesWithoutGroup.length > 0) {
+                const noGroupCheckbox = createPageGroupFilterCheckbox('no-group', `Sans groupe (${pagesWithoutGroup.length})`, '📄');
+                container.appendChild(noGroupCheckbox);
+            }
+
+            // Ajouter tous les groupes
+            if (appData.pageGroups && appData.pageGroups.length > 0) {
+                appData.pageGroups.forEach(group => {
+                    const groupPages = appData.pages.filter(p => p.groupId === group.id);
+                    const checkbox = createPageGroupFilterCheckbox(
+                        group.id.toString(),
+                        `${group.title} (${groupPages.length})`,
+                        '📁'
+                    );
+                    container.appendChild(checkbox);
+                });
+            }
+        }
+
+        function createPageGroupFilterCheckbox(value, label, icon) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'group-filter-checkbox';
+
+            if (window.selectedPageGroups && window.selectedPageGroups.has(value)) {
+                wrapper.classList.add('selected');
+            }
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = `pageGroupFilter_${value}`;
+            checkbox.value = value;
+            checkbox.checked = window.selectedPageGroups && window.selectedPageGroups.has(value);
+
+            const labelElement = document.createElement('label');
+            labelElement.htmlFor = `pageGroupFilter_${value}`;
+            labelElement.textContent = `${icon} ${label}`;
+
+            wrapper.appendChild(checkbox);
+            wrapper.appendChild(labelElement);
+
+            // Gérer le clic sur tout le wrapper
+            wrapper.onclick = function(e) {
+                if (e.target !== checkbox) {
+                    checkbox.checked = !checkbox.checked;
+                }
+                togglePageGroupFilter(value);
+            };
+
+            return wrapper;
+        }
+
+        function togglePageGroupFilter(groupValue) {
+            if (!window.selectedPageGroups) {
+                window.selectedPageGroups = new Set();
+            }
+
+            // Si "Tous les groupes" est cliqué
+            if (groupValue === 'all') {
+                if (window.selectedPageGroups.has('all')) {
+                    // Déselectionner "Tous"
+                    window.selectedPageGroups.delete('all');
+                } else {
+                    // Sélectionner "Tous" et désélectionner tous les autres
+                    window.selectedPageGroups.clear();
+                    window.selectedPageGroups.add('all');
+                }
+            } else {
+                // Si un groupe spécifique est cliqué, retirer "Tous"
+                window.selectedPageGroups.delete('all');
+
+                if (window.selectedPageGroups.has(groupValue)) {
+                    window.selectedPageGroups.delete(groupValue);
+                } else {
+                    window.selectedPageGroups.add(groupValue);
+                }
+
+                // Si aucun groupe n'est sélectionné, revenir à "Tous"
+                if (window.selectedPageGroups.size === 0) {
+                    window.selectedPageGroups.add('all');
+                }
+            }
+
+            // Mettre à jour l'affichage des checkboxes
+            updatePageGroupFilterDisplay();
+            filterPages();
+        }
+
+        function updatePageGroupFilterDisplay() {
+            const container = document.getElementById('pageGroupFiltersContainer');
+            if (!container) return;
+
+            container.querySelectorAll('.group-filter-checkbox').forEach(wrapper => {
+                const checkbox = wrapper.querySelector('input[type="checkbox"]');
+                const isSelected = window.selectedPageGroups && window.selectedPageGroups.has(checkbox.value);
+
+                checkbox.checked = isSelected;
+
+                if (isSelected) {
+                    wrapper.classList.add('selected');
+                } else {
+                    wrapper.classList.remove('selected');
+                }
+            });
+        }
+
+        function selectAllPageGroups() {
+            window.selectedPageGroups = new Set(['all']);
+            updatePageGroupFilterDisplay();
+            filterPages();
+        }
+
+        function deselectAllPageGroups() {
+            window.selectedPageGroups = new Set();
+
+            // Collecter tous les IDs de groupes
+            if (appData.pageGroups && appData.pageGroups.length > 0) {
+                appData.pageGroups.forEach(group => {
+                    window.selectedPageGroups.add(group.id.toString());
+                });
+            }
+
+            // Ajouter "Sans groupe" s'il existe
+            const pagesWithoutGroup = appData.pages.filter(p => !p.groupId);
+            if (pagesWithoutGroup.length > 0) {
+                window.selectedPageGroups.add('no-group');
+            }
+
+            // Retirer "Tous"
+            window.selectedPageGroups.delete('all');
+
+            updatePageGroupFilterDisplay();
+            filterPages();
+        }
+
+        function filterPages() {
+            const container = document.getElementById('pagesContainer');
+            if (!container) return;
+
+            if (!window.selectedPageGroups) {
+                window.selectedPageGroups = new Set(['all']);
+            }
+
+            const showAllGroups = window.selectedPageGroups.has('all');
+
+            // Filtrer les groupes
+            const groupContainers = container.querySelectorAll('[data-page-group-id]');
+            groupContainers.forEach(groupContainer => {
+                const groupId = parseInt(groupContainer.dataset.pageGroupId);
+                const showGroup = showAllGroups || window.selectedPageGroups.has(groupId.toString());
+                groupContainer.style.display = showGroup ? '' : 'none';
+            });
+
+            // Filtrer les pages individuelles (sans groupe)
+            const allSections = container.querySelectorAll('.page-section');
+            allSections.forEach(section => {
+                // Si la section est dans un groupe, le groupe gère déjà la visibilité
+                if (section.closest('[data-page-group-id]')) return;
+
+                const showPage = showAllGroups || window.selectedPageGroups.has('no-group');
+                section.style.display = showPage ? '' : 'none';
+            });
+
+            // Gérer l'affichage du header "Pages sans groupe"
+            const noGroupHeaders = container.querySelectorAll('h3');
+            noGroupHeaders.forEach(header => {
+                if (header.textContent.includes('Pages sans groupe')) {
+                    const showNoGroupHeader = showAllGroups || window.selectedPageGroups.has('no-group');
+                    header.style.display = showNoGroupHeader ? '' : 'none';
+                }
+            });
         }
 
         function deleteTheme(id) {
@@ -6032,6 +6742,11 @@
             if (tabName === 'parcours') {
                 updateParcoursGroupFilter();
                 renderEntryPointsCharts();
+            }
+
+            // Update page group filter when switching to comportement tab
+            if (tabName === 'comportement') {
+                updatePageGroupFilter();
             }
 
             // Render performance insights when switching to performances tab
