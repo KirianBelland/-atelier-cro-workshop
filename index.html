@@ -1064,12 +1064,17 @@
             <div style="background: white; padding: 25px; border-radius: 10px; margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <div>
-                        <h3 style="margin: 0 0 5px 0; color: #2c3e50;">📌 Liste des Insights</h3>
-                        <p style="margin: 0; color: #666; font-size: 0.95em;">Ajoutez des insights avec liens de redirection pour naviguer rapidement dans l'atelier</p>
+                        <h3 style="margin: 0 0 5px 0; color: #2c3e50;">📌 Organisation des Insights</h3>
+                        <p style="margin: 0; color: #666; font-size: 0.95em;">Organisez vos insights par dossiers thématiques</p>
                     </div>
-                    <button class="btn-add" onclick="openKeyInsightModal()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 12px 24px; font-size: 1em;">
-                        + Ajouter un Insight
-                    </button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn-add" onclick="openInsightFolderModal()" style="background: #3498db; padding: 12px 20px; font-size: 0.95em;">
+                            📁 Nouveau Dossier
+                        </button>
+                        <button class="btn-add" onclick="openKeyInsightModal()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 12px 24px; font-size: 1em;">
+                            + Ajouter un Insight
+                        </button>
+                    </div>
                 </div>
 
                 <div id="keyInsightsContainer"></div>
@@ -1970,6 +1975,41 @@
         </div>
     </div>
 
+    <!-- MODAL INSIGHT FOLDER -->
+    <div id="insightFolderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="insightFolderModalTitle">📁 Créer un Dossier</h2>
+                <span class="modal-close" onclick="closeModal('insightFolderModal')">&times;</span>
+            </div>
+            <form id="insightFolderForm" onsubmit="saveInsightFolder(event)">
+                <input type="hidden" id="insightFolderId">
+                <div class="form-group">
+                    <label>Nom du Dossier *</label>
+                    <input type="text" id="insightFolderName" placeholder="Ex: Performances, Navigation, Conversion..." required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="insightFolderDescription" rows="2" placeholder="Description optionnelle du dossier..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Couleur du dossier</label>
+                    <select id="insightFolderColor">
+                        <option value="#667eea">🟣 Violet (par défaut)</option>
+                        <option value="#3498db">🔵 Bleu</option>
+                        <option value="#27ae60">🟢 Vert</option>
+                        <option value="#f39c12">🟠 Orange</option>
+                        <option value="#e74c3c">🔴 Rouge</option>
+                        <option value="#9b59b6">🟣 Violet foncé</option>
+                        <option value="#1abc9c">🔷 Turquoise</option>
+                        <option value="#e67e22">🟠 Orange foncé</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-add" id="insightFolderSubmitBtn">Créer le Dossier</button>
+            </form>
+        </div>
+    </div>
+
     <!-- MODAL KEY INSIGHT -->
     <div id="keyInsightModal" class="modal">
         <div class="modal-content" style="max-width: 700px;">
@@ -1990,6 +2030,31 @@
                     <textarea id="keyInsightDescription" rows="3" placeholder="Détails supplémentaires sur cet insight..."></textarea>
                 </div>
 
+                <!-- Nouveaux champs d'analyse -->
+                <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #f39c12;">
+                    <h4 style="margin: 0 0 15px 0; color: #856404;">📋 Analyse Détaillée</h4>
+
+                    <div class="form-group">
+                        <label>❗ Problématique</label>
+                        <textarea id="keyInsightProblematique" rows="2" placeholder="Quelle est la problématique identifiée ? Ex: Taux de rebond élevé sur la page Resort"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>✅ Points Forts</label>
+                        <textarea id="keyInsightPointsForts" rows="2" placeholder="Quels sont les points positifs ? Ex: Bon taux d'engagement sur les photos, scroll reach de 85%"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>❌ Points Faibles</label>
+                        <textarea id="keyInsightPointsFaibles" rows="2" placeholder="Quels sont les points à améliorer ? Ex: CTA peu visible, manque de clarté sur les prix"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>🎯 Objectifs</label>
+                        <textarea id="keyInsightObjectifs" rows="2" placeholder="Quels sont les objectifs visés ? Ex: Augmenter le taux d'entrée BE de 5%, réduire le taux de rebond"></textarea>
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label>Priorité</label>
                     <select id="keyInsightPriority">
@@ -1997,6 +2062,16 @@
                         <option value="medium" selected>🟠 Moyenne - Important</option>
                         <option value="low">🟢 Basse - À noter</option>
                     </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Dossier 📁</label>
+                    <select id="keyInsightFolder">
+                        <option value="">-- Aucun dossier (racine) --</option>
+                    </select>
+                    <small style="color: #666; display: block; margin-top: 5px;">
+                        Organisez vos insights par dossiers thématiques
+                    </small>
                 </div>
 
                 <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
@@ -2430,6 +2505,13 @@
                         votes: 0
                     }
                 ];
+
+                // Initialize new data structures
+                if (!appData.keyInsights) appData.keyInsights = [];
+                if (!appData.insightFolders) appData.insightFolders = [];
+                if (!appData.performanceTables) appData.performanceTables = [];
+                if (!appData.parcoursGroups) appData.parcoursGroups = [];
+                if (!appData.pageGroups) appData.pageGroups = [];
             }
             renderAll();
         }
@@ -2442,84 +2524,231 @@
             container.innerHTML = '';
 
             if (!appData.keyInsights) appData.keyInsights = [];
+            if (!appData.insightFolders) appData.insightFolders = [];
 
-            if (appData.keyInsights.length === 0) {
+            if (appData.keyInsights.length === 0 && appData.insightFolders.length === 0) {
                 container.innerHTML = `
                     <div style="background: rgba(255,255,255,0.95); padding: 20px; border-radius: 8px; text-align: center; color: #666;">
-                        <p style="margin: 0;">Aucun insight clé pour le moment. Ajoutez-en un pour créer votre fil conducteur d'atelier.</p>
+                        <p style="margin: 0;">Aucun insight clé pour le moment. Créez des dossiers et ajoutez des insights pour créer votre fil conducteur d'atelier.</p>
                     </div>
                 `;
                 return;
             }
 
-            appData.keyInsights.forEach((insight, index) => {
-                const card = document.createElement('div');
-                card.style.cssText = `
-                    background: white;
+            // Grouper les insights par dossier
+            const insightsWithFolder = appData.keyInsights.filter(i => i.folderId);
+            const insightsWithoutFolder = appData.keyInsights.filter(i => !i.folderId);
+
+            // Afficher les dossiers
+            appData.insightFolders.forEach(folder => {
+                const folderInsights = insightsWithFolder.filter(i => i.folderId === folder.id);
+
+                const folderDiv = document.createElement('div');
+                folderDiv.style.cssText = `
+                    background: linear-gradient(135deg, ${folder.color || '#667eea'} 0%, ${adjustColor(folder.color || '#667eea', -20)} 100%);
                     padding: 20px;
-                    border-radius: 8px;
-                    margin-bottom: 15px;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-                    border-left: 4px solid ${insight.priority === 'high' ? '#e74c3c' : insight.priority === 'medium' ? '#f39c12' : '#27ae60'};
-                    position: relative;
+                    border-radius: 10px;
+                    margin-bottom: 20px;
+                    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
                 `;
 
-                const priorityLabel = insight.priority === 'high' ? '🔴 Haute' : insight.priority === 'medium' ? '🟠 Moyenne' : '🟢 Basse';
+                const folderHeader = document.createElement('div');
+                folderHeader.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; cursor: pointer;';
+                folderHeader.onclick = () => toggleFolder(folder.id);
 
-                let linkButton = '';
-                if (insight.linkTab) {
-                    const tabName = {
-                        'performances': '📈 Performances Pages',
-                        'parcours': '🗺️ Parcours Utilisateurs',
-                        'comportement': '👤 Comportement In-Page',
-                        'frictions': '🎨 Thèmes CRO',
-                        'benchmark': '🔍 Benchmark',
-                        'hypotheses': '💭 Hypothèses',
-                        'ideas': '💡 Idées d\'AB Test'
-                    }[insight.linkTab] || insight.linkTab;
-
-                    const escapedTarget = (insight.linkTarget || '').replace(/'/g, "\\'");
-                    linkButton = `
-                        <button class="btn-add" onclick="navigateToInsight('${insight.linkTab}', '${escapedTarget}')"
-                                style="padding: 8px 16px; font-size: 0.9em; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                            ${insight.linkLabel || 'Voir les détails'} →
-                        </button>
-                    `;
-                }
-
-                card.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
-                        <div style="flex: 1;">
-                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-                                <span style="background: rgba(102, 126, 234, 0.1); padding: 4px 10px; border-radius: 4px; font-size: 0.85em; font-weight: 600; color: #667eea;">
-                                    ${priorityLabel}
-                                </span>
-                            </div>
-                            <h4 style="margin: 0 0 8px 0; color: #2c3e50; font-size: 1.1em;">${insight.title}</h4>
-                            ${insight.description ? `<p style="margin: 0 0 12px 0; color: #666; line-height: 1.6;">${insight.description}</p>` : ''}
-                            ${linkButton}
-                        </div>
-                        <div style="display: flex; gap: 5px; margin-left: 15px;">
-                            <button class="btn-edit" onclick="editKeyInsight(${index})" style="padding: 6px 10px; font-size: 0.85em;">✏️</button>
-                            <button class="btn-delete" onclick="deleteKeyInsight(${index})" style="padding: 6px 10px; font-size: 0.85em;">🗑️</button>
-                        </div>
+                folderHeader.innerHTML = `
+                    <div style="flex: 1;">
+                        <h3 style="margin: 0; color: white; display: flex; align-items: center; gap: 10px;">
+                            <span id="folderToggle_${folder.id}">📂</span>
+                            ${folder.name}
+                            <span style="background: rgba(255,255,255,0.3); padding: 4px 10px; border-radius: 12px; font-size: 0.8em;">
+                                ${folderInsights.length} insight${folderInsights.length > 1 ? 's' : ''}
+                            </span>
+                        </h3>
+                        ${folder.description ? `<p style="margin: 5px 0 0 35px; color: rgba(255,255,255,0.9); font-size: 0.9em;">${folder.description}</p>` : ''}
+                    </div>
+                    <div style="display: flex; gap: 5px;" onclick="event.stopPropagation();">
+                        <button class="btn-edit" onclick="editInsightFolder(${folder.id})" style="padding: 6px 10px; font-size: 0.85em;">✏️</button>
+                        <button class="btn-delete" onclick="deleteInsightFolder(${folder.id})" style="padding: 6px 10px; font-size: 0.85em;">🗑️</button>
                     </div>
                 `;
 
-                container.appendChild(card);
+                const folderContent = document.createElement('div');
+                folderContent.id = `folderContent_${folder.id}`;
+                folderContent.style.display = 'block';
+
+                folderInsights.forEach(insight => {
+                    const index = appData.keyInsights.indexOf(insight);
+                    const card = createInsightCard(insight, index);
+                    folderContent.appendChild(card);
+                });
+
+                if (folderInsights.length === 0) {
+                    folderContent.innerHTML = `
+                        <div style="background: rgba(255,255,255,0.9); padding: 15px; border-radius: 6px; text-align: center; color: #666; font-size: 0.9em;">
+                            Aucun insight dans ce dossier
+                        </div>
+                    `;
+                }
+
+                folderDiv.appendChild(folderHeader);
+                folderDiv.appendChild(folderContent);
+                container.appendChild(folderDiv);
             });
+
+            // Afficher les insights sans dossier
+            if (insightsWithoutFolder.length > 0) {
+                const noDolderHeader = document.createElement('h4');
+                noDolderHeader.textContent = '📋 Insights sans dossier';
+                noDolderHeader.style.cssText = 'margin: 20px 0 15px 0; color: #666;';
+                container.appendChild(noDolderHeader);
+
+                insightsWithoutFolder.forEach(insight => {
+                    const index = appData.keyInsights.indexOf(insight);
+                    const card = createInsightCard(insight, index);
+                    container.appendChild(card);
+                });
+            }
+        }
+
+        function adjustColor(color, percent) {
+            const num = parseInt(color.replace('#', ''), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = (num >> 16) + amt;
+            const G = (num >> 8 & 0x00FF) + amt;
+            const B = (num & 0x0000FF) + amt;
+            return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+                (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+                (B < 255 ? B < 1 ? 0 : B : 255))
+                .toString(16).slice(1);
+        }
+
+        function toggleFolder(folderId) {
+            const content = document.getElementById(`folderContent_${folderId}`);
+            const toggle = document.getElementById(`folderToggle_${folderId}`);
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                toggle.textContent = '📂';
+            } else {
+                content.style.display = 'none';
+                toggle.textContent = '📁';
+            }
+        }
+
+        function createInsightCard(insight, index) {
+            const card = document.createElement('div');
+            card.style.cssText = `
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                margin-bottom: 15px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                border-left: 4px solid ${insight.priority === 'high' ? '#e74c3c' : insight.priority === 'medium' ? '#f39c12' : '#27ae60'};
+                position: relative;
+            `;
+
+            const priorityLabel = insight.priority === 'high' ? '🔴 Haute' : insight.priority === 'medium' ? '🟠 Moyenne' : '🟢 Basse';
+
+            let linkButton = '';
+            if (insight.linkTab) {
+                const tabName = {
+                    'performances': '📈 Performances Pages',
+                    'parcours': '🗺️ Parcours Utilisateurs',
+                    'comportement': '👤 Comportement In-Page',
+                    'frictions': '🎨 Thèmes CRO',
+                    'benchmark': '🔍 Benchmark',
+                    'hypotheses': '💭 Hypothèses',
+                    'ideas': '💡 Idées d\'AB Test'
+                }[insight.linkTab] || insight.linkTab;
+
+                const escapedTarget = (insight.linkTarget || '').replace(/'/g, "\\'");
+                linkButton = `
+                    <button class="btn-add" onclick="navigateToInsight('${insight.linkTab}', '${escapedTarget}')"
+                            style="padding: 8px 16px; font-size: 0.9em; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        ${insight.linkLabel || 'Voir les détails'} →
+                    </button>
+                `;
+            }
+
+            card.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                            <span style="background: rgba(102, 126, 234, 0.1); padding: 4px 10px; border-radius: 4px; font-size: 0.85em; font-weight: 600; color: #667eea;">
+                                ${priorityLabel}
+                            </span>
+                        </div>
+                        <h4 style="margin: 0 0 8px 0; color: #2c3e50; font-size: 1.1em;">${insight.title}</h4>
+                        ${insight.description ? `<p style="margin: 0 0 12px 0; color: #666; line-height: 1.6;">${insight.description}</p>` : ''}
+
+                        ${insight.problematique || insight.pointsForts || insight.pointsFaibles || insight.objectifs ? `
+                            <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+                                ${insight.problematique ? `
+                                    <div style="margin-bottom: 8px;">
+                                        <strong style="color: #e74c3c;">❗ Problématique :</strong>
+                                        <span style="color: #555;">${insight.problematique}</span>
+                                    </div>
+                                ` : ''}
+                                ${insight.pointsForts ? `
+                                    <div style="margin-bottom: 8px;">
+                                        <strong style="color: #27ae60;">✅ Points Forts :</strong>
+                                        <span style="color: #555;">${insight.pointsForts}</span>
+                                    </div>
+                                ` : ''}
+                                ${insight.pointsFaibles ? `
+                                    <div style="margin-bottom: 8px;">
+                                        <strong style="color: #e67e22;">❌ Points Faibles :</strong>
+                                        <span style="color: #555;">${insight.pointsFaibles}</span>
+                                    </div>
+                                ` : ''}
+                                ${insight.objectifs ? `
+                                    <div>
+                                        <strong style="color: #3498db;">🎯 Objectifs :</strong>
+                                        <span style="color: #555;">${insight.objectifs}</span>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        ` : ''}
+
+                        ${linkButton}
+                    </div>
+                    <div style="display: flex; gap: 5px; margin-left: 15px;">
+                        <button class="btn-edit" onclick="editKeyInsight(${index})" style="padding: 6px 10px; font-size: 0.85em;">✏️</button>
+                        <button class="btn-delete" onclick="deleteKeyInsight(${index})" style="padding: 6px 10px; font-size: 0.85em;">🗑️</button>
+                    </div>
+                </div>
+            `;
+
+            return card;
         }
 
         function openKeyInsightModal(index = null) {
             const form = document.getElementById('keyInsightForm');
             form.reset();
 
+            // Charger la liste des dossiers
+            const folderSelect = document.getElementById('keyInsightFolder');
+            folderSelect.innerHTML = '<option value="">-- Aucun dossier (racine) --</option>';
+            if (appData.insightFolders) {
+                appData.insightFolders.forEach(folder => {
+                    const option = document.createElement('option');
+                    option.value = folder.id;
+                    option.textContent = `📁 ${folder.name}`;
+                    folderSelect.appendChild(option);
+                });
+            }
+
             if (index !== null && appData.keyInsights && appData.keyInsights[index]) {
                 const insight = appData.keyInsights[index];
                 document.getElementById('keyInsightId').value = index;
                 document.getElementById('keyInsightTitle').value = insight.title || '';
                 document.getElementById('keyInsightDescription').value = insight.description || '';
+                document.getElementById('keyInsightProblematique').value = insight.problematique || '';
+                document.getElementById('keyInsightPointsForts').value = insight.pointsForts || '';
+                document.getElementById('keyInsightPointsFaibles').value = insight.pointsFaibles || '';
+                document.getElementById('keyInsightObjectifs').value = insight.objectifs || '';
                 document.getElementById('keyInsightPriority').value = insight.priority || 'medium';
+                document.getElementById('keyInsightFolder').value = insight.folderId || '';
                 document.getElementById('keyInsightLinkTab').value = insight.linkTab || '';
                 document.getElementById('keyInsightLinkTarget').value = insight.linkTarget || '';
                 document.getElementById('keyInsightLinkLabel').value = insight.linkLabel || 'Voir les détails';
@@ -2552,10 +2781,17 @@
             e.preventDefault();
 
             const index = document.getElementById('keyInsightId').value;
+            const folderId = document.getElementById('keyInsightFolder').value;
+
             const insight = {
                 title: document.getElementById('keyInsightTitle').value,
                 description: document.getElementById('keyInsightDescription').value,
+                problematique: document.getElementById('keyInsightProblematique').value,
+                pointsForts: document.getElementById('keyInsightPointsForts').value,
+                pointsFaibles: document.getElementById('keyInsightPointsFaibles').value,
+                objectifs: document.getElementById('keyInsightObjectifs').value,
                 priority: document.getElementById('keyInsightPriority').value,
+                folderId: folderId ? parseInt(folderId) : null,
                 linkTab: document.getElementById('keyInsightLinkTab').value,
                 linkTarget: document.getElementById('keyInsightLinkTarget').value,
                 linkLabel: document.getElementById('keyInsightLinkLabel').value,
@@ -2582,6 +2818,88 @@
         function deleteKeyInsight(index) {
             if (confirm('Êtes-vous sûr de vouloir supprimer cet insight clé ?')) {
                 appData.keyInsights.splice(index, 1);
+                saveData();
+                renderKeyInsights();
+            }
+        }
+
+        // INSIGHT FOLDER FUNCTIONS
+        function openInsightFolderModal(id = null) {
+            const form = document.getElementById('insightFolderForm');
+            form.reset();
+
+            if (id !== null && appData.insightFolders) {
+                const folder = appData.insightFolders.find(f => f.id === id);
+                if (folder) {
+                    document.getElementById('insightFolderId').value = folder.id;
+                    document.getElementById('insightFolderName').value = folder.name || '';
+                    document.getElementById('insightFolderDescription').value = folder.description || '';
+                    document.getElementById('insightFolderColor').value = folder.color || '#667eea';
+
+                    document.getElementById('insightFolderModalTitle').textContent = '📁 Modifier le Dossier';
+                    document.getElementById('insightFolderSubmitBtn').textContent = 'Enregistrer';
+                } else {
+                    document.getElementById('insightFolderId').value = '';
+                    document.getElementById('insightFolderModalTitle').textContent = '📁 Créer un Dossier';
+                    document.getElementById('insightFolderSubmitBtn').textContent = 'Créer le Dossier';
+                }
+            } else {
+                document.getElementById('insightFolderId').value = '';
+                document.getElementById('insightFolderModalTitle').textContent = '📁 Créer un Dossier';
+                document.getElementById('insightFolderSubmitBtn').textContent = 'Créer le Dossier';
+            }
+
+            openModal('insightFolderModal');
+        }
+
+        function saveInsightFolder(e) {
+            e.preventDefault();
+
+            const id = document.getElementById('insightFolderId').value;
+            const folder = {
+                id: id ? parseInt(id) : Date.now(),
+                name: document.getElementById('insightFolderName').value,
+                description: document.getElementById('insightFolderDescription').value,
+                color: document.getElementById('insightFolderColor').value,
+                createdAt: new Date().toISOString()
+            };
+
+            if (!appData.insightFolders) appData.insightFolders = [];
+
+            if (id) {
+                const index = appData.insightFolders.findIndex(f => f.id === parseInt(id));
+                if (index !== -1) {
+                    appData.insightFolders[index] = folder;
+                }
+            } else {
+                appData.insightFolders.push(folder);
+            }
+
+            saveData();
+            renderKeyInsights();
+            closeModal('insightFolderModal');
+        }
+
+        function editInsightFolder(id) {
+            openInsightFolderModal(id);
+        }
+
+        function deleteInsightFolder(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce dossier ? Les insights qu\'il contient ne seront pas supprimés mais déplacés vers la racine.')) {
+                // Déplacer les insights du dossier vers la racine
+                if (appData.keyInsights) {
+                    appData.keyInsights.forEach(insight => {
+                        if (insight.folderId === id) {
+                            insight.folderId = null;
+                        }
+                    });
+                }
+
+                // Supprimer le dossier
+                if (appData.insightFolders) {
+                    appData.insightFolders = appData.insightFolders.filter(f => f.id !== id);
+                }
+
                 saveData();
                 renderKeyInsights();
             }
@@ -6410,12 +6728,205 @@
                 XLSX.utils.book_append_sheet(wb, ws5, "Idées AB Test");
             }
 
+            // Sheet 6: Insights Clés
+            if (appData.keyInsights && appData.keyInsights.length > 0) {
+                const insightsData = appData.keyInsights.map((insight, idx) => {
+                    const priorityLabels = {
+                        'high': 'Haute - Critique',
+                        'medium': 'Moyenne - Important',
+                        'low': 'Basse - À noter'
+                    };
+                    const tabLabels = {
+                        'performances': 'Performances Pages',
+                        'parcours': 'Parcours Utilisateurs',
+                        'comportement': 'Comportement In-Page',
+                        'frictions': 'Thèmes CRO',
+                        'benchmark': 'Benchmark',
+                        'hypotheses': 'Hypothèses',
+                        'ideas': 'Idées d\'AB Test'
+                    };
+
+                    // Récupérer le nom du dossier
+                    let folderName = '-';
+                    if (insight.folderId && appData.insightFolders) {
+                        const folder = appData.insightFolders.find(f => f.id === insight.folderId);
+                        if (folder) folderName = folder.name;
+                    }
+
+                    return {
+                        'N°': idx + 1,
+                        'Dossier': folderName,
+                        'Titre': insight.title,
+                        'Description': insight.description || '',
+                        'Problématique': insight.problematique || '',
+                        'Points Forts': insight.pointsForts || '',
+                        'Points Faibles': insight.pointsFaibles || '',
+                        'Objectifs': insight.objectifs || '',
+                        'Priorité': priorityLabels[insight.priority] || insight.priority,
+                        'Lien vers': insight.linkTab ? tabLabels[insight.linkTab] : '-',
+                        'Élément cible': insight.linkTarget || '-',
+                        'Date création': insight.createdAt ? new Date(insight.createdAt).toLocaleDateString('fr-FR') : 'N/A'
+                    };
+                });
+                const ws6 = XLSX.utils.json_to_sheet(insightsData);
+                ws6['!cols'] = [
+                    { wch: 5 }, { wch: 25 }, { wch: 40 }, { wch: 50 },
+                    { wch: 40 }, { wch: 40 }, { wch: 40 }, { wch: 40 },
+                    { wch: 20 }, { wch: 20 }, { wch: 25 }, { wch: 15 }
+                ];
+                XLSX.utils.book_append_sheet(wb, ws6, "Insights Clés");
+            }
+
+            // Sheet 7: Performances Pages
+            if (appData.performanceTables && appData.performanceTables.length > 0) {
+                const performanceData = [];
+                appData.performanceTables.forEach(table => {
+                    const tableName = table.name;
+                    const columns = table.columns || [];
+                    const rows = table.rows || [];
+
+                    if (rows.length > 0) {
+                        rows.forEach((row, rowIdx) => {
+                            const rowData = {
+                                'Tableau': tableName,
+                                'Ligne #': rowIdx + 1
+                            };
+                            columns.forEach(col => {
+                                const key = col.toLowerCase().replace(/\s+/g, '').replace(/%/g, '').replace(/'/g, '');
+                                rowData[col] = row[key] || '';
+                            });
+                            if (table.insights) {
+                                rowData['Insights du tableau'] = table.insights;
+                            }
+                            performanceData.push(rowData);
+                        });
+                    } else {
+                        performanceData.push({
+                            'Tableau': tableName,
+                            'Ligne #': '-',
+                            'Insights du tableau': table.insights || ''
+                        });
+                    }
+                });
+                if (performanceData.length > 0) {
+                    const ws7 = XLSX.utils.json_to_sheet(performanceData);
+                    const colWidths = [{ wch: 30 }, { wch: 10 }];
+                    for (let i = 2; i < 15; i++) colWidths.push({ wch: 20 });
+                    ws7['!cols'] = colWidths;
+                    XLSX.utils.book_append_sheet(wb, ws7, "Performances Pages");
+                }
+            }
+
+            // Sheet 8: Parcours Utilisateurs
+            if (appData.parcours && appData.parcours.length > 0) {
+                const parcoursData = appData.parcours.map((p, idx) => {
+                    const typeLabels = {
+                        'good': 'Bon Parcours (Convertissant)',
+                        'neutral': 'Parcours Neutre/Indécis',
+                        'bad': 'Mauvais Parcours (Non-Convertissant)'
+                    };
+
+                    // Récupérer le nom du groupe si applicable
+                    let groupName = '-';
+                    if (p.groupId && appData.parcoursGroups) {
+                        const group = appData.parcoursGroups.find(g => g.id === p.groupId);
+                        if (group) groupName = group.title;
+                    }
+
+                    const rowData = {
+                        'N°': idx + 1,
+                        'Nom du Parcours': p.name,
+                        'Type': typeLabels[p.type] || p.type,
+                        'Pays': p.country || '-',
+                        'Groupe': groupName
+                    };
+
+                    // Ajouter les métriques dynamiques
+                    if (p.metrics && Array.isArray(p.metrics)) {
+                        p.metrics.forEach((metric, mIdx) => {
+                            if (metric.label && metric.value) {
+                                rowData[metric.label] = metric.value;
+                            }
+                        });
+                    } else {
+                        // Ancien format
+                        if (p.users) rowData['% Utilisateurs'] = p.users;
+                        if (p.conversion) rowData['Taux Conversion'] = p.conversion;
+                        if (p.time) rowData['Temps Moyen'] = p.time;
+                    }
+
+                    rowData['Insights'] = p.insights || '';
+
+                    return rowData;
+                });
+                const ws8 = XLSX.utils.json_to_sheet(parcoursData);
+                ws8['!cols'] = [
+                    { wch: 5 }, { wch: 50 }, { wch: 30 }, { wch: 15 }, { wch: 25 },
+                    { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 18 },
+                    { wch: 60 }
+                ];
+                XLSX.utils.book_append_sheet(wb, ws8, "Parcours Utilisateurs");
+            }
+
+            // Sheet 9: Comportement In-Page
+            if (appData.pages && appData.pages.length > 0) {
+                const comportementData = [];
+                appData.pages.forEach(page => {
+                    const pageName = `${page.emoji} ${page.name}`;
+
+                    // Récupérer le nom du groupe si applicable
+                    let groupName = '-';
+                    if (page.groupId && appData.pageGroups) {
+                        const group = appData.pageGroups.find(g => g.id === page.groupId);
+                        if (group) groupName = group.title;
+                    }
+
+                    if (page.components && page.components.length > 0) {
+                        page.components.forEach((comp, compIdx) => {
+                            comportementData.push({
+                                'Page': pageName,
+                                'Groupe': groupName,
+                                'Composant #': compIdx + 1,
+                                'Nom Composant': comp.name || '',
+                                'Scroll Reach': comp.scroll || '',
+                                'Taux de Clic': comp.click || '',
+                                'Engagement': comp.engagement || '',
+                                'Heatmap': comp.heatmap || '',
+                                'Observation': comp.observation || '',
+                                'Insights de la page': page.insights || ''
+                            });
+                        });
+                    } else {
+                        comportementData.push({
+                            'Page': pageName,
+                            'Groupe': groupName,
+                            'Composant #': '-',
+                            'Nom Composant': '-',
+                            'Scroll Reach': '-',
+                            'Taux de Clic': '-',
+                            'Engagement': '-',
+                            'Heatmap': '-',
+                            'Observation': '-',
+                            'Insights de la page': page.insights || ''
+                        });
+                    }
+                });
+                if (comportementData.length > 0) {
+                    const ws9 = XLSX.utils.json_to_sheet(comportementData);
+                    ws9['!cols'] = [
+                        { wch: 30 }, { wch: 25 }, { wch: 12 }, { wch: 25 }, { wch: 15 },
+                        { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 40 }, { wch: 60 }
+                    ];
+                    XLSX.utils.book_append_sheet(wb, ws9, "Comportement In-Page");
+                }
+            }
+
             // Generate filename
             const fileName = `atelier-cro-complet-${new Date().toISOString().split('T')[0]}.xlsx`;
             XLSX.writeFile(wb, fileName);
 
             console.log(`✅ Export complet Excel réussi : ${fileName}`);
-            alert(`✅ Export réussi !\n\nFichier : ${fileName}\n\nOnglets inclus :\n- Métriques\n- Thèmes et Frictions\n- Hypothèses\n- Benchmarks\n- Idées AB Test (avec commentaires)`);
+            alert(`✅ Export réussi !\n\nFichier : ${fileName}\n\nOnglets inclus :\n- Métriques\n- Thèmes et Frictions\n- Hypothèses\n- Benchmarks\n- Idées AB Test\n- Insights Clés\n- Performances Pages\n- Parcours Utilisateurs\n- Comportement In-Page`);
         }
 
         function deleteIdea(id) {
@@ -7405,6 +7916,11 @@
                     if (!appData.ideas) appData.ideas = [];
                     if (!appData.customSegments) appData.customSegments = [];
                     if (!appData.benchmarks) appData.benchmarks = [];
+                    if (!appData.keyInsights) appData.keyInsights = [];
+                    if (!appData.insightFolders) appData.insightFolders = [];
+                    if (!appData.performanceTables) appData.performanceTables = [];
+                    if (!appData.parcoursGroups) appData.parcoursGroups = [];
+                    if (!appData.pageGroups) appData.pageGroups = [];
 
                     // Normalize themes - ensure each theme has frictions array
                     appData.themes.forEach(theme => {
@@ -7611,6 +8127,13 @@
                         votes: 0
                     }
                 ];
+
+                // Initialize new data structures
+                if (!appData.keyInsights) appData.keyInsights = [];
+                if (!appData.insightFolders) appData.insightFolders = [];
+                if (!appData.performanceTables) appData.performanceTables = [];
+                if (!appData.parcoursGroups) appData.parcoursGroups = [];
+                if (!appData.pageGroups) appData.pageGroups = [];
             }
             renderAll();
         }
