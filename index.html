@@ -1824,7 +1824,7 @@
                     <small style="color: #666;">Décrivez l'insight ou la barrière observée (données analytics, heatmaps, feedbacks...)</small>
                 </div>
                 <div class="form-group">
-                    <label>Titre de l'Hypothèse</label>
+                    <label>Titre de l'idée</label>
                     <input type="text" id="hypotheseTitle" placeholder="Ex: Propositions de valeur Resort" required>
                 </div>
                 <div class="form-group">
@@ -2637,6 +2637,9 @@
 
         function createInsightCard(insight, index) {
             const card = document.createElement('div');
+            card.draggable = true;
+            card.dataset.insightIndex = index;
+            card.dataset.folderId = insight.folderId || 'none';
             card.style.cssText = `
                 background: white;
                 padding: 20px;
@@ -2645,7 +2648,15 @@
                 box-shadow: 0 2px 8px rgba(0,0,0,0.1);
                 border-left: 4px solid ${insight.priority === 'high' ? '#e74c3c' : insight.priority === 'medium' ? '#f39c12' : '#27ae60'};
                 position: relative;
+                cursor: move;
+                transition: all 0.2s;
             `;
+
+            // Événements drag & drop
+            card.addEventListener('dragstart', handleInsightDragStart);
+            card.addEventListener('dragover', handleInsightDragOver);
+            card.addEventListener('drop', handleInsightDrop);
+            card.addEventListener('dragend', handleInsightDragEnd);
 
             const priorityLabel = insight.priority === 'high' ? '🔴 Haute' : insight.priority === 'medium' ? '🟠 Moyenne' : '🟢 Basse';
 
@@ -2672,45 +2683,50 @@
 
             card.innerHTML = `
                 <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                    <div style="flex: 1;">
-                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-                            <span style="background: rgba(102, 126, 234, 0.1); padding: 4px 10px; border-radius: 4px; font-size: 0.85em; font-weight: 600; color: #667eea;">
-                                ${priorityLabel}
-                            </span>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="cursor: grab; padding: 5px; color: #999; font-size: 1.2em;" title="Glisser pour réorganiser">
+                            ⋮⋮
                         </div>
-                        <h4 style="margin: 0 0 8px 0; color: #2c3e50; font-size: 1.1em;">${insight.title}</h4>
-                        ${insight.description ? `<p style="margin: 0 0 12px 0; color: #666; line-height: 1.6;">${insight.description}</p>` : ''}
-
-                        ${insight.problematique || insight.pointsForts || insight.pointsFaibles || insight.objectifs ? `
-                            <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
-                                ${insight.problematique ? `
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #e74c3c;">❗ Problématique :</strong>
-                                        <span style="color: #555;">${insight.problematique}</span>
-                                    </div>
-                                ` : ''}
-                                ${insight.pointsForts ? `
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #27ae60;">✅ Points Forts :</strong>
-                                        <span style="color: #555;">${insight.pointsForts}</span>
-                                    </div>
-                                ` : ''}
-                                ${insight.pointsFaibles ? `
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #e67e22;">❌ Points Faibles :</strong>
-                                        <span style="color: #555;">${insight.pointsFaibles}</span>
-                                    </div>
-                                ` : ''}
-                                ${insight.objectifs ? `
-                                    <div>
-                                        <strong style="color: #3498db;">🎯 Objectifs :</strong>
-                                        <span style="color: #555;">${insight.objectifs}</span>
-                                    </div>
-                                ` : ''}
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                <span style="background: rgba(102, 126, 234, 0.1); padding: 4px 10px; border-radius: 4px; font-size: 0.85em; font-weight: 600; color: #667eea;">
+                                    ${priorityLabel}
+                                </span>
                             </div>
-                        ` : ''}
+                            <h4 style="margin: 0 0 8px 0; color: #2c3e50; font-size: 1.1em;">${insight.title}</h4>
+                            ${insight.description ? `<p style="margin: 0 0 12px 0; color: #666; line-height: 1.6;">${insight.description}</p>` : ''}
 
-                        ${linkButton}
+                            ${insight.problematique || insight.pointsForts || insight.pointsFaibles || insight.objectifs ? `
+                                <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+                                    ${insight.problematique ? `
+                                        <div style="margin-bottom: 8px;">
+                                            <strong style="color: #e74c3c;">❗ Problématique :</strong>
+                                            <span style="color: #555;">${insight.problematique}</span>
+                                        </div>
+                                    ` : ''}
+                                    ${insight.pointsForts ? `
+                                        <div style="margin-bottom: 8px;">
+                                            <strong style="color: #27ae60;">✅ Points Forts :</strong>
+                                            <span style="color: #555;">${insight.pointsForts}</span>
+                                        </div>
+                                    ` : ''}
+                                    ${insight.pointsFaibles ? `
+                                        <div style="margin-bottom: 8px;">
+                                            <strong style="color: #e67e22;">❌ Points Faibles :</strong>
+                                            <span style="color: #555;">${insight.pointsFaibles}</span>
+                                        </div>
+                                    ` : ''}
+                                    ${insight.objectifs ? `
+                                        <div>
+                                            <strong style="color: #3498db;">🎯 Objectifs :</strong>
+                                            <span style="color: #555;">${insight.objectifs}</span>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            ` : ''}
+
+                            ${linkButton}
+                        </div>
                     </div>
                     <div style="display: flex; gap: 5px; margin-left: 15px;">
                         <button class="btn-edit" onclick="editKeyInsight(${index})" style="padding: 6px 10px; font-size: 0.85em;">✏️</button>
@@ -2720,6 +2736,73 @@
             `;
 
             return card;
+        }
+
+        // Variables pour le drag & drop des insights
+        let draggedInsightElement = null;
+        let draggedInsightIndex = null;
+
+        function handleInsightDragStart(e) {
+            draggedInsightElement = e.currentTarget;
+            draggedInsightIndex = parseInt(draggedInsightElement.dataset.insightIndex);
+            e.currentTarget.style.opacity = '0.4';
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleInsightDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            e.dataTransfer.dropEffect = 'move';
+
+            const targetCard = e.currentTarget;
+            if (targetCard !== draggedInsightElement) {
+                targetCard.style.borderTop = '3px solid #667eea';
+            }
+            return false;
+        }
+
+        function handleInsightDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+
+            const targetCard = e.currentTarget;
+            targetCard.style.borderTop = '';
+
+            if (draggedInsightElement !== targetCard) {
+                const targetIndex = parseInt(targetCard.dataset.insightIndex);
+                const draggedFolderId = draggedInsightElement.dataset.folderId;
+                const targetFolderId = targetCard.dataset.folderId;
+
+                // Permettre le déplacement uniquement dans le même contexte (même dossier ou sans dossier)
+                if (draggedFolderId === targetFolderId) {
+                    // Réorganiser les insights
+                    const movedInsight = appData.keyInsights[draggedInsightIndex];
+                    appData.keyInsights.splice(draggedInsightIndex, 1);
+
+                    // Recalculer l'index cible après la suppression
+                    const newTargetIndex = draggedInsightIndex < targetIndex ? targetIndex - 1 : targetIndex;
+                    appData.keyInsights.splice(newTargetIndex, 0, movedInsight);
+
+                    saveToFirebase();
+                    renderKeyInsights();
+                }
+            }
+
+            return false;
+        }
+
+        function handleInsightDragEnd(e) {
+            e.currentTarget.style.opacity = '1';
+
+            // Nettoyer les bordures de tous les éléments
+            document.querySelectorAll('[data-insight-index]').forEach(card => {
+                card.style.borderTop = '';
+            });
+
+            draggedInsightElement = null;
+            draggedInsightIndex = null;
         }
 
         function openKeyInsightModal(index = null) {
@@ -8117,71 +8200,4 @@
                     {
                         id: 1,
                         title: "Hero Resort avec propositions de valeur",
-                        pages: "Resort Page",
-                        hypothese: "Hypothèse #1 - Propositions de valeur Resort",
-                        themes: "Informations Resort, Activités",
-                        desc: "Ajouter dans la hero section (sous le prix) une zone avec 4-5 badges/icônes mettant en avant : \"5 restaurants inclus\", \"Kids Club gratuit\", \"Spa sur place\", \"Piscines\", \"Activités nautiques\". Version A (control) vs Version B (avec badges)",
-                        metricPrimary: "Taux d'entrée dans le BE depuis Resort Page",
-                        metricSecondary: "Scroll depth, temps sur page, taux de rebond",
-                        priority: "Impact: 8, Confidence: 7, Ease: 6 = Score 7",
-                        votes: 0
-                    }
-                ];
-
-                // Initialize new data structures
-                if (!appData.keyInsights) appData.keyInsights = [];
-                if (!appData.insightFolders) appData.insightFolders = [];
-                if (!appData.performanceTables) appData.performanceTables = [];
-                if (!appData.parcoursGroups) appData.parcoursGroups = [];
-                if (!appData.pageGroups) appData.pageGroups = [];
-            }
-            renderAll();
-        }
-
-        // Initialize on load
-        window.addEventListener('load', function() {
-            // Charger les paramètres du header immédiatement depuis localStorage
-            loadHeaderSettings();
-
-            // Initialiser la sauvegarde automatique du header
-            const headerTitle = document.getElementById('headerTitle');
-            const headerSubtitle = document.getElementById('headerSubtitle');
-            const timer = document.getElementById('timer');
-
-            if (headerTitle) {
-                headerTitle.addEventListener('input', debouncedSaveHeader);
-                headerTitle.addEventListener('blur', saveHeaderSettings);
-            }
-            if (headerSubtitle) {
-                headerSubtitle.addEventListener('input', debouncedSaveHeader);
-                headerSubtitle.addEventListener('blur', saveHeaderSettings);
-            }
-            if (timer) {
-                timer.addEventListener('input', debouncedSaveHeader);
-                timer.addEventListener('blur', saveHeaderSettings);
-            }
-
-            // Firebase will call initData or loadFromFirebase when ready
-            // If Firebase fails to load after 3 seconds, fallback to local
-            setTimeout(() => {
-                if (!isFirebaseReady) {
-                    console.log('⚠️ Timeout Firebase - Mode local activé');
-                    document.getElementById('collaborativeStatus').innerHTML = '💾 Mode Local';
-                    document.getElementById('collaborativeStatus').style.color = '#f39c12';
-                    initData();
-                }
-            }, 3000);
-
-            const savedTab = localStorage.getItem('currentTab');
-            if (savedTab && savedTab !== 'overview') {
-                setTimeout(() => {
-                    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-                    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-                    document.getElementById(savedTab).classList.add('active');
-                    document.querySelector(`[onclick="switchTab('${savedTab}')"]`).classList.add('active');
-                }, 500);
-            }
-        });
-    </script>
-</body>
-</html>
+                        pages: "Resort
