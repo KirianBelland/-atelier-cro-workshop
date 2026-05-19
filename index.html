@@ -2785,8 +2785,11 @@
                     const newTargetIndex = draggedInsightIndex < targetIndex ? targetIndex - 1 : targetIndex;
                     appData.keyInsights.splice(newTargetIndex, 0, movedInsight);
 
-                    saveToFirebase();
+                    // Re-render uniquement les insights (pas toute l'interface)
                     renderKeyInsights();
+
+                    // Sauvegarder avec debounce (500ms)
+                    saveToFirebase();
                 }
             }
 
@@ -7768,6 +7771,8 @@
         let database;
         let isFirebaseReady = false;
         let currentGroup = 'default'; // Default group for guest mode
+        let saveTimeout = null;
+        let isUpdatingFromFirebase = false; // Flag pour éviter les boucles infinies
 
         // Firebase configuration - REMPLACEZ PAR VOTRE CONFIG
         const firebaseConfig = {
@@ -7986,6 +7991,18 @@
             sharedRef.on('value', (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
+                    // Vérifier si les données ont vraiment changé (éviter les re-renders inutiles)
+                    const currentDataString = JSON.stringify(appData);
+                    const newDataString = JSON.stringify(data);
+
+                    if (currentDataString === newDataString) {
+                        // Données identiques, pas besoin de re-render
+                        return;
+                    }
+
+                    // Marquer qu'on est en train de mettre à jour depuis Firebase
+                    isUpdatingFromFirebase = true;
+
                     appData = data;
                     // Ensure all arrays exist (backward compatibility)
                     if (!appData.metrics) appData.metrics = [];
@@ -8038,6 +8055,11 @@
 
                     renderAll();
                     console.log(`🔄 Données partagées synchronisées (Utilisateur: ${currentUser}, Groupe: ${currentGroup})`);
+
+                    // Réinitialiser le flag après un court délai
+                    setTimeout(() => {
+                        isUpdatingFromFirebase = false;
+                    }, 100);
                 } else {
                     // First time - initialize with default data
                     console.log('Aucune donnée existante, initialisation...');
@@ -8055,25 +8077,33 @@
                 return;
             }
 
-            // Add metadata
-            const dataWithMetadata = {
-                ...appData,
-                lastModified: new Date().toISOString(),
-                lastModifiedBy: currentUser || 'Anonyme',
-                lastModifiedGroup: currentGroup || 'default'
-            };
+            // Debounce: annuler la sauvegarde précédente si elle existe
+            if (saveTimeout) {
+                clearTimeout(saveTimeout);
+            }
 
-            // Save to shared path (all users see the same data)
-            database.ref('sharedWorkshopData').set(dataWithMetadata)
-                .then(() => {
-                    console.log(`✅ Données partagées sauvegardées (Utilisateur: ${currentUser}, Groupe: ${currentGroup})`);
-                    showSaveIndicator();
-                })
-                .catch((error) => {
-                    console.error('❌ Erreur Firebase:', error);
-                    localStorage.setItem('croWorkshopData', JSON.stringify(appData));
-                    showSaveIndicator();
-                });
+            // Attendre 500ms avant de sauvegarder (grouper les modifications)
+            saveTimeout = setTimeout(() => {
+                // Add metadata
+                const dataWithMetadata = {
+                    ...appData,
+                    lastModified: new Date().toISOString(),
+                    lastModifiedBy: currentUser || 'Anonyme',
+                    lastModifiedGroup: currentGroup || 'default'
+                };
+
+                // Save to shared path (all users see the same data)
+                database.ref('sharedWorkshopData').set(dataWithMetadata)
+                    .then(() => {
+                        console.log(`✅ Données partagées sauvegardées (Utilisateur: ${currentUser}, Groupe: ${currentGroup})`);
+                        showSaveIndicator();
+                    })
+                    .catch((error) => {
+                        console.error('❌ Erreur Firebase:', error);
+                        localStorage.setItem('croWorkshopData', JSON.stringify(appData));
+                        showSaveIndicator();
+                    });
+            }, 500);
         }
 
         // Load data from Firebase
@@ -8200,4 +8230,71 @@
                     {
                         id: 1,
                         title: "Hero Resort avec propositions de valeur",
-                        pages: "Resort
+                        pages: "Resort Page",
+                        hypothese: "Hypothèse #1 - Propositions de valeur Resort",
+                        themes: "Informations Resort, Activités",
+                        desc: "Ajouter dans la hero section (sous le prix) une zone avec 4-5 badges/icônes mettant en avant : \"5 restaurants inclus\", \"Kids Club gratuit\", \"Spa sur place\", \"Piscines\", \"Activités nautiques\". Version A (control) vs Version B (avec badges)",
+                        metricPrimary: "Taux d'entrée dans le BE depuis Resort Page",
+                        metricSecondary: "Scroll depth, temps sur page, taux de rebond",
+                        priority: "Impact: 8, Confidence: 7, Ease: 6 = Score 7",
+                        votes: 0
+                    }
+                ];
+
+                // Initialize new data structures
+                if (!appData.keyInsights) appData.keyInsights = [];
+                if (!appData.insightFolders) appData.insightFolders = [];
+                if (!appData.performanceTables) appData.performanceTables = [];
+                if (!appData.parcoursGroups) appData.parcoursGroups = [];
+                if (!appData.pageGroups) appData.pageGroups = [];
+            }
+            renderAll();
+        }
+
+        // Initialize on load
+        window.addEventListener('load', function() {
+            // Charger les paramètres du header immédiatement depuis localStorage
+            loadHeaderSettings();
+
+            // Initialiser la sauvegarde automatique du header
+            const headerTitle = document.getElementById('headerTitle');
+            const headerSubtitle = document.getElementById('headerSubtitle');
+            const timer = document.getElementById('timer');
+
+            if (headerTitle) {
+                headerTitle.addEventListener('input', debouncedSaveHeader);
+                headerTitle.addEventListener('blur', saveHeaderSettings);
+            }
+            if (headerSubtitle) {
+                headerSubtitle.addEventListener('input', debouncedSaveHeader);
+                headerSubtitle.addEventListener('blur', saveHeaderSettings);
+            }
+            if (timer) {
+                timer.addEventListener('input', debouncedSaveHeader);
+                timer.addEventListener('blur', saveHeaderSettings);
+            }
+
+            // Firebase will call initData or loadFromFirebase when ready
+            // If Firebase fails to load after 3 seconds, fallback to local
+            setTimeout(() => {
+                if (!isFirebaseReady) {
+                    console.log('⚠️ Timeout Firebase - Mode local activé');
+                    document.getElementById('collaborativeStatus').innerHTML = '💾 Mode Local';
+                    document.getElementById('collaborativeStatus').style.color = '#f39c12';
+                    initData();
+                }
+            }, 3000);
+
+            const savedTab = localStorage.getItem('currentTab');
+            if (savedTab && savedTab !== 'overview') {
+                setTimeout(() => {
+                    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+                    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                    document.getElementById(savedTab).classList.add('active');
+                    document.querySelector(`[onclick="switchTab('${savedTab}')"]`).classList.add('active');
+                }, 500);
+            }
+        });
+    </script>
+</body>
+</html>
